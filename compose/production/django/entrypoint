@@ -42,4 +42,5 @@ until postgres_ready; do
 done
 >&2 echo 'PostgreSQL is available'
 
+env > django.env 
 exec "$@"

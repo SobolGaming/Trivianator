@@ -339,3 +339,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Manual Additions
+django.env
