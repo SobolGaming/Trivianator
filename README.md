@@ -21,7 +21,7 @@ Django-based Trivia Quiz Framework
 4) ### Running Django Management Commands
   To run any `python manage.py <CMD>` like you would typically, you need to:<br>
     Find the django container ID using: `docker ps` <br>
-    Enter the django container using: `docker exec -t <CONTAINER_ID> /bin/bash` <br>
+    Enter the django container using: `docker exec -it <CONTAINER_ID> /bin/bash` <br>
     Load the environment variables indicating the DB setup attached to Django using: <br>
       `set -a` <br>
       `source django.env` <br>
