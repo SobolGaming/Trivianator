@@ -9,8 +9,14 @@ from django.utils.translation import ugettext as _
 
 # Create your models here.
 QUESTION_TYPES = (
-    (1, "SINGLE CHOICE"),
-    (2, "MULTIPLE CHOICE"),
+    ('single_choice', "SINGLE CORRECT ANSWER"),
+    ('multi_choice', "MULTIPLE CORRECT ANSWERS"),
+)
+
+ANSWER_ORDER_OPTIONS = (
+    ('content', 'Content'),
+    ('none', 'None'),
+    ('random', 'Random'),
 )
 
 class CategoryManager(models.Manager):
@@ -484,12 +490,11 @@ class Question(models.Model):
                                   verbose_name=_("Quiz"),
                                   blank=True)
 
-    q_type = models.PositiveSmallIntegerField(
-                                blank=False,
+    question_type = models.CharField(
+                                max_length=30, null=True, blank=True,
                                 choices = QUESTION_TYPES,
-                                default = 1,
                                 help_text=_("The question type."),
-                                verbose_name=_("Type"))
+                                verbose_name=_("Question Type"))
 
     category = models.ForeignKey(Category,
                                  verbose_name=_("Category"),
@@ -514,6 +519,14 @@ class Question(models.Model):
                                                "been answered."),
                                    verbose_name=_('Explanation'))
 
+    answer_order = models.CharField(
+        max_length=30, null=True, blank=True,
+        choices=ANSWER_ORDER_OPTIONS,
+        help_text="The order in which multichoice \
+                    answer options are displayed \
+                    to the user",
+        verbose_name="Answer Order")
+
     objects = InheritanceManager()
 
     class Meta:
@@ -523,3 +536,51 @@ class Question(models.Model):
     def __str__(self):
         return self.content
 
+    def check_if_correct(self, guess):
+        if self.question_type == 'multi_choice':
+            # NEEDS TO BE COMPLETED - TODO
+            return False
+        # else 
+        answer = Answer.objects.get(id=guess)
+        if answer.correct is True:
+            return True
+        else:
+            return False
+
+    def order_answers(self, queryset):
+        if self.answer_order == 'content':
+            return queryset.order_by('content')
+        elif self.answer_order == 'random':
+            return queryset.order_by('?')
+        return
+
+    def get_answers(self):
+        return self.order_answers(Answer.objects.filter(question=self))
+
+    def get_answers_list(self):
+        return [(answer.id, answer.content) for answer in self.order_answers(Answer.objects.filter(question=self))]
+
+    def answer_choice_to_string(self, guess):
+        return Answer.objects.get(id=guess).content
+
+
+class Answer(models.Model):
+    question = models.ForeignKey(Question, verbose_name='Question', on_delete=models.CASCADE)
+
+    content = models.CharField(max_length=1000,
+                               blank=False,
+                               help_text="Enter the answer text that \
+                                            you want displayed",
+                               verbose_name="Content")
+
+    correct = models.BooleanField(blank=False,
+                                  default=False,
+                                  help_text="Is this a correct answer?",
+                                  verbose_name="Correct")
+
+    def __str__(self):
+        return self.content
+
+    class Meta:
+        verbose_name = "Answer"
+        verbose_name_plural = "Answers"
