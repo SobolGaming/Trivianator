@@ -18,7 +18,7 @@ urlpatterns = [
     path("users/", include("trivianator.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    path('trivia/', include('trivia.urls')),
+    path('trivia/', include('trivianator.trivia.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
     # Static file serving when using Gunicorn + Uvicorn for local web socket development
