@@ -111,9 +111,12 @@ LOGIN_REQUIRED_IGNORE_PATHS = [
 
 LOGIN_REQUIRED_IGNORE_VIEW_NAMES = [
     'account_login',
+    'account_signup',
+    'account_confirm_email',
     'admin:index',
     'admin:login',
 ]
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
 # PASSWORDS
 # ------------------------------------------------------------------------------
