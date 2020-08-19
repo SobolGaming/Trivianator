@@ -8,7 +8,10 @@ from model_utils.managers import InheritanceManager
 from django.utils.translation import ugettext as _
 
 # Create your models here.
-
+QUESTION_TYPES = (
+    (1, "SINGLE CHOICE"),
+    (2, "MULTIPLE CHOICE"),
+)
 
 class CategoryManager(models.Manager):
 
@@ -470,11 +473,6 @@ class Sitting(models.Model):
         total = self.get_max_score
         return answered, total
 
-
-QUESTION_TYPES = (
-    (1, "SINGLE CHOICE"),
-    (2, "MULTIPLE CHOICE"),
-)
 
 class Question(models.Model):
     """
