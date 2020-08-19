@@ -536,16 +536,19 @@ class Question(models.Model):
     def __str__(self):
         return self.content
 
-    def check_if_correct(self, guess):
-        if self.question_type == 'multi_choice':
-            # NEEDS TO BE COMPLETED - TODO
-            return False
-        # else 
+    def check_if_correct_sc(self, guess):
         answer = Answer.objects.get(id=guess)
         if answer.correct is True:
             return True
         else:
             return False
+
+    def check_if_correct_mc(self, guess):
+        for choice in guess:
+            answer = Answer.objects.get(id=choice)
+            if not answer.correct is True:
+                return False
+        return True
 
     def order_answers(self, queryset):
         if self.answer_order == 'content':
