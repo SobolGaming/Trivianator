@@ -631,7 +631,7 @@ class CSVUpload(models.Model):
 
 
 def create_user(data):
-    user =  User.objects.create_user(username=data['username'], 
+    user = User.objects.create_user(username=data['username'], 
                             email=data['email'],
                             password=data['password'],
                             first_name=data['first_name'],
