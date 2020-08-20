@@ -28,3 +28,18 @@ Django-based Trivia Quiz Framework
       `set +a` <br>
     Run the command: `python manage.py <CMD>`
 
+5) ### Useful Commands when getting started
+  Once system is up and running create a superuser:<br>
+    `docker-compose -f .\local.yml run --rm django python manage.py createsuperuser`<br>
+  Log into the administrative trivia site to create quizes and questions using above created account:<br>
+    `http://127.0.0.1:8000/admin/trivia`<br>
+  If you ever modify the data_type of existing model fields you will need to edit the Postgres DB for it to work.<br>
+  During development you can just `docker-compose -f .\local.yml down -v`. Adding the `-v` deletes the volume and wipes the DB.<br>
+  In production you would need to `django python manage.py makemigrations` and `django python manage.py migrate`.
+
+6) ### URLs of note
+  `http://127.0.0.1:8000/trivia/quizzes/` lists all available quizzes<br>
+  `http://127.0.0.1:8000/trivia/marking/` lists results of users for each quiz (for admins)<br>
+  `http://127.0.0.1:8000/trivia/progress/` lists all quizzes taken by the user and their result<br>
+  `http://127.0.0.1:8000/trivia/category/` lists all quiz/question related categories<br>
+  `http://127.0.0.1:8000/trivia/<FriendlyURL>` direct URL to a quiz identified by the friendly URL set when creating the quiz

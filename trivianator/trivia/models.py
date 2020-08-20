@@ -10,14 +10,20 @@ from django.utils.translation import ugettext as _
 
 # Create your models here.
 QUESTION_TYPES = (
-    ('single_choice', "SINGLE CORRECT ANSWER"),
-    ('multi_choice', "MULTIPLE CORRECT ANSWERS"),
+    ('single_choice', _("Single correct answer")),
+    ('multi_choice', _("Multiple correct answers")),
 )
 
 ANSWER_ORDER_OPTIONS = (
-    ('content', 'Content'),
-    ('none', 'None'),
-    ('random', 'Random'),
+    ('content', _('Content')),
+    ('none', _('None')),
+    ('random', _('Random')),
+)
+
+ANSWER_REVEAL_OPTIONS = (
+    (1, _("After each question")),
+    (2, _("At end of quiz")),
+    (3, _("Never")),
 )
 
 class CategoryManager(models.Manager):
@@ -73,11 +79,10 @@ class Quiz(models.Model):
         blank=True, null=True, verbose_name=_("Max Questions"),
         help_text=_("Number of questions to be answered on each attempt."))
 
-    answers_at_end = models.BooleanField(
-        blank=False, default=False,
-        help_text=_("Correct answer is NOT shown after question."
-                    " Answers displayed at the end."),
-        verbose_name=_("Answers at end"))
+    answers_at_end = models.PositiveSmallIntegerField(
+        blank=False, default=1, choices = ANSWER_REVEAL_OPTIONS,
+        help_text=_("Determines when correct answers are revealed for each question."),
+        verbose_name=_("Answers Reveal Option"))
 
     saved = models.BooleanField(
         blank=True, default=True,
@@ -355,7 +360,7 @@ class Sitting(models.Model):
     objects = SittingManager()
 
     class Meta:
-        permissions = (("view_sittings", _("Can see completed exams.")),)
+        permissions = (("view_sittings", _("Can see completed quizzes.")),)
 
     def get_first_question(self):
         """
@@ -492,7 +497,8 @@ class Question(models.Model):
                                   blank=True)
 
     question_type = models.CharField(
-                                max_length=30, null=True, blank=True,
+                                max_length=30, blank=False,
+                                default = 'single_choice',
                                 choices = QUESTION_TYPES,
                                 help_text=_("The question type."),
                                 verbose_name=_("Question Type"))
@@ -521,12 +527,13 @@ class Question(models.Model):
                                    verbose_name=_('Explanation'))
 
     answer_order = models.CharField(
-        max_length=30, null=True, blank=True,
-        choices=ANSWER_ORDER_OPTIONS,
-        help_text="The order in which multichoice \
-                    answer options are displayed \
-                    to the user",
-        verbose_name="Answer Order")
+        max_length=30, blank=False,
+        default = 'none',
+        choices = ANSWER_ORDER_OPTIONS,
+        help_text = _("The order in which multichoice "
+                      "answer options are displayed "
+                      "to the user"),
+        verbose_name=_("Answer Order"))
 
     objects = InheritanceManager()
 

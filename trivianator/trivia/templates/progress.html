@@ -43,13 +43,13 @@
 
   {% endif %}
 
-  {% if exams %}
+  {% if saved %}
 
   <hr>
 
-  <h1>{% trans "Previous quizes" %}</h1>
+  <h1>{% trans "Previous quizzes" %}</h1>
   <p class="lead">
-	{% trans "Below are the results of quizes that you have taken." %}
+	{% trans "Below are the results of quizzes that you have taken." %}
   </p>
 
   <table class="table table-bordered table-striped">
@@ -65,7 +65,7 @@
 
 	<tbody>
 
-	  {% for quiz in exams %}
+	  {% for quiz in saved %}
 
 	  <tr>
 		<td>{{ quiz.quiz.title }}</td>
