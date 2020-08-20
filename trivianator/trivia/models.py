@@ -537,23 +537,28 @@ class Question(models.Model):
     def __str__(self):
         return self.content
 
-    def check_if_correct(self, guess):
-        if self.question_type == 'multi_choice':
-            # NEEDS TO BE COMPLETED - TODO
-            return False
-        # else
+    def check_if_correct_sc(self, guess):
         answer = Answer.objects.get(id=guess)
         if answer.correct is True:
             return True
         else:
             return False
 
+    def check_if_correct_mc(self, guess, choices):
+        for choice in choices:
+            answer = Answer.objects.get(id=str(choice))
+            if answer.correct is True and str(choice) not in guess:
+                return False
+            if answer.correct is False and str(choice) in guess:
+                return False
+        return True
+
     def order_answers(self, queryset):
         if self.answer_order == 'content':
             return queryset.order_by('content')
         elif self.answer_order == 'random':
             return queryset.order_by('?')
-        return
+        return queryset
 
     def get_answers(self):
         return self.order_answers(Answer.objects.filter(question=self))
@@ -562,7 +567,13 @@ class Question(models.Model):
         return [(answer.id, answer.content) for answer in self.order_answers(Answer.objects.filter(question=self))]
 
     def answer_choice_to_string(self, guess):
-        return Answer.objects.get(id=guess).content
+        if isinstance(guess, list):
+            ret = []
+            for elem in guess:
+                ret.append(Answer.objects.get(id=elem).content)
+            return ret
+        else:
+            return Answer.objects.get(id=guess).content
 
 
 class Answer(models.Model):
