@@ -543,10 +543,12 @@ class Question(models.Model):
         else:
             return False
 
-    def check_if_correct_mc(self, guess):
-        for choice in guess:
+    def check_if_correct_mc(self, guess, choices):
+        for choice in choices:
             answer = Answer.objects.get(id=choice)
-            if not answer.correct is True:
+            if answer.correct is True and choice not in guess:
+                return False
+            if answer.correct is False and choice in guess:
                 return False
         return True
 

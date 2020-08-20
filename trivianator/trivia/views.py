@@ -193,7 +193,7 @@ class QuizTake(FormView):
 
         is_correct = False
         if 'multi_choice' == self.question.question_type:
-            is_correct = self.question.check_if_correct_mc(guess)
+            is_correct = self.question.check_if_correct_mc(guess, form.answers)
         else:
             is_correct = self.question.check_if_correct_sc(guess)
 
