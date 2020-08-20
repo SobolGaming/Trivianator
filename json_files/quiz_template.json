@@ -1,45 +1,43 @@
 {
-  "Categories": [
-    "Lore",
-    "Religions",
-    "PvP Combat",
-    "PvE Combat",
-    "Itemization",
-    "Nodes",
-    "Professions",
-    "Classes",
-    "Seiges"
-  ],
-  "Questions": [
-    {
-      "Quiz": "",
-      "QuestionType": "single_choice",
-      "Category": "Religions",
-      "Content": "How many Religions are there in Ashes of Creation?",
-      "Explanation": "There are 6 primary religions and 1 underground religion",
-      "AnswerOrder": "content",
-      "Answers": [
-        {
-          "Content": "4",
-          "Correct": 0
-        },
-        {
-          "Content": "5",
-          "Correct": 0
-        },
-        {
-          "Content": "6",
-          "Correct": 0
-        },
-        {
-          "Content": "7",
-          "Correct": 1
-        },
-        {
-          "Content": "8",
-          "Correct": 0
-        }
-      ]
-    }
-  ]
+  "Quiz": {
+    "Title": "AoC_Quiz",
+    "URL": "aocquiz",
+    "Category": null,
+    "RandomOrder": true,
+    "AnswerRevealOption": 1,
+    "Save": true,
+    "SingleAttempt": false,
+    "Draft": false,
+    "Questions": [
+      {
+        "QuestionType": "single_choice",
+        "Category": "Religions",
+        "Content": "How many Religions are there in Ashes of Creation?",
+        "Explanation": "There are 6 primary religions and 1 underground religion",
+        "AnswerOrder": "content",
+        "Answers": [
+          {
+            "Content": "4",
+            "Correct": false
+          },
+          {
+            "Content": "5",
+            "Correct": false
+          },
+          {
+            "Content": "6",
+            "Correct": false
+          },
+          {
+            "Content": "7",
+            "Correct": true
+          },
+          {
+            "Content": "8",
+            "Correct": false
+          }
+        ]
+      }
+    ]
+  }
 }

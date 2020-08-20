@@ -637,16 +637,24 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
         try:
             data = json.load(json_file)
 
-            # Create categories
-            for category in data['Categories']:
-                if not Category.objects.filter(category=sanitize_string(category).lower()).exists():
-                    Category.objects.new_category(category)
+            # Create quiz
+            quiz_cat = Category.objects.get_or_create(category=sanitize_string(data['Quiz']['Category']).lower()) if 'Category' in data['Quiz'] and data['Quiz']['Category'] != None else (None, False)
+            quiz = Quiz.objects.create(
+                title = sanitize_string(data['Quiz']['Title']),
+                url = sanitize_string(data['Quiz']['URL']).lower(),
+                category = quiz_cat[0],
+                random_order = data['Quiz']['RandomOrder'],
+                max_questions = data['Quiz']['MaxQuestions'] if 'MaxQuestions' in data['Quiz'] else None,
+                answers_at_end = min(max(data['Quiz']['AnswerRevealOption'], 1), 3),
+                saved = data['Quiz']['Save'] if 'Save' in data['Quiz'] else True,
+                single_attempt = data['Quiz']['SingleAttempt'] if 'SingleAttempt' in data['Quiz'] else False,
+                draft = data['Quiz']['Draft'] if 'Draft' in data['Quiz'] else False,
+            )
 
             # Create questions
-            for question in data['Questions']:
+            for question in data['Quiz']['Questions']:
                 q_cat = Category.objects.get_or_create(category=sanitize_string(question['Category']).lower()) if 'Category' in question and question['Category'] != "" else (None, False)
                 q = Question.objects.create(
-                    #quiz = getForeignKey(question['Quiz']),
                     question_type = question['QuestionType'].lower(),
                     category = q_cat[0],
                     content = question['Content'],
@@ -659,6 +667,8 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
                         content = answer['Content'],
                         correct = True if answer['Correct'] == 1 else False,
                     )
+                # add each question to the quiz parent, can't set direcly as other parameters since it's a ManyToMany parameter
+                q.quiz.add(quiz)
 
             instance.completed = True
             instance.save()
