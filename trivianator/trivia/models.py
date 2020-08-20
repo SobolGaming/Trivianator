@@ -15,8 +15,8 @@ QUESTION_TYPES = (
 )
 
 ANSWER_ORDER_OPTIONS = (
-    ('content', _('Content')),
     ('none', _('None')),
+    ('content', _('Content')),
     ('random', _('Random')),
 )
 
@@ -588,18 +588,18 @@ class Answer(models.Model):
 
     content = models.CharField(max_length=1000,
                                blank=False,
-                               help_text="Enter the answer text that \
-                                            you want displayed",
-                               verbose_name="Content")
+                               help_text=_("Enter the answer text that "
+                                           "you want displayed"),
+                               verbose_name=_("Content"))
 
     correct = models.BooleanField(blank=False,
                                   default=False,
-                                  help_text="Is this a correct answer?",
-                                  verbose_name="Correct")
+                                  help_text=_("Is this a correct answer?"),
+                                  verbose_name=_("Correct"))
 
     def __str__(self):
         return self.content
 
     class Meta:
-        verbose_name = "Answer"
-        verbose_name_plural = "Answers"
+        verbose_name = _("Answer")
+        verbose_name_plural = _("Answers")
