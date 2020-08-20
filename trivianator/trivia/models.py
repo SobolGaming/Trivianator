@@ -1,6 +1,7 @@
 import json
 import re
 import csv
+import io
 from django.db import models
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.validators import MaxValueValidator, validate_comma_separated_integer_list
@@ -10,6 +11,8 @@ from model_utils.managers import InheritanceManager
 from django.utils.translation import ugettext as _
 from .signals import csv_uploaded
 from .validators import csv_file_validator
+from django.db.models.signals import pre_save, post_save
+from django.contrib.auth.models import User
 
 # Create your models here.
 QUESTION_TYPES = (
@@ -667,7 +670,6 @@ def csv_upload_post_save(sender, instance, created, *args, **kwargs):
                 i+=1
             create_user(parsed_row_data) # create user
             parsed_items.append(parsed_row_data)
-            # messages.success(parsed_items)
             print(parsed_items)
         csv_uploaded.send(sender=instance, user=instance.user, csv_file_list=parsed_items)
         ''' 
