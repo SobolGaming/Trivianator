@@ -1,5 +1,6 @@
 import json
 import re
+import csv
 from django.db import models
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.validators import MaxValueValidator, validate_comma_separated_integer_list
@@ -7,6 +8,8 @@ from django.utils.timezone import now
 from django.conf import settings
 from model_utils.managers import InheritanceManager
 from django.utils.translation import ugettext as _
+from .signals import csv_uploaded
+from .validators import csv_file_validator
 
 # Create your models here.
 QUESTION_TYPES = (
@@ -603,3 +606,83 @@ class Answer(models.Model):
     class Meta:
         verbose_name = _("Answer")
         verbose_name_plural = _("Answers")
+
+
+def upload_csv_file(instance, filename):
+    qs = instance.__class__.objects.filter(user=instance.user)
+    if qs.exists():
+        num_ = qs.last().id + 1
+    else:
+        num_ = 1
+    return f'csv/{num_}/{instance.user.username}/{filename}'
+
+
+class CSVUpload(models.Model):
+    title       = models.CharField(max_length=100, verbose_name=_('Title'), blank=False)
+    user        = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE)
+    file        = models.FileField(upload_to=upload_csv_file, validators=[csv_file_validator])
+    completed   = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username
+
+
+def create_user(data):
+    user =  User.objects.create_user(username=data['username'], 
+                            email=data['email'],
+                            password=data['password'],
+                            first_name=data['first_name'],
+                            last_name=data['last_name']
+                            )
+    user.is_admin=False
+    user.is_staff=False
+    user.save()
+
+def convert_header(csvHeader):
+    header_ = csvHeader[0]
+    cols = [x.replace(' ', '_').lower() for x in header_.split(",")]
+    return cols
+
+def csv_upload_post_save(sender, instance, created, *args, **kwargs):
+    if not instance.completed:
+        csv_file = instance.file
+        decoded_file = csv_file.read().decode('utf-8')
+        io_string = io.StringIO(decoded_file)
+        reader = csv.reader(io_string, delimiter=';', quotechar='|')
+        header_ = next(reader)
+        header_cols = convert_header(header_)
+        print(header_cols, str(len(header_cols)))
+        parsed_items = []
+
+        # if using a custom signal
+        for line in reader:
+            # print(line)
+            parsed_row_data = {}
+            i = 0
+            print(line[0].split(','), len(line[0].split(',')))
+            row_item = line[0].split(',')
+            for item in row_item:
+                key = header_cols[i]
+                parsed_row_data[key] = item
+                i+=1
+            create_user(parsed_row_data) # create user
+            parsed_items.append(parsed_row_data)
+            # messages.success(parsed_items)
+            print(parsed_items)
+        csv_uploaded.send(sender=instance, user=instance.user, csv_file_list=parsed_items)
+        ''' 
+        # if using a model directly
+        for line in reader:
+            new_obj = YourModelClass()
+            i = 0
+            row_item = line[0].split(',')
+            for item in row_item:
+                key = header_cols[i]
+                setattr(new_obj, key) = item
+                i+=1
+            new_obj.save()
+        ''' 
+        instance.completed = True
+        instance.save()
+
+post_save.connect(csv_upload_post_save, sender=CSVUpload)
