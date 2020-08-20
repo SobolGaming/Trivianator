@@ -1,3 +1,4 @@
+import json
 import re
 from django.db import models
 from django.core.exceptions import ValidationError, ImproperlyConfigured
@@ -158,7 +159,7 @@ class Progress(models.Model):
 
     correct_answer = models.CharField(max_length=10, verbose_name=_('Correct Answers'))
 
-    wrong_answer = models.CharField(max_length=10, verbose_name=_('Wrong Answers')) 
+    wrong_answer = models.CharField(max_length=10, verbose_name=_('Wrong Answers'))
 
     objects = ProgressManager()
 
