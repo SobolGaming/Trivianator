@@ -4,13 +4,12 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 # Register your models here.
 from .models import Quiz, Category, Question, Progress, Answer
 from django.utils.translation import ugettext_lazy as _
-from .models import CSVUpload
+from .models import JSONUpload
 
 
-class CSVUploadsAdmin(admin.ModelAdmin):
-    model = CSVUpload
+class JSONUploadsAdmin(admin.ModelAdmin):
+    model = JSONUpload
     list_display = ('title',)
-
 
 class AnswerInline(admin.TabularInline):
     model = Answer
@@ -86,4 +85,4 @@ admin.site.register(Quiz, QuizAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Progress, ProgressAdmin)
-admin.site.register(CSVUpload, CSVUploadsAdmin)
+admin.site.register(JSONUpload, JSONUploadsAdmin)
