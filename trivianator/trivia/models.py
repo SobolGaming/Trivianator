@@ -644,11 +644,11 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
 
             # Create questions
             for question in data['Questions']:
-                q_cat, created = Category.objects.get_or_create(category=sanitize_string(question['Category'])) if 'Category' in question and question['Category'] != "" else None, False
-                q = Questions.objects.create(
+                q_cat = Category.objects.get_or_create(category=sanitize_string(question['Category']).lower()) if 'Category' in question and question['Category'] != "" else (None, False)
+                q = Question.objects.create(
                     #quiz = getForeignKey(question['Quiz']),
                     question_type = question['QuestionType'].lower(),
-                    category = q_cat,
+                    category = q_cat[0],
                     content = question['Content'],
                     explanation = question['Explanation'],
                     answer_order = sanitize_string(question['AnswerOrder']) if 'AnswerOrder' in question and question['AnswerOrder'] != "" else 'none',
