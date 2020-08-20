@@ -9,5 +9,37 @@
     "Professions",
     "Classes",
     "Seiges"
+  ],
+  "Questions": [
+    {
+      "Quiz": "",
+      "QuestionType": "single_choice",
+      "Category": "Religions",
+      "Content": "How many Religions are there in Ashes of Creation?",
+      "Explanation": "There are 6 primary religions and 1 underground religion",
+      "AnswerOrder": "content",
+      "Answers": [
+        {
+          "Content": "4",
+          "Correct": 0
+        },
+        {
+          "Content": "5",
+          "Correct": 0
+        },
+        {
+          "Content": "6",
+          "Correct": 0
+        },
+        {
+          "Content": "7",
+          "Correct": 1
+        },
+        {
+          "Content": "8",
+          "Correct": 1
+        },
+      ]
+    }
   ]
 }

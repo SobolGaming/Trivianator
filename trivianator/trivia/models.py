@@ -628,14 +628,37 @@ class JSONUpload(models.Model):
         return self.user.username
 
 
+def sanitize_string(data):
+    return re.sub('\s+', '-', data)
+
 def json_upload_post_save(sender, instance, created, *args, **kwargs):
     if not instance.completed:
         json_file = instance.file
         try:
             data = json.load(json_file)
 
+            # Create categories
             for category in data['Categories']:
-                Category.objects.new_category(category)
+                if not Category.objects.filter(category=sanitize_string(category).lower()).exists():
+                    Category.objects.new_category(category)
+
+            # Create questions
+            for question in data['Questions']:
+                q_cat, created = Category.objects.get_or_create(category=sanitize_string(question['Category'])) if 'Category' in question and question['Category'] != "" else None, False
+                q = Questions.objects.create(
+                    #quiz = getForeignKey(question['Quiz']),
+                    question_type = question['QuestionType'].lower(),
+                    category = q_cat,
+                    content = question['Content'],
+                    explanation = question['Explanation'],
+                    answer_order = sanitize_string(question['AnswerOrder']) if 'AnswerOrder' in question and question['AnswerOrder'] != "" else 'none',
+                )
+                for answer in question['Answers']:
+                    Answer.objects.create(
+                        question = q,
+                        content = answer['Content'],
+                        correct = True if answer['Correct'] == 1 else False,
+                    )
 
             instance.completed = True
             instance.save()
