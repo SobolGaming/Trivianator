@@ -26,19 +26,19 @@
   </thead>
 
   <tbody>
-{% for question in questions %}
+	{% for question in questions %}
 
 	<tr>
       <td>
         {{ question.content }}
         {% if question.figure %}
-        <div style="max-width: 100px;"><img src="{{ question.figure.url }}" alt="{{ question.figure }}"/></div>
+          <div style="max-width: 100px;"><img src="{{ question.figure.url }}" alt="{{ question.figure }}"/></div>
         {% endif %}
       </td>
 	  <td>{{ question|answer_choice_to_string:question.user_answer }}</td>
 	  <td>
 		{% if question.id in sitting.get_incorrect_questions %}
-		  <p>{% trans "incorrect" %}</p>
+		  <p>{% trans "Incorrect" %}</p>
 		{% else %}
 		  <p>{% trans "Correct" %}</p>
 		{% endif %}
@@ -46,13 +46,12 @@
 	  <td>
 		<form action="" method="POST">{% csrf_token %}
 		  <input type=hidden name="qid" value="{{ question.id }}">
-		  <button type="submit" class="btn btn-warning">{% trans "Toggle whether correct" %}</button>
+		  <button type="submit" class="btn btn-warning">{% trans "Toggle whether Correct" %}</button>
 		</form>
 	  </td>
 	</tr>
 
-{% endfor %}
-
+	{% endfor %}
   </tbody>
 
 </table>

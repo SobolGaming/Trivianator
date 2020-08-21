@@ -427,7 +427,7 @@ class Sitting(models.Model):
         """
         if len(self.incorrect_questions) > 0:
             self.incorrect_questions += ','
-        self.incorrect_questions += str(question.id) + ","
+        self.incorrect_questions += str(question.id)
         if self.complete:
             self.add_to_score(-1)
         self.save()
@@ -643,9 +643,9 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
                 title = sanitize_string(data['Quiz']['Title']),
                 url = sanitize_string(data['Quiz']['URL']).lower(),
                 category = quiz_cat[0],
-                random_order = data['Quiz']['RandomOrder'],
+                random_order = data['Quiz']['RandomOrder'] if 'RandomOrder' in data['Quiz'] else False,
                 max_questions = data['Quiz']['MaxQuestions'] if 'MaxQuestions' in data['Quiz'] else None,
-                answers_at_end = min(max(data['Quiz']['AnswerRevealOption'], 1), 3),
+                answers_at_end = min(max(data['Quiz']['AnswerRevealOption'], 1), 3) if 'AnswerRevealOption' in data['Quiz'] else 1,
                 saved = data['Quiz']['Save'] if 'Save' in data['Quiz'] else True,
                 single_attempt = data['Quiz']['SingleAttempt'] if 'SingleAttempt' in data['Quiz'] else False,
                 draft = data['Quiz']['Draft'] if 'Draft' in data['Quiz'] else False,
@@ -658,7 +658,7 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
                     question_type = question['QuestionType'].lower(),
                     category = q_cat[0],
                     content = question['Content'],
-                    explanation = question['Explanation'],
+                    explanation = question['Explanation'] if 'Explanation' in question else "",
                     answer_order = sanitize_string(question['AnswerOrder']) if 'AnswerOrder' in question and question['AnswerOrder'] != "" else 'none',
                 )
                 for answer in question['Answers']:
