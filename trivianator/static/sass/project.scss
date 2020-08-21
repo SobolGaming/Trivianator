@@ -55,6 +55,16 @@ $link-decoration:                         none;
 $link-hover-color:                        darken($link-color, 15%);
 $link-hover-decoration:                   underline;
 
+$list-group-bg: $input-bg;
+$list-group-color: $ashes-orange;
+$list-group-disabled-bg: rgba($input-bg, .25);
+$list-group-disabled-color: rgba($ashes-orange, .25);
+
+$card-bg: rgba($ashes-orange, .5);
+$card-color: $ashes-bg;
+$card-border-color: $input-bg;
+
+
 .bg-cover {
   background-size: contain;
   background-repeat: no-repeat;
