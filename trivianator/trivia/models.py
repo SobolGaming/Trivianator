@@ -7,6 +7,10 @@ from django.utils.timezone import now
 from django.conf import settings
 from model_utils.managers import InheritanceManager
 from django.utils.translation import ugettext as _
+from .signals import json_uploaded
+from .validators import json_file_validator
+from django.db.models.signals import pre_save, post_save
+from django.contrib.auth.models import User
 
 # Create your models here.
 QUESTION_TYPES = (
@@ -164,13 +168,13 @@ class Progress(models.Model):
 
     correct_answer = models.CharField(max_length=10, verbose_name=_('Correct Answers'))
 
-    wrong_answer = models.CharField(max_length=10, verbose_name=_('Wrong Answers'))
+    max_possible = models.CharField(max_length=10, verbose_name=_('Maximum Correct Answers'))
 
     objects = ProgressManager()
 
     class Meta:
         verbose_name = _("User Progress")
-        verbose_name_plural = _("User progress records")
+        verbose_name_plural = _("User Progress Records")
 
     @property
     def list_all_cat_scores(self):
@@ -215,8 +219,7 @@ class Progress(models.Model):
 
     def update_score(self, question, score_to_add=0, possible_to_add=0):
         """
-        Pass in question object, amount to increase score
-        and max possible.
+        Pass in question object, amount to increase score and max possible.
         Does not return anything.
         """
         category_test = Category.objects.filter(category=question.category)\
@@ -423,7 +426,7 @@ class Sitting(models.Model):
         """
         if len(self.incorrect_questions) > 0:
             self.incorrect_questions += ','
-        self.incorrect_questions += str(question.id) + ","
+        self.incorrect_questions += str(question.id)
         if self.complete:
             self.add_to_score(-1)
         self.save()
@@ -603,3 +606,72 @@ class Answer(models.Model):
     class Meta:
         verbose_name = _("Answer")
         verbose_name_plural = _("Answers")
+
+
+def upload_json_file(instance, filename):
+    qs = instance.__class__.objects.filter(user=instance.user)
+    if qs.exists():
+        num_ = qs.last().id + 1
+    else:
+        num_ = 1
+    return f'json_files/{num_}/{instance.user.username}/{filename}'
+
+
+class JSONUpload(models.Model):
+    title       = models.CharField(max_length=100, verbose_name=_('Title'), blank=False)
+    user        = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE)
+    file        = models.FileField(upload_to=upload_json_file, validators=[json_file_validator])
+    completed   = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username
+
+
+def sanitize_string(data):
+    return re.sub('\s+', '-', data)
+
+def json_upload_post_save(sender, instance, created, *args, **kwargs):
+    if not instance.completed:
+        json_file = instance.file
+        try:
+            data = json.load(json_file)
+
+            # Create quiz
+            quiz_cat = Category.objects.get_or_create(category=sanitize_string(data['Quiz']['Category']).lower()) if 'Category' in data['Quiz'] and data['Quiz']['Category'] != None else (None, False)
+            quiz = Quiz.objects.create(
+                title = sanitize_string(data['Quiz']['Title']),
+                url = sanitize_string(data['Quiz']['URL']).lower(),
+                category = quiz_cat[0],
+                random_order = data['Quiz']['RandomOrder'] if 'RandomOrder' in data['Quiz'] else False,
+                max_questions = data['Quiz']['MaxQuestions'] if 'MaxQuestions' in data['Quiz'] else None,
+                answers_at_end = min(max(data['Quiz']['AnswerRevealOption'], 1), 3) if 'AnswerRevealOption' in data['Quiz'] else 1,
+                saved = data['Quiz']['Save'] if 'Save' in data['Quiz'] else True,
+                single_attempt = data['Quiz']['SingleAttempt'] if 'SingleAttempt' in data['Quiz'] else False,
+                draft = data['Quiz']['Draft'] if 'Draft' in data['Quiz'] else False,
+            )
+
+            # Create questions
+            for question in data['Quiz']['Questions']:
+                q_cat = Category.objects.get_or_create(category=sanitize_string(question['Category']).lower()) if 'Category' in question and question['Category'] != "" else (None, False)
+                q = Question.objects.create(
+                    question_type = question['QuestionType'].lower(),
+                    category = q_cat[0],
+                    content = question['Content'],
+                    explanation = question['Explanation'] if 'Explanation' in question else "",
+                    answer_order = sanitize_string(question['AnswerOrder']) if 'AnswerOrder' in question and question['AnswerOrder'] != "" else 'none',
+                )
+                for answer in question['Answers']:
+                    Answer.objects.create(
+                        question = q,
+                        content = answer['Content'],
+                        correct = True if answer['Correct'] == 1 else False,
+                    )
+                # add each question to the quiz parent, can't set direcly as other parameters since it's a ManyToMany parameter
+                q.quiz.add(quiz)
+
+            instance.completed = True
+            instance.save()
+        except ValueError as err:
+            raise err
+
+post_save.connect(json_upload_post_save, sender=JSONUpload)

@@ -229,10 +229,8 @@ class QuizTake(FormView):
         self.sitting.mark_quiz_complete()
 
         if self.quiz.answers_at_end == 2:
-            results['questions'] =\
-                self.sitting.get_questions(with_answers=True)
-            results['incorrect_questions'] =\
-                self.sitting.get_incorrect_questions
+            results['questions'] = self.sitting.get_questions(with_answers=True)
+            results['incorrect_questions'] = self.sitting.get_incorrect_questions
 
         if self.quiz.saved is False:
             self.sitting.delete()
