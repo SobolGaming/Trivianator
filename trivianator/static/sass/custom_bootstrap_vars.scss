@@ -1,0 +1,15 @@
+// Global Overrides
+$body-bg: #4c4c4c;
+$body-color: #e69710;
+
+
+$ashes-orange: #e69710
+$ashes-bg: #4c4c4c
+
+
+
+$navbar-dark-color:                 rgba($ashes-orange, .5) !default;
+$navbar-dark-hover-color:           rgba($ashes-orange, .75) !default;
+$navbar-dark-active-color:          $ashes-orange !default;
+$navbar-dark-disabled-color:        rgba($ashes-orange, .25) !default;
+$navbar-dark-toggler-border-color:  rgba($ashes-orange, .1) !default;
