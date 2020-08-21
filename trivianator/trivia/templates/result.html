@@ -38,14 +38,14 @@
 	  {% trans "You answered" %} {{ score }} {% trans "questions correctly out of" %} {{ max_score }}, {% trans "giving you" %} {{ percent }} {% trans "percent correct" %}
 	</p>
 
-	{% if quiz.pass_mark %}
 	<hr>
-        <p class="lead">{{ sitting.result_message }}</p>
+    <p class="lead">{{ sitting.result_message }}</p>
 	<hr>
 
 	{% endif %}
 
-	<p>{% trans "Review the questions below and try the quiz again in the future"%}.</p>
+  {% if quiz.answers_at_end == 2 %}
+	<p>{% trans "Review the questions below and try the quiz again in the future" %}.</p>
 
 	{% if user.is_authenticated %}
 

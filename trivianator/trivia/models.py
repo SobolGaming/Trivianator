@@ -168,13 +168,13 @@ class Progress(models.Model):
 
     correct_answer = models.CharField(max_length=10, verbose_name=_('Correct Answers'))
 
-    wrong_answer = models.CharField(max_length=10, verbose_name=_('Wrong Answers'))
+    max_possible = models.CharField(max_length=10, verbose_name=_('Maximum Correct Answers'))
 
     objects = ProgressManager()
 
     class Meta:
         verbose_name = _("User Progress")
-        verbose_name_plural = _("User progress records")
+        verbose_name_plural = _("User Progress Records")
 
     @property
     def list_all_cat_scores(self):
@@ -219,8 +219,7 @@ class Progress(models.Model):
 
     def update_score(self, question, score_to_add=0, possible_to_add=0):
         """
-        Pass in question object, amount to increase score
-        and max possible.
+        Pass in question object, amount to increase score and max possible.
         Does not return anything.
         """
         category_test = Category.objects.filter(category=question.category)\
