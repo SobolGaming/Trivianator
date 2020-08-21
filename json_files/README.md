@@ -13,7 +13,7 @@ The JSON file for uploading a Quiz, it's associated Questions and their Answers 
             1 == "show correct answer after each question"
             2 == "show correct answers at end of quiz"
             3 == "never show answers"
-        "Save": (Optional) Boolean (true or false) - should answers be saved upon quiz completetion; defaults to "True"
+        "Save": (Optional) Boolean (true or false) - should answers be saved upon quiz completion; defaults to "True"
         "SingleAttempt": (Optional) Boolean (true or false) - is each user given only one attempt to take the quiz; defaults to "False"
         "Draft": (Optional) Boolean (true or false) - is the quiz still in development, if "True" will not appear to non-admin users; defaults to "False"
         "Questions": [  next we have an array of Questions associated with the quiz, each non-optional field must be provided for each question
@@ -38,3 +38,8 @@ The JSON file for uploading a Quiz, it's associated Questions and their Answers 
     }
 }
 ```
+### Categories
+Categories exist to allow users to track what their strengths and weakness are.<br>
+For example, question dealing with **Lore** could be assigned the category of "Lore", whereas questions dealing with **Nodes** can have their own category.<br>
+As a user answers quiz questions perhaps they know all the **node** related answers but are bad at **lore**. The existance of categories tracks this.<br>
+Additionally, it allows administrators to filter based on categories.
