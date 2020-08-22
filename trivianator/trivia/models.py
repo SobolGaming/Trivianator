@@ -187,7 +187,7 @@ class Progress(models.Model):
             to_find = re.escape(cat.category) + r",(\d+),(\d+),"
             #  group 1 is score, group 2 is highest possible
 
-            match = re.search(to_find, self.score, re.IGNORECASE)
+            match = re.search(to_find, self.serialized_performance, re.IGNORECASE)
 
             if match:
                 score = int(match.group(1))
