@@ -156,19 +156,13 @@ class ProgressManager(models.Manager):
 
 class Progress(models.Model):
     """
-    Progress is used to track an individual signed in users score on different
-    quiz's and categories
-    Data stored in csv using the format:
-        category, score, possible, category, score, possible, ...
+    Progress is used to track an individual signed in user's score on different
+    categories across all quizzes.
     """
     user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE)
 
-    score = models.CharField(validators=[validate_comma_separated_integer_list], max_length=1024,
-                                              verbose_name=_("Score"))
-
-    correct_answer = models.CharField(max_length=10, verbose_name=_('Correct Answers'))
-
-    max_possible = models.CharField(max_length=10, verbose_name=_('Maximum Correct Answers'))
+    serialized_performance = models.CharField(validators=[validate_comma_separated_integer_list], max_length=2048,
+                                              verbose_name=_("Per Category Performance"))
 
     objects = ProgressManager()
 
@@ -186,7 +180,7 @@ class Progress(models.Model):
         the third is the percentage correct.
         The dict will have one key for every category that you have defined
         """
-        score_before = self.score
+        serialized_performance_before = self.serialized_performance
         output = {}
 
         for cat in Category.objects.all():
@@ -200,18 +194,17 @@ class Progress(models.Model):
                 possible = int(match.group(2))
 
                 try:
-                    percent = int(round((float(score) / float(possible))
-                                        * 100))
+                    percent = int(round((float(score) / float(possible)) * 100))
                 except:
                     percent = 0
 
                 output[cat.category] = [score, possible, percent]
 
             else:  # if category has not been added yet, add it.
-                self.score += cat.category + ",0,0,"
-                output[cat.category] = [0, 0]
+                self.serialized_performance += cat.category + ",0,0,"
+                output[cat.category] = [0, 0, 0]
 
-        if len(self.score) > len(score_before):
+        if len(self.serialized_performance) > len(serialized_performance_before):
             # If a new category has been added, save changes.
             self.save()
 
@@ -222,8 +215,7 @@ class Progress(models.Model):
         Pass in question object, amount to increase score and max possible.
         Does not return anything.
         """
-        category_test = Category.objects.filter(category=question.category)\
-                                        .exists()
+        category_test = Category.objects.filter(category=question.category).exists()
 
         if any([item is False for item in [category_test,
                                            score_to_add,
@@ -232,10 +224,9 @@ class Progress(models.Model):
                                            isinstance(possible_to_add, int)]]):
             return _("error"), _("category does not exist or invalid score")
 
-        to_find = re.escape(str(question.category)) +\
-            r",(?P<score>\d+),(?P<possible>\d+),"
+        to_find = re.escape(str(question.category)) + r",(?P<score>\d+),(?P<possible>\d+),"
 
-        match = re.search(to_find, self.score, re.IGNORECASE)
+        match = re.search(to_find, self.serialized_performance, re.IGNORECASE)
 
         if match:
             updated_score = int(match.group('score')) + abs(score_to_add)
@@ -250,12 +241,12 @@ class Progress(models.Model):
                 ])
 
             # swap old score for the new one
-            self.score = self.score.replace(match.group(), new_score)
+            self.serialized_performance = self.serialized_performance.replace(match.group(), new_score)
             self.save()
 
         else:
             #  if not present but existing, add with the points passed in
-            self.score += ",".join(
+            self.serialized_performance += ",".join(
                 [
                     str(question.category),
                     str(score_to_add),
@@ -272,7 +263,7 @@ class Progress(models.Model):
         return Sitting.objects.filter(user=self.user, complete=True)
 
     def __str__(self):
-        return self.user.username + ' - '  + self.score
+        return self.user.username + ' - '  + self.serialized_performance
 
 
 class SittingManager(models.Manager):
