@@ -4,7 +4,7 @@
     "URL": "aocquiz",
     "Category": null,
     "RandomOrder": false,
-    "AnswerRevealOption": 1,
+    "AnswerRevealOption": 2,
     "Save": true,
     "SingleAttempt": false,
     "Draft": false,
@@ -35,31 +35,6 @@
           {
             "Content": "8",
             "Correct": false
-          }
-        ]
-      },
-      {
-        "QuestionType": "multi_choice",
-        "Category": "Religions",
-        "Content": "Which of the following statements about Temples are TRUE?",
-        "Explanation": "",
-        "AnswerOrder": "random",
-        "Answers": [
-          {
-            "Content": "Temples are unlocked at the Village Stage of Divine nodes",
-            "Correct": true
-          },
-          {
-            "Content": "Temples progress a specific religion when built",
-            "Correct": true
-          },
-          {
-            "Content": "Players can build Temples on their freehold plot once sufficient progressed within their religion",
-            "Correct": false
-          },
-          {
-            "Content": "There are seven Grand Temples on Verra",
-            "Correct": true
           }
         ]
       }
