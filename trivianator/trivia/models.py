@@ -156,19 +156,13 @@ class ProgressManager(models.Manager):
 
 class Progress(models.Model):
     """
-    Progress is used to track an individual signed in users score on different
-    quiz's and categories
-    Data stored in csv using the format:
-        category, score, possible, category, score, possible, ...
+    Progress is used to track an individual signed in user's score on different
+    categories across all quizzes.
     """
     user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE)
 
-    score = models.CharField(validators=[validate_comma_separated_integer_list], max_length=1024,
-                                              verbose_name=_("Score"))
-
-    correct_answer = models.CharField(max_length=10, verbose_name=_('Correct Answers'))
-
-    max_possible = models.CharField(max_length=10, verbose_name=_('Maximum Correct Answers'))
+    serialized_performance = models.CharField(validators=[validate_comma_separated_integer_list], max_length=2048,
+                                              verbose_name=_("Per Category Performance"))
 
     objects = ProgressManager()
 
@@ -200,8 +194,7 @@ class Progress(models.Model):
                 possible = int(match.group(2))
 
                 try:
-                    percent = int(round((float(score) / float(possible))
-                                        * 100))
+                    percent = int(round((float(score) / float(possible)) * 100))
                 except:
                     percent = 0
 
@@ -209,7 +202,7 @@ class Progress(models.Model):
 
             else:  # if category has not been added yet, add it.
                 self.score += cat.category + ",0,0,"
-                output[cat.category] = [0, 0]
+                output[cat.category] = [0, 0, 0]
 
         if len(self.score) > len(score_before):
             # If a new category has been added, save changes.
@@ -222,8 +215,7 @@ class Progress(models.Model):
         Pass in question object, amount to increase score and max possible.
         Does not return anything.
         """
-        category_test = Category.objects.filter(category=question.category)\
-                                        .exists()
+        category_test = Category.objects.filter(category=question.category).exists()
 
         if any([item is False for item in [category_test,
                                            score_to_add,
@@ -232,8 +224,7 @@ class Progress(models.Model):
                                            isinstance(possible_to_add, int)]]):
             return _("error"), _("category does not exist or invalid score")
 
-        to_find = re.escape(str(question.category)) +\
-            r",(?P<score>\d+),(?P<possible>\d+),"
+        to_find = re.escape(str(question.category)) + r",(?P<score>\d+),(?P<possible>\d+),"
 
         match = re.search(to_find, self.score, re.IGNORECASE)
 
