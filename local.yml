@@ -50,6 +50,24 @@ services:
   #   ports:
   #     - "7000:7000"
 
+  node:
+    build:
+      context: .
+      dockerfile: ./compose/local/node/Dockerfile
+    image: trivianator_node
+    container_name: node
+    depends_on:
+      - django
+    volumes:
+      - .:/app
+      # http://jdlm.info/articles/2016/03/06/lessons-building-node-app-docker.html
+      - /app/node_modules
+    command: npm run dev
+    ports:
+      - "3000:3000"
+      # Expose browsersync UI: https://www.browsersync.io/docs/options/#option-ui
+      - "3001:3001"
+
   mailhog:
     image: mailhog/mailhog:v1.0.0
     container_name: mailhog

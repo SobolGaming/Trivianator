@@ -29,10 +29,12 @@
 
 	{% include 'correct_answer.html' %}
 
+  {% if previous.previous_question.explanation %}
 	<p><strong>{% trans "Explanation" %}:</strong></p>
-	<div class="well " style="background-color: #fcf8e3;">
+	<div class="card">
 	  <p>{{ previous.previous_question.explanation }}</p>
 	</div>
+  {% endif %}
 
 	<hr>
 

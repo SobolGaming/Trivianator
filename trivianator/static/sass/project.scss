@@ -1,7 +1,3 @@
-
-
-
-
 // project specific CSS goes here
 
 ////////////////////////////////
@@ -35,3 +31,46 @@ $red: #b94a48;
   border-color: $dark-pink;
   color: $red;
 }
+
+
+$ashes-orange: #e69710;
+$ashes-bg: #4c4c4c;
+
+$body-bg: #4c4c4c;
+$body-color: #c1c1c1;
+
+$input-bg: #666;
+$theme-colors: (
+   primary: $ashes-orange,
+);
+
+$navbar-dark-color:                 rgba($ashes-orange, .5);
+$navbar-dark-hover-color:           rgba($ashes-orange, .75);
+$navbar-dark-active-color:          $ashes-orange;
+$navbar-dark-disabled-color:        rgba($ashes-orange, .25);
+$navbar-dark-toggler-border-color:  rgba($ashes-orange, .1);
+
+$link-color:                              $ashes-orange;
+$link-decoration:                         none;
+$link-hover-color:                        darken($link-color, 15%);
+$link-hover-decoration:                   underline;
+
+$list-group-bg: $input-bg;
+$list-group-color: $ashes-orange;
+$list-group-disabled-bg: rgba($input-bg, .25);
+$list-group-disabled-color: rgba($ashes-orange, .25);
+
+$card-bg: rgba($ashes-orange, .5);
+$card-color: $ashes-bg;
+$card-border-color: $input-bg;
+
+
+.bg-cover {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+// Bootstrap file partials
+@import "../../../node_modules/bootstrap/scss/bootstrap";

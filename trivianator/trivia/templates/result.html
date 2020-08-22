@@ -12,17 +12,30 @@
 
   <p class="muted"><small>{% trans "The previous question" %}:</small></p>
   <p>{{ previous.previous_question }}</p>
-  <p>Your answer was
-	<strong>
-	  {{ previous.previous_outcome|yesno:"correct,incorrect" }}
-	</strong>
-  </p>
+
+  {% if previous.previous_outcome %}
+	<div class="alert alert-success">
+  {% else %}
+	<div class="alert alert-warning">
+  {% endif %}
+  	  <p><small>
+		{% trans "Your answer was" %} </small>
+		<strong>
+		  {{ previous.previous_outcome|yesno:"correct,incorrect" }}
+		</strong>
+	  </p>
+
+	</div>
+
   {% include 'correct_answer.html' %}
+
+  {% if previous.previous_question.explanation %}
   <p><strong>{% trans "Explanation" %}:</strong></p>
-  <div class="well " style="background-color: #fcf8e3;">
+  <div class="card">
     <p>{{ previous.previous_question.explanation }}</p>
   </div>
   <hr>
+  {% endif %}
 
   {% endif %}
 
