@@ -180,7 +180,7 @@ class Progress(models.Model):
         the third is the percentage correct.
         The dict will have one key for every category that you have defined
         """
-        score_before = self.score
+        serialized_performance_before = self.serialized_performance
         output = {}
 
         for cat in Category.objects.all():
@@ -201,10 +201,10 @@ class Progress(models.Model):
                 output[cat.category] = [score, possible, percent]
 
             else:  # if category has not been added yet, add it.
-                self.score += cat.category + ",0,0,"
+                self.serialized_performance += cat.category + ",0,0,"
                 output[cat.category] = [0, 0, 0]
 
-        if len(self.score) > len(score_before):
+        if len(self.serialized_performance) > len(serialized_performance_before):
             # If a new category has been added, save changes.
             self.save()
 
@@ -226,7 +226,7 @@ class Progress(models.Model):
 
         to_find = re.escape(str(question.category)) + r",(?P<score>\d+),(?P<possible>\d+),"
 
-        match = re.search(to_find, self.score, re.IGNORECASE)
+        match = re.search(to_find, self.serialized_performance, re.IGNORECASE)
 
         if match:
             updated_score = int(match.group('score')) + abs(score_to_add)
@@ -241,12 +241,12 @@ class Progress(models.Model):
                 ])
 
             # swap old score for the new one
-            self.score = self.score.replace(match.group(), new_score)
+            self.serialized_performance = self.serialized_performance.replace(match.group(), new_score)
             self.save()
 
         else:
             #  if not present but existing, add with the points passed in
-            self.score += ",".join(
+            self.serialized_performance += ",".join(
                 [
                     str(question.category),
                     str(score_to_add),
@@ -263,7 +263,7 @@ class Progress(models.Model):
         return Sitting.objects.filter(user=self.user, complete=True)
 
     def __str__(self):
-        return self.user.username + ' - '  + self.score
+        return self.user.username + ' - '  + self.serialized_performance
 
 
 class SittingManager(models.Manager):
