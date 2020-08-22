@@ -110,7 +110,7 @@ class QuizMarkingList(QuizMarkerMixin, SittingFilterTitleMixin, ListView):
             queryset = queryset.filter(user__username__icontains=user_filter)
 
         return queryset
-    
+
     class Meta:
         pass
 
