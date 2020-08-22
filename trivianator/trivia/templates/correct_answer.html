@@ -17,18 +17,18 @@
           <td>
 
             {% if answer.correct %}
-      		  <strong>{% trans "This is the correct answer" %}</strong>
+      		  <strong>{% trans "Correct Answer" %}</strong>
             {% endif %}
 
             {% if previous.question_type == "single_choice" %}
-      			  {% if answer.id|add:"0" == previous.previous_answer|add:"0" %}
-      			    {% trans "This was your answer." %}
+      			  {% if answer.id|stringformat:"i" == previous.previous_answer %}
+      			    {% trans "Your Answer" %}
               {% endif %}
             {% endif %}
 
             {% if previous.question_type == "multi_choice" %}
               {% if answer.id|stringformat:"i" in previous.previous_answer %}
-                {% trans "This was your answer." %}
+                {% trans "Your Answer" %}
               {% endif %}
             {% endif %}
 
