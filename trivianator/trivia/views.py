@@ -110,7 +110,7 @@ class QuizMarkingList(QuizMarkerMixin, SittingFilterTitleMixin, ListView):
             queryset = queryset.filter(user__username__icontains=user_filter)
 
         return queryset
-    
+
     class Meta:
         pass
 
@@ -205,6 +205,7 @@ class QuizTake(FormView):
             progress.update_score(self.question, 0, 1)
 
         if self.quiz.answers_at_end == 1:
+            print(f"GUESS {guess}")
             self.previous = {'previous_answer': guess,
                              'previous_outcome': is_correct,
                              'previous_question': self.question,
