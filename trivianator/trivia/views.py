@@ -87,8 +87,7 @@ class QuizUserProgressView(TemplateView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        return super(QuizUserProgressView, self)\
-            .dispatch(request, *args, **kwargs)
+        return super(QuizUserProgressView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(QuizUserProgressView, self).get_context_data(**kwargs)
@@ -102,8 +101,7 @@ class QuizMarkingList(QuizMarkerMixin, SittingFilterTitleMixin, ListView):
     model = Sitting
 
     def get_queryset(self):
-        queryset = super(QuizMarkingList, self).get_queryset()\
-                                               .filter(complete=True)
+        queryset = super(QuizMarkingList, self).get_queryset().filter(complete=True)
 
         user_filter = self.request.GET.get('user_filter')
         if user_filter:
@@ -236,6 +234,25 @@ class QuizTake(FormView):
             self.sitting.delete()
 
         return render(self.request, 'result.html', results)
+
+
+class QuizLeaderboardsView(QuizMarkingList):
+    template_name = 'leaderboards.html'
+    model = Sitting
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(QuizLeaderboardsView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return super(QuizMarkingList, self).get_queryset().filter(complete=True)
+    
+    def get_context_data(self, **kwargs):
+        context = super(QuizLeaderboardsView, self).get_context_data(**kwargs)
+        #progress, c = Progress.objects.get_or_create(user=self.request.user)
+        #context['cat_scores'] = progress.list_all_cat_scores
+        #context['saved'] = progress.show_saved()
+        return context
 
 
 def index(request):

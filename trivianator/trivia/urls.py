@@ -35,4 +35,8 @@ urlpatterns = [
     re_path(route=r'^(?P<quiz_name>[\w-]+)/take/$',
         view=views.QuizTake.as_view(),
         name='quiz_question'),
+
+    re_path(route=r'^leaderboards/$',
+        view=views.QuizLeaderboardsView.as_view(),
+        name='quiz_leaderboards'),
 ]
