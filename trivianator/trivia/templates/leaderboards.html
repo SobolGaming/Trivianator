@@ -5,5 +5,35 @@
 {% block description %} {% trans "Leaderboards - Overall and Per Quiz" %} {% endblock %}
 
 {% block content %}
+    <h1>{% trans "Leaderboards" %}</h1>
+
+    {% if quizzes %}
+
+        <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+              <th>{% trans "Username" %}</th>
+              <th>{% trans "Score" %}</th>
+              <th>{% trans "Time" %}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for value in quizzes.values %}
+      
+            <tr>
+              <td>{{ value.quiz }}</td>
+              <td>{{ value.current_score }}</td>
+              <td>{{ value.get_time_taken }}</td>
+            </tr>
+      
+            {% endfor %}
+      
+        </tbody>
+      
+        </table>
+        
+    {% endif %}
 
 {% endblock %}

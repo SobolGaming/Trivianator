@@ -19,6 +19,10 @@ urlpatterns = [
         view=views.QuizUserProgressView.as_view(),
         name='quiz_progress'),
 
+    re_path(route=r'^leaderboards/$',
+        view=views.QuizLeaderboardsView.as_view(),
+        name='quiz_leaderboards'),
+
     re_path(route=r'^marking/$',
         view=views.QuizMarkingList.as_view(),
         name='quiz_marking'),
@@ -27,16 +31,13 @@ urlpatterns = [
         view=views.QuizMarkingDetail.as_view(),
         name='quiz_marking_detail'),
 
-    #  passes variable 'quiz_name' to quiz_take view
+    #  passes variable 'slug' to quiz detail view
     re_path(route=r'^(?P<slug>[\w-]+)/$',
         view=views.QuizDetailView.as_view(),
         name='quiz_start_page'),
 
+    #  passes variable 'quiz_name' to quiz take view
     re_path(route=r'^(?P<quiz_name>[\w-]+)/take/$',
         view=views.QuizTake.as_view(),
         name='quiz_question'),
-
-    re_path(route=r'^leaderboards/$',
-        view=views.QuizLeaderboardsView.as_view(),
-        name='quiz_leaderboards'),
 ]

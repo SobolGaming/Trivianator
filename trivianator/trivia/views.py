@@ -236,22 +236,18 @@ class QuizTake(FormView):
         return render(self.request, 'result.html', results)
 
 
-class QuizLeaderboardsView(QuizMarkingList):
+class QuizLeaderboardsView(TemplateView):
     template_name = 'leaderboards.html'
-    model = Sitting
+    model = Quiz
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super(QuizLeaderboardsView, self).dispatch(request, *args, **kwargs)
 
-    def get_queryset(self):
-        return super(QuizMarkingList, self).get_queryset().filter(complete=True)
-    
     def get_context_data(self, **kwargs):
         context = super(QuizLeaderboardsView, self).get_context_data(**kwargs)
-        #progress, c = Progress.objects.get_or_create(user=self.request.user)
-        #context['cat_scores'] = progress.list_all_cat_scores
-        #context['saved'] = progress.show_saved()
+        completed_quizzes = Sitting.objects.filter(complete=True)
+        context['quizzes'] = completed_quizzes
         return context
 
 

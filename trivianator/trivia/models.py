@@ -296,10 +296,7 @@ class SittingManager(models.Manager):
         return new_sitting
 
     def user_sitting(self, user, quiz):
-        if quiz.single_attempt is True and self.filter(user=user,
-                                                       quiz=quiz,
-                                                       complete=True)\
-                                               .exists():
+        if quiz.single_attempt is True and self.filter(user=user, quiz=quiz, complete=True).exists():
             return False
 
         try:
@@ -346,8 +343,7 @@ class Sitting(models.Model):
     user_answers = models.TextField(blank=True, default='{}',
                                     verbose_name=_("User Answers"))
 
-    start = models.DateTimeField(auto_now_add=True,
-                                 verbose_name=_("Start"))
+    start = models.DateTimeField(auto_now_add=True, verbose_name=_("Start"))
 
     end = models.DateTimeField(null=True, blank=True, verbose_name=_("End"))
 
@@ -479,6 +475,9 @@ class Sitting(models.Model):
         total = self.get_max_score
         return answered, total
 
+    @property
+    def get_time_taken(self):
+        return self.end - self.start
 
 class Question(models.Model):
     """
