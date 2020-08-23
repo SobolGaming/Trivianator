@@ -23,9 +23,9 @@
             {% for value in quizzes.values %}
       
             <tr>
-              <td>{{ value.quiz }}</td>
-              <td>{{ value.current_score }}</td>
-              <td>{{ value.get_time_taken }}</td>
+              <td>{{ value.user }}</td>
+              <td>{{ value.score }}</td>
+              <td>{{ value.seconds }}</td>
             </tr>
       
             {% endfor %}

@@ -131,8 +131,7 @@ class QuizMarkingDetail(QuizMarkerMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(QuizMarkingDetail, self).get_context_data(**kwargs)
-        context['questions'] =\
-            context['sitting'].get_questions(with_answers=True)
+        context['questions'] = context['sitting'].get_questions(with_answers=True)
         return context
 
 
@@ -148,8 +147,7 @@ class QuizTake(FormView):
         self.logged_in_user = self.request.user.is_authenticated
 
         if self.logged_in_user:
-            self.sitting = Sitting.objects.user_sitting(request.user,
-                                                        self.quiz)
+            self.sitting = Sitting.objects.user_sitting(request.user, self.quiz)
         if self.sitting is False:
             return render(request, 'single_complete.html')
 
@@ -247,7 +245,14 @@ class QuizLeaderboardsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(QuizLeaderboardsView, self).get_context_data(**kwargs)
         completed_quizzes = Sitting.objects.filter(complete=True)
-        context['quizzes'] = completed_quizzes
+        context = {}
+        context['quizzes'] = {}
+        for q in completed_quizzes:
+            if q.quiz.title not in context['quizzes']:
+                context['quizzes'][q.quiz.title] = {}
+                context['quizzes'][q.quiz.title]['user'] = q.user.username
+                context['quizzes'][q.quiz.title]['score'] = q.current_score
+                context['quizzes'][q.quiz.title]['seconds'] = (q.end - q.start).seconds
         return context
 
 
