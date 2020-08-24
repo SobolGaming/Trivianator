@@ -19,10 +19,6 @@ urlpatterns = [
         view=views.QuizUserProgressView.as_view(),
         name='quiz_progress'),
 
-    re_path(route=r'^leaderboards/$',
-        view=views.QuizLeaderboardsView.as_view(),
-        name='quiz_leaderboards'),
-
     re_path(route=r'^marking/$',
         view=views.QuizMarkingList.as_view(),
         name='quiz_marking'),
