@@ -244,15 +244,25 @@ class QuizLeaderboardsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(QuizLeaderboardsView, self).get_context_data(**kwargs)
-        completed_quizzes = Sitting.objects.filter(complete=True)
-        context = {}
+        completed_quizzes = Sitting.objects.filter(complete=True).order_by('-current_score')
         context['quizzes'] = {}
         for q in completed_quizzes:
-            if q.quiz.title not in context['quizzes']:
+            if not q.quiz.title in context['quizzes']:
                 context['quizzes'][q.quiz.title] = {}
-                context['quizzes'][q.quiz.title]['user'] = q.user.username
-                context['quizzes'][q.quiz.title]['score'] = q.current_score
-                context['quizzes'][q.quiz.title]['seconds'] = (q.end - q.start).seconds
+
+            if not q.user.username in context['quizzes'][q.quiz.title]:
+                context['quizzes'][q.quiz.title][q.user.username] = {}
+
+            if not 'score' in context['quizzes'][q.quiz.title][q.user.username]:
+                context['quizzes'][q.quiz.title][q.user.username]['score'] = q.current_score
+                context['quizzes'][q.quiz.title][q.user.username]['time'] = (q.end - q.start)
+            else:
+                if context['quizzes'][q.quiz.title][q.user.username]['score'] < q.current_score:
+                    context['quizzes'][q.quiz.title][q.user.username]['score'] = q.current_score
+                    context['quizzes'][q.quiz.title][q.user.username]['time'] = (q.end - q.start)
+                elif context['quizzes'][q.quiz.title][q.user.username]['score'] == q.current_score:
+                    if context['quizzes'][q.quiz.title][q.user.username]['time'].seconds > (q.end - q.start).seconds:
+                        context['quizzes'][q.quiz.title][q.user.username]['time'] = (q.end - q.start)
         return context
 
 
