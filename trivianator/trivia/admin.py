@@ -85,6 +85,7 @@ class LeaderboardAdmin(admin.ModelAdmin):
     list_display = ('quiz', 'user', 'score', 'completion_time', )
     list_filter = ('quiz', )
     filter_horizontal = ('quiz',)
+    search_fields = ('quiz__title', 'user__username',)
 
 
 admin.site.register(Quiz, QuizAdmin)
