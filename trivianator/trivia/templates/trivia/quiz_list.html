@@ -10,30 +10,27 @@
 
 		  <thead>
 			<tr>
+			  <th></th>
 			  <th>{% trans "Title" %}</th>
 			  <th>{% trans "Category" %}</th>
-			  <th>{% trans "Saved" %}</th>
-			  <th>{% trans "Single attempt" %}</th>
-			  <th></th>
+			  <th>{% trans "Will Be Saved" %}</th>
+			  <th>{% trans "Single Attempt" %}</th>
 			</tr>
 		  </thead>
 
 		  <tbody>
 
-        {% for quiz in quiz_list %}
+        	{% for quiz in quiz_list %}
 
   			<tr>
+			  <td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Quiz" %}</a></td>
 			  <td>{{ quiz.title }}</td>
 			  <td>{{ quiz.category }}</td>
 			  <td>{{ quiz.saved }}</td>
 			  <td>{{ quiz.single_attempt }}</td>
-			  <td>
-				<a href="{% url 'quiz_start_page' slug=quiz.url %}">
-				  {% trans "View details" %}
-				</a>
 			</tr>
 
-        {% endfor %}
+        	{% endfor %}
 		  </tbody>
 
 		</table>

@@ -104,8 +104,8 @@ class Quiz(models.Model):
                     " taken by users who can edit quizzes."))
 
     timer = models.PositiveSmallIntegerField(blank=True, default=0,
-        verbose_name=_("Question Timer"),
-        help_text=_("If > 0, amount of seconds allowed to answer the question."))
+        verbose_name=_("Quiz Timer"),
+        help_text=_("If > 0, amount of seconds allowed to complete the quiz."))
 
     show_leaderboards = models.BooleanField(blank=True, default=True,
         verbose_name=_("Show Leaderboards"),
@@ -527,6 +527,10 @@ class Question(models.Model):
                                                "after the question has "
                                                "been answered."),
                                    verbose_name=_('Explanation'))
+
+    timer = models.PositiveSmallIntegerField(blank=True, default=0,
+                                             verbose_name=_("Question Timer"),
+                                             help_text=_("If > 0, amount of seconds allowed to answer the question."))
 
     answer_order = models.CharField(max_length=30, blank=False,
                                     default = 'none', choices = ANSWER_ORDER_OPTIONS,
