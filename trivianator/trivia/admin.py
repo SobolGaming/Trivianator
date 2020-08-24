@@ -2,14 +2,14 @@ from django.contrib import admin
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 # Register your models here.
-from .models import Quiz, Category, Question, Progress, Answer
+from .models import Quiz, Category, Question, Progress, Answer, Leaderboard
 from django.utils.translation import ugettext_lazy as _
 from .models import JSONUpload
 
 
 class JSONUploadsAdmin(admin.ModelAdmin):
     model = JSONUpload
-    list_display = ('title',)
+    list_display = ('title', 'user', 'file', 'completed', )
 
 class AnswerInline(admin.TabularInline):
     model = Answer
@@ -81,8 +81,15 @@ class ProgressAdmin(admin.ModelAdmin):
     search_fields = ('user', 'score', )
 
 
+class LeaderboardAdmin(admin.ModelAdmin):
+    list_display = ('quiz', 'user', 'score', 'completion_time', )
+    list_filter = ('quiz', )
+    filter_horizontal = ('quiz',)
+
+
 admin.site.register(Quiz, QuizAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Progress, ProgressAdmin)
+admin.site.register(Leaderboard, LeaderboardAdmin)
 admin.site.register(JSONUpload, JSONUploadsAdmin)
