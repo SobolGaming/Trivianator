@@ -27,11 +27,12 @@ urlpatterns = [
         view=views.QuizMarkingDetail.as_view(),
         name='quiz_marking_detail'),
 
-    #  passes variable 'quiz_name' to quiz_take view
+    #  passes variable 'slug' to quiz detail view
     re_path(route=r'^(?P<slug>[\w-]+)/$',
         view=views.QuizDetailView.as_view(),
         name='quiz_start_page'),
 
+    #  passes variable 'quiz_name' to quiz take view
     re_path(route=r'^(?P<quiz_name>[\w-]+)/take/$',
         view=views.QuizTake.as_view(),
         name='quiz_question'),

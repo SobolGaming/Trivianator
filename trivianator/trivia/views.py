@@ -87,8 +87,7 @@ class QuizUserProgressView(TemplateView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        return super(QuizUserProgressView, self)\
-            .dispatch(request, *args, **kwargs)
+        return super(QuizUserProgressView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(QuizUserProgressView, self).get_context_data(**kwargs)
@@ -102,8 +101,7 @@ class QuizMarkingList(QuizMarkerMixin, SittingFilterTitleMixin, ListView):
     model = Sitting
 
     def get_queryset(self):
-        queryset = super(QuizMarkingList, self).get_queryset()\
-                                               .filter(complete=True)
+        queryset = super(QuizMarkingList, self).get_queryset().filter(complete=True)
 
         user_filter = self.request.GET.get('user_filter')
         if user_filter:
@@ -133,8 +131,7 @@ class QuizMarkingDetail(QuizMarkerMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(QuizMarkingDetail, self).get_context_data(**kwargs)
-        context['questions'] =\
-            context['sitting'].get_questions(with_answers=True)
+        context['questions'] = context['sitting'].get_questions(with_answers=True)
         return context
 
 
@@ -150,8 +147,7 @@ class QuizTake(FormView):
         self.logged_in_user = self.request.user.is_authenticated
 
         if self.logged_in_user:
-            self.sitting = Sitting.objects.user_sitting(request.user,
-                                                        self.quiz)
+            self.sitting = Sitting.objects.user_sitting(request.user, self.quiz)
         if self.sitting is False:
             return render(request, 'single_complete.html')
 

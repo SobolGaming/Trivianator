@@ -143,6 +143,10 @@ class Quiz(models.Model):
     def anon_q_data(self):
         return str(self.id) + "_data"
 
+    @property
+    def get_leaderboard(self):
+        return Leaderboard.objects.filter(quiz=self).order_by('-score', 'completion_time')[:30]
+
 
 # progress manager
 class ProgressManager(models.Manager):
@@ -296,10 +300,7 @@ class SittingManager(models.Manager):
         return new_sitting
 
     def user_sitting(self, user, quiz):
-        if quiz.single_attempt is True and self.filter(user=user,
-                                                       quiz=quiz,
-                                                       complete=True)\
-                                               .exists():
+        if quiz.single_attempt is True and self.filter(user=user, quiz=quiz, complete=True).exists():
             return False
 
         try:
@@ -346,8 +347,7 @@ class Sitting(models.Model):
     user_answers = models.TextField(blank=True, default='{}',
                                     verbose_name=_("User Answers"))
 
-    start = models.DateTimeField(auto_now_add=True,
-                                 verbose_name=_("Start"))
+    start = models.DateTimeField(auto_now_add=True, verbose_name=_("Start"))
 
     end = models.DateTimeField(null=True, blank=True, verbose_name=_("End"))
 
@@ -409,6 +409,12 @@ class Sitting(models.Model):
         self.complete = True
         self.end = now()
         self.save()
+
+        # add to leaderboard
+        if not Leaderboard.objects.filter(quiz=self.quiz, user=self.user).exists():
+            ld = Leaderboard.objects.create(
+                quiz=self.quiz, user=self.user, score=self.current_score, completion_time=(self.end - self.start).seconds
+            )
 
     def add_incorrect_question(self, question):
         """
@@ -520,14 +526,12 @@ class Question(models.Model):
                                                "been answered."),
                                    verbose_name=_('Explanation'))
 
-    answer_order = models.CharField(
-        max_length=30, blank=False,
-        default = 'none',
-        choices = ANSWER_ORDER_OPTIONS,
-        help_text = _("The order in which multichoice "
-                      "answer options are displayed "
-                      "to the user"),
-        verbose_name=_("Answer Order"))
+    answer_order = models.CharField(max_length=30, blank=False,
+                                    default = 'none', choices = ANSWER_ORDER_OPTIONS,
+                                    help_text = _("The order in which multichoice "
+                                                  "answer options are displayed "
+                                                  "to the user"),
+                                    verbose_name=_("Answer Order"))
 
     objects = InheritanceManager()
 
@@ -597,6 +601,25 @@ class Answer(models.Model):
     class Meta:
         verbose_name = _("Answer")
         verbose_name_plural = _("Answers")
+
+
+class Leaderboard(models.Model):
+    quiz = models.ForeignKey(Quiz, verbose_name='Quiz', on_delete=models.CASCADE)
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE)
+
+    score = models.PositiveSmallIntegerField(verbose_name=_("Score"))
+
+    completion_time = models.PositiveIntegerField(verbose_name=_("Completion Time"))
+
+    objects = InheritanceManager()
+
+    def __str__(self):
+        return self.user.username + "_" + self.quiz.title
+
+    class Meta:
+        verbose_name = _("Leaderboard")
+        verbose_name_plural = _("Leaderboards")
 
 
 def upload_json_file(instance, filename):

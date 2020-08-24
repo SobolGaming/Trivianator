@@ -6,6 +6,7 @@
 {% block title %} {{ quiz.title}} {% endblock %}
 {% block description %} {% trans "Quiz Results for" %} {{ quiz.title }} {% endblock %}
 
+
 {% block content %}
 
   {% if previous.answers %}
@@ -53,10 +54,38 @@
 
 	<hr>
     <p class="lead">{{ sitting.result_message }}</p>
-	<hr>
+  <hr>
+  </div>
 
-	{% endif %}
+  {% endif %}
+  
+  <hr>
+  {% if sitting.complete %}
+    <div>
+      <h2>{% trans "Leaderboards" %}</h2>
+      <table class="table table-bordered table-striped">
+      {% for entry in quiz.get_leaderboard %}
+        <thead>
+          <tr>
+              <th>{% trans "Username" %}</th>
+              <th>{% trans "Score" %}</th>
+              <th>{% trans "Completion Time" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+              <td>{{ entry.user.username }}</td>
+              <td>{{ entry.score }}</td>
+              <td>{{ entry.completion_time|smooth_timedelta }}</td>
+          </tr>
+        </tbody>
+      {% endfor %}
+      </table>
+    </div>
+  {% endif %}
+  <hr>
 
+  <div>
   {% if quiz.answers_at_end == 2 %}
 	<p>{% trans "Review the questions below and try the quiz again in the future" %}.</p>
 
@@ -104,7 +133,7 @@
 
 	  <hr>
 
-  {% endfor %}
+    {% endfor %}
 
   {% endif %}
 
