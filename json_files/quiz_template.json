@@ -37,6 +37,31 @@
             "Correct": false
           }
         ]
+      },
+      {
+        "QuestionType": "multi_choice",
+        "Category": "Basic",
+        "Content": "Pick All that Apply: Which of the following are Parent Races?",
+        "Explanation": "Kaelar are a playable Aela Human race; Vek are a playable Kaivek Orc race.",
+        "AnswerOrder": "random",
+        "Answers": [
+          {
+            "Content": "Aela",
+            "Correct": true
+          },
+          {
+            "Content": "Pyrian",
+            "Correct": true 
+          },
+          {
+            "Content": "Kaelar",
+            "Correct": false
+          },
+          {
+            "Content": "Vek",
+            "Correct": false
+          }
+        ]
       }
     ]
   }

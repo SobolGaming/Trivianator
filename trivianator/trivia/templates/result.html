@@ -58,28 +58,28 @@
   </div>
 
   {% endif %}
-  
+
   <hr>
   {% if sitting.complete %}
     <div>
       <h2>{% trans "Leaderboards" %}</h2>
       <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+            <th>{% trans "Username" %}</th>
+            <th>{% trans "Score" %}</th>
+            <th>{% trans "Completion Time" %}</th>
+        </tr>
+      </thead>
+      <tbody>
       {% for entry in quiz.get_leaderboard %}
-        <thead>
-          <tr>
-              <th>{% trans "Username" %}</th>
-              <th>{% trans "Score" %}</th>
-              <th>{% trans "Completion Time" %}</th>
-          </tr>
-        </thead>
-        <tbody>
           <tr>
               <td>{{ entry.user.username }}</td>
               <td>{{ entry.score }}</td>
               <td>{{ entry.completion_time|smooth_timedelta }}</td>
           </tr>
-        </tbody>
       {% endfor %}
+      </tbody>
       </table>
     </div>
   {% endif %}
