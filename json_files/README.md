@@ -16,6 +16,8 @@ The JSON file for uploading a Quiz, it's associated Questions and their Answers 
         "Save": (Optional) Boolean (true or false) - should answers be saved upon quiz completion; defaults to "True"
         "SingleAttempt": (Optional) Boolean (true or false) - is each user given only one attempt to take the quiz; defaults to "False"
         "Draft": (Optional) Boolean (true or false) - is the quiz still in development, if "True" will not appear to non-admin users; defaults to "False"
+        "Timer": (Optional) Positive Integer - value in seconds, if greater than 0, allowed for question attempt; defaults to 0
+        "Leaderboards": (Optional) Boolean (true or false) - should leaderboards be shown at end of quiz; defaults to "True"
         "Questions": [  next we have an array of Questions associated with the quiz, each non-optional field must be provided for each question
             {
                 "QuestionType": Selection of either "single_choice" or "multi_choice" depending of just one, or more than one answers are correct

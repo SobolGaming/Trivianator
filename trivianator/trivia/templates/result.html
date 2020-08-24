@@ -60,7 +60,7 @@
   {% endif %}
 
   <hr>
-  {% if sitting.complete %}
+  {% if sitting.complete and quiz.show_leaderboards %}
     <div>
       <h2>{% trans "Leaderboards" %}</h2>
       <table class="table table-bordered table-striped">
@@ -86,7 +86,7 @@
   <hr>
 
   <div>
-  {% if quiz.answers_at_end == 2 %}
+  {% if quiz.answers_reveal_option == 2 %}
 	<p>{% trans "Review the questions below and try the quiz again in the future" %}.</p>
 
 	{% if user.is_authenticated %}

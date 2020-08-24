@@ -8,6 +8,58 @@
 
 {% block content %}
 
+  {% if saved %}
+
+  <hr>
+
+  <h1>{% trans "Previous quizzes" %}</h1>
+  <p class="lead">
+	{% trans "Below are the results of quizzes that you have taken." %}
+  </p>
+
+  <table class="table table-bordered table-striped">
+
+	<thead>
+	  <tr>
+		<th>{% trans "Quiz Title" %}</th>
+		<th>{% trans "Score" %}</th>
+		<th>{% trans "Possible Score" %}</th>
+		<th>%</th>
+	  </tr>
+	</thead>
+
+	<tbody>
+
+	  {% for quiz in saved %}
+
+		{% if quiz.quiz.show_leaderboards %}
+			{% setvar 1 as display %}
+		{% endif %}
+
+		{% if display %}
+			<tr>
+				<td>{{ quiz.quiz.title }}</td>
+				<td>{{ quiz.current_score }}</td>
+				<td>{{ quiz.get_max_score }}</td>
+				<td>{{ quiz.get_percent_correct }}</td>
+			</tr>
+		{% else %}
+			<tr>
+				<td>{{ quiz.quiz.title }}</td>
+				<td>{% trans "Currently Not Available" %}</td>
+				<td>{% trans "Currently Not Available" %}</td>
+				<td>{% trans "Currently Not Available" %}</td>
+			</tr>
+		{% endif %}
+
+	  {% endfor %}
+
+	</tbody>
+
+  </table>
+
+  {% endif %}
+
   {% if cat_scores %}
 
   <h1>{% trans "Question Category Scores" %}</h1>
@@ -40,47 +92,6 @@
 
   </table>
 
-
   {% endif %}
-
-  {% if saved %}
-
-  <hr>
-
-  <h1>{% trans "Previous quizzes" %}</h1>
-  <p class="lead">
-	{% trans "Below are the results of quizzes that you have taken." %}
-  </p>
-
-  <table class="table table-bordered table-striped">
-
-	<thead>
-	  <tr>
-		<th>{% trans "Quiz Title" %}</th>
-		<th>{% trans "Score" %}</th>
-		<th>{% trans "Possible Score" %}</th>
-		<th>%</th>
-	  </tr>
-	</thead>
-
-	<tbody>
-
-	  {% for quiz in saved %}
-
-	  <tr>
-		<td>{{ quiz.quiz.title }}</td>
-		<td>{{ quiz.current_score }}</td>
-		<td>{{ quiz.get_max_score }}</td>
-		<td>{{ quiz.get_percent_correct }}</td>
-	  </tr>
-
-	  {% endfor %}
-
-	</tbody>
-
-  </table>
-
-  {% endif %}
-
 
 {% endblock %}

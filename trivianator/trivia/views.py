@@ -200,7 +200,7 @@ class QuizTake(FormView):
             self.sitting.add_incorrect_question(self.question)
             progress.update_score(self.question, 0, 1)
 
-        if self.quiz.answers_at_end == 1:
+        if self.quiz.answers_reveal_option == 1:
             self.previous = {'previous_answer': guess,
                              'previous_outcome': is_correct,
                              'previous_question': self.question,
@@ -224,7 +224,7 @@ class QuizTake(FormView):
 
         self.sitting.mark_quiz_complete()
 
-        if self.quiz.answers_at_end == 2:
+        if self.quiz.answers_reveal_option == 2:
             results['questions'] = self.sitting.get_questions(with_answers=True)
             results['incorrect_questions'] = self.sitting.get_incorrect_questions
 

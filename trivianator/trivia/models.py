@@ -75,39 +75,41 @@ class Quiz(models.Model):
     random_order = models.BooleanField(
         blank=False, default=False,
         verbose_name=_("Random Order"),
-        help_text=_("Display the questions in "
-                    "a random order or as they "
-                    "are set?"))
+        help_text=_("Display the questions in a random order or as they are set?"))
 
     max_questions = models.PositiveIntegerField(
         blank=True, null=True, verbose_name=_("Max Questions"),
         help_text=_("Number of questions to be answered on each attempt."))
 
-    answers_at_end = models.PositiveSmallIntegerField(
+    answers_reveal_option = models.PositiveSmallIntegerField(
         blank=False, default=1, choices = ANSWER_REVEAL_OPTIONS,
         help_text=_("Determines when correct answers are revealed for each question."),
         verbose_name=_("Answers Reveal Option"))
 
     saved = models.BooleanField(
         blank=True, default=True,
-        help_text=_("If yes, the result of each attempt "
-                    " by a user will be saved."),
+        help_text=_("If yes, the result of each attempt by a user will be saved."),
         verbose_name=_("Saved"))
 
     single_attempt = models.BooleanField(
         blank=False, default=False,
-        help_text=_("If yes, only one attempt by"
-                    " a user will be permitted."
+        help_text=_("If yes, only one attempt by a user will be permitted."
                     " Non users cannot sit this quiz."),
         verbose_name=_("Single Attempt"))
 
     draft = models.BooleanField(
         blank=True, default=False,
         verbose_name=_("Draft"),
-        help_text=_("If yes, the quiz is not displayed"
-                    " in the quiz list and can only be"
-                    " taken by users who can edit"
-                    " quizzes."))
+        help_text=_("If yes, the quiz is not displayed in the quiz list and can only be"
+                    " taken by users who can edit quizzes."))
+
+    timer = models.PositiveSmallIntegerField(blank=True, default=0,
+        verbose_name=_("Question Timer"),
+        help_text=_("If > 0, amount of seconds allowed to answer the question."))
+
+    show_leaderboards = models.BooleanField(blank=True, default=True,
+        verbose_name=_("Show Leaderboards"),
+        help_text=_("Boolean if leaderboards should be displayed after quiz completion."))
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         self.url = re.sub('\s+', '-', self.url).lower()
@@ -658,10 +660,12 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
                 category = quiz_cat[0],
                 random_order = data['Quiz']['RandomOrder'] if 'RandomOrder' in data['Quiz'] else False,
                 max_questions = data['Quiz']['MaxQuestions'] if 'MaxQuestions' in data['Quiz'] else None,
-                answers_at_end = min(max(data['Quiz']['AnswerRevealOption'], 1), 3) if 'AnswerRevealOption' in data['Quiz'] else 1,
+                answers_reveal_option = min(max(data['Quiz']['AnswerRevealOption'], 1), 3) if 'AnswerRevealOption' in data['Quiz'] else 1,
                 saved = data['Quiz']['Save'] if 'Save' in data['Quiz'] else True,
                 single_attempt = data['Quiz']['SingleAttempt'] if 'SingleAttempt' in data['Quiz'] else False,
                 draft = data['Quiz']['Draft'] if 'Draft' in data['Quiz'] else False,
+                timer = max(0, data['Quiz']['Timer']) if 'Timer' in data['Quiz'] else 0,
+                show_leaderboards = data['Quiz']['Leaderboards'] if 'Leaderboards' in data['Quiz'] else True,
             )
 
             # Create questions
