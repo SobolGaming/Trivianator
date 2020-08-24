@@ -234,38 +234,6 @@ class QuizTake(FormView):
         return render(self.request, 'result.html', results)
 
 
-class QuizLeaderboardsView(TemplateView):
-    template_name = 'leaderboards.html'
-    model = Quiz
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super(QuizLeaderboardsView, self).dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(QuizLeaderboardsView, self).get_context_data(**kwargs)
-        completed_quizzes = Sitting.objects.filter(complete=True).order_by('-current_score')
-        context['quizzes'] = {}
-        for q in completed_quizzes:
-            if not q.quiz.title in context['quizzes']:
-                context['quizzes'][q.quiz.title] = {}
-
-            if not q.user.username in context['quizzes'][q.quiz.title]:
-                context['quizzes'][q.quiz.title][q.user.username] = {}
-
-            if not 'score' in context['quizzes'][q.quiz.title][q.user.username]:
-                context['quizzes'][q.quiz.title][q.user.username]['score'] = q.current_score
-                context['quizzes'][q.quiz.title][q.user.username]['time'] = (q.end - q.start)
-            else:
-                if context['quizzes'][q.quiz.title][q.user.username]['score'] < q.current_score:
-                    context['quizzes'][q.quiz.title][q.user.username]['score'] = q.current_score
-                    context['quizzes'][q.quiz.title][q.user.username]['time'] = (q.end - q.start)
-                elif context['quizzes'][q.quiz.title][q.user.username]['score'] == q.current_score:
-                    if context['quizzes'][q.quiz.title][q.user.username]['time'].seconds > (q.end - q.start).seconds:
-                        context['quizzes'][q.quiz.title][q.user.username]['time'] = (q.end - q.start)
-        return context
-
-
 def index(request):
     return render(request, 'index.html', {})
 
