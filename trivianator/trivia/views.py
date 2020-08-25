@@ -110,10 +110,12 @@ class QuizUserProgressView(TemplateView):
         progress, c = Progress.objects.get_or_create(user=self.request.user)
         context['cat_scores'] = progress.list_all_cat_scores
         context['saved'] = progress.show_saved()
-        context['show_leaderboards'] = True
+        context['display_categories'] = True
+        context['hide'] = []
         for quiz in context['saved']:
-            if not quiz.quiz.show_leaderboards:
-                context['show_leaderboards'] = False
+            if quiz.quiz.competitive and now() < quiz.quiz.end_time:
+                context['display_categories'] = False
+                context['hide'].append(quiz.quiz.title)
                 break
         return context
 
