@@ -1,9 +1,11 @@
+from os.path import join as path_join
 import json
 import re
 from django.db import models
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.validators import MaxValueValidator, validate_comma_separated_integer_list
-from django.utils.timezone import now
+from django.utils.dateparse import parse_datetime
+from django.utils.timezone import now, timedelta, is_aware, make_aware
 from django.conf import settings
 from model_utils.managers import InheritanceManager
 from django.utils.translation import ugettext as _
@@ -11,6 +13,7 @@ from .signals import json_uploaded
 from .validators import json_file_validator
 from django.db.models.signals import pre_save, post_save
 from django.contrib.auth.models import User
+from django.core.files.storage import default_storage
 
 # Create your models here.
 QUESTION_TYPES = (
@@ -111,6 +114,21 @@ class Quiz(models.Model):
         verbose_name=_("Show Leaderboards"),
         help_text=_("Boolean if leaderboards should be displayed after quiz completion."))
 
+    competitive = models.BooleanField(blank=True, default=False,
+        verbose_name=_("Competitive"),
+        help_text=_("Boolean if this quiz is competitive. If 'True' it disables "
+                    "displaying results of the quiz or of the leaderboards, although "
+                    "leaderboard data is collected. Requires 'StartTime' and 'EndTime' "
+                    "to be specified."))
+
+    start_time = models.DateTimeField(blank=True, null=True, default=None,
+        verbose_name=_("StartTime"),
+        help_text=_("Start DateTime of the quiz."))
+
+    end_time = models.DateTimeField(blank=True, null=True, default=None,
+        verbose_name=_("EndTime"),
+        help_text=_("End DateTime of the quiz."))
+
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         self.url = re.sub('\s+', '-', self.url).lower()
 
@@ -148,6 +166,15 @@ class Quiz(models.Model):
     @property
     def get_leaderboard(self):
         return Leaderboard.objects.filter(quiz=self).order_by('-score', 'completion_time')[:30]
+
+    @property
+    def end_time_expired(self):
+        if self.competitive:
+            if now() >= self.end_time:
+                return True
+            else:
+                return False
+        return True
 
 
 # progress manager
@@ -298,6 +325,7 @@ class SittingManager(models.Manager):
                                   incorrect_questions="",
                                   current_score=0,
                                   complete=False,
+                                  start=now(),
                                   user_answers='{}')
         return new_sitting
 
@@ -412,11 +440,12 @@ class Sitting(models.Model):
         self.end = now()
         self.save()
 
-        # add to leaderboard
-        if not Leaderboard.objects.filter(quiz=self.quiz, user=self.user).exists():
-            ld = Leaderboard.objects.create(
-                quiz=self.quiz, user=self.user, score=self.current_score, completion_time=(self.end - self.start).seconds
-            )
+        # add to leaderboard if quiz was competitive and currently in session
+        if self.quiz.competitive and self.quiz.end_time > now() and self.quiz.start_time < now():
+            if not Leaderboard.objects.filter(quiz=self.quiz, user=self.user).exists():
+                ld = Leaderboard.objects.create(
+                    quiz=self.quiz, user=self.user, score=self.current_score, completion_time=(self.end - self.start).seconds
+                )
 
     def add_incorrect_question(self, question):
         """
@@ -464,7 +493,11 @@ class Sitting(models.Model):
         if with_answers:
             user_answers = json.loads(self.user_answers)
             for question in questions:
-                question.user_answer = user_answers[str(question.id)]
+                try: 
+                    question.user_answer = user_answers[str(question.id)]
+                except KeyError:
+                    # quiz or question timer expired
+                    pass
 
         return questions
 
@@ -584,6 +617,8 @@ class Question(models.Model):
                 ret.append(Answer.objects.get(id=elem).content)
             return ret
         else:
+            if guess == '':
+                return ''
             return Answer.objects.get(id=guess).content
 
 
@@ -650,6 +685,13 @@ class JSONUpload(models.Model):
 def sanitize_string(data):
     return re.sub('\s+', '-', data)
 
+def process_datetime_string(date_str):
+    ret = parse_datetime(date_str)
+    # make timezone aware if not aware
+    if not is_aware(ret):
+        ret = make_aware(ret)
+    return ret
+
 def json_upload_post_save(sender, instance, created, *args, **kwargs):
     if not instance.completed:
         json_file = instance.file
@@ -658,6 +700,7 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
 
             # Create quiz
             quiz_cat = Category.objects.get_or_create(category=sanitize_string(data['Quiz']['Category']).lower()) if 'Category' in data['Quiz'] and data['Quiz']['Category'] != None else (None, False)
+
             quiz = Quiz.objects.create(
                 title = sanitize_string(data['Quiz']['Title']),
                 url = sanitize_string(data['Quiz']['URL']).lower(),
@@ -670,11 +713,15 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
                 draft = data['Quiz']['Draft'] if 'Draft' in data['Quiz'] else False,
                 timer = max(0, data['Quiz']['Timer']) if 'Timer' in data['Quiz'] else 0,
                 show_leaderboards = data['Quiz']['Leaderboards'] if 'Leaderboards' in data['Quiz'] else True,
+                competitive = data['Quiz']['Competitive'] if 'Competitive' in data['Quiz'] else False,
+                start_time = process_datetime_string(data['Quiz']['StartTime']) if 'StartTime' in data['Quiz'] else now() + timedelta(minutes=5),
+                end_time = process_datetime_string(data['Quiz']['EndTime']) if 'EndTime' in data['Quiz'] else now() + timedelta(hours=1, minutes=5),
             )
 
             # Create questions
             for question in data['Quiz']['Questions']:
                 q_cat = Category.objects.get_or_create(category=sanitize_string(question['Category']).lower()) if 'Category' in question and question['Category'] != "" else (None, False)
+
                 q = Question.objects.create(
                     question_type = question['QuestionType'].lower(),
                     category = q_cat[0],
@@ -682,6 +729,13 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
                     explanation = question['Explanation'] if 'Explanation' in question else "",
                     answer_order = sanitize_string(question['AnswerOrder']) if 'AnswerOrder' in question and question['AnswerOrder'] != "" else 'none',
                 )
+
+                if 'Image' in question and isinstance(question['Image'], list):
+                    image_loc = path_join(*question['Image'])
+                    if default_storage.exists(image_loc):
+                        q.figure = image_loc
+                        q.save()
+
                 for answer in question['Answers']:
                     Answer.objects.create(
                         question = q,

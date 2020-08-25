@@ -18,13 +18,23 @@ The JSON file for uploading a Quiz, it's associated Questions and their Answers 
         "Draft": (Optional) Boolean (true or false) - is the quiz still in development, if "True" will not appear to non-admin users; defaults to "False"
         "Timer": (Optional) Positive Integer - value in seconds, if greater than 0, allowed for quiz attempt; defaults to 0
         "Leaderboards": (Optional) Boolean (true or false) - should leaderboards be shown at end of quiz; defaults to "True"
+        "Competitive": (Optional) Boolean (true or false) - is this quiz competitive; defaults to "False"
+        "StartTime": (Optional) DateTime - when quiz starts considering attempts for leaderboards and recording answers; defaults to "now() of posting"
+            DateTime is Provided as "YYYY-MM-DD HH:MM:SS+ZZZZ" (the '+ZZZZ' is optional for specifing timezone offset from local server time)
+        "EndTime": (Optional) DateTime - when quiz stops considering attempts for leaderboards and recording of answers; defaults to "not() +1 hour of posting"
+            DateTime is Provided as "YYYY-MM-DD HH:MM:SS+ZZZZ" (the '+ZZZZ' is optional for specifing timezone offset from local server time)
         "Questions": [  next we have an array of Questions associated with the quiz, each non-optional field must be provided for each question
             {
-                "QuestionType": Selection of either "single_choice" or "multi_choice" depending of just one, or more than one answers are correct
+                "QuestionType": Selection of either "single_choice" or "multi_choice" depending if just one, or 0 to All possiblity of answers are correct
                 "Category": (Optional) String - name of Category associated with the question; can be "" or null
+                "Image": (Optional) Uploaded Image Path List; defaults to None
+                    To Use:
+                    1) you must upload the image into the server's Trivianator/media/uploads/YYYY/MM/DD/Filename.FileExtension to use
+                    2) Specify "Image" as a list with directory/file structure starting inside media directory
+                    Example: "Image": ["uploads", "2020", "08", "25", "Nodes.png"],
                 "Content": String - the text of the question
                 "Explanation": (Optional) String - explanation of the reasoning behind the answers or about the question, defaults to ""
-                "Timer": (Optional) Positive Integer - value in seconds, if greater than 0, allowed for question attempt; defaults to 0
+                "Timer": CURRENTLY NOT IMPLEMENTED - (Optional) Positive Integer - value in seconds, if greater than 0, allowed for question attempt; defaults to 0
                 "AnswerOrder": Selection of "none", "content", "random" - how should the answers be ordered
                     "none" == answer order presented as entered into Database
                     "content" == answer order alphabetically sorted by text of the answers
@@ -46,3 +56,6 @@ Categories exist to allow users to track what their strengths and weakness are.<
 For example, question dealing with **Lore** could be assigned the category of "Lore", whereas questions dealing with **Nodes** can have their own category.<br>
 As a user answers quiz questions perhaps they know all the **node** related answers but are bad at **lore**. The existance of categories tracks this.<br>
 Additionally, it allows administrators to filter based on categories.
+
+### Competitive
+Quizzes marked as **Competitive** have an associated Start DateTime and End DateTime required. Between their Start and Close DateTime they will not display results or leaderboards at the end of quiz although both will be recorded. **Competitive** quizzes will only allow 1 attempt per user. These attempts CAN be timed with a timer specified for the length of the entire quiz. Once a **competitive** quiz completes, users can still take the quiz but it will not record results or consider peformance for inclusion in the Leaderboards.

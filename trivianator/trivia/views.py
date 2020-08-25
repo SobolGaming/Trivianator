@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
+from django.utils.timezone import now
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import FormView
 from .forms import QuestionForm
@@ -38,6 +39,24 @@ class QuizListView(ListView):
         queryset = super(QuizListView, self).get_queryset()
         return queryset.filter(draft=False)
 
+    def get_context_data(self, **kwargs):
+        context = super(QuizListView, self).get_context_data(**kwargs)
+        q_competitive = self.get_queryset().filter(competitive=True)
+        context['now'] = now()
+        context['competitive'] = []
+        context['competitive_old'] = []
+        context['competitive_upcoming'] = []
+        for q in q_competitive:
+            if q.start_time <= now() and q.end_time > now():
+                context['competitive'].append(q)
+            elif q.start_time > now():
+                context['competitive_upcoming'].append(q)
+            elif q.end_time <= now():
+                context['competitive_old'].append(q)
+        context['generic'] = self.get_queryset().filter(competitive=False)
+        context['competitive_upcoming_count'] = len(context['competitive_upcoming'])
+        context['competitive_old_count'] = len(context['competitive_old'])
+        return context
 
 class QuizDetailView(DetailView):
     model = Quiz
@@ -91,10 +110,12 @@ class QuizUserProgressView(TemplateView):
         progress, c = Progress.objects.get_or_create(user=self.request.user)
         context['cat_scores'] = progress.list_all_cat_scores
         context['saved'] = progress.show_saved()
-        context['show_leaderboards'] = True
+        context['display_categories'] = True
+        context['hide'] = []
         for quiz in context['saved']:
-            if not quiz.quiz.show_leaderboards:
-                context['show_leaderboards'] = False
+            if quiz.quiz.competitive and now() < quiz.quiz.end_time:
+                context['display_categories'] = False
+                context['hide'].append(quiz.quiz.title)
                 break
         return context
 
@@ -163,7 +184,6 @@ class QuizTake(FormView):
 
     def get_form_kwargs(self):
         kwargs = super(QuizTake, self).get_form_kwargs()
-
         return dict(kwargs, question=self.question)
 
     def form_valid(self, form):
@@ -171,6 +191,10 @@ class QuizTake(FormView):
             self.form_valid_user(form)
             if self.sitting.get_first_question() is False:
                 return self.final_result_user()
+            if self.quiz.timer > 0:
+                elapsed = now() - self.sitting.start
+                if elapsed.total_seconds() > self.quiz.timer:
+                    return self.final_result_user()
         self.request.POST = {}
 
         return super(QuizTake, self).get(self, self.request)
@@ -195,6 +219,15 @@ class QuizTake(FormView):
         else:
             is_correct = self.question.check_if_correct_sc(guess)
 
+        # if end_time of a competitive quiz has passed and you started the quiz before it ended, disregard last answer
+        if self.quiz.competitive and self.quiz.end_time_expired and self.sitting.start < self.quiz.end_time:
+            is_correct = False
+            guess = ''
+        # if quiz timer was set and expired, disregard last answer
+        if self.quiz.timer > 0 and (now() - self.sitting.start).total_seconds() > self.quiz.timer:
+            is_correct = False
+            guess = ''
+
         if is_correct is True:
             self.sitting.add_to_score(1)
             progress.update_score(self.question, 1, 1)
@@ -207,7 +240,9 @@ class QuizTake(FormView):
                              'previous_outcome': is_correct,
                              'previous_question': self.question,
                              'answers': self.question.get_answers(),
-                             'question_type': self.question.question_type }
+                             'question_type': self.question.question_type,
+                             'no_longer_competitive': self.quiz.end_time_expired,
+            }
         else:
             self.previous = {}
 
@@ -215,6 +250,8 @@ class QuizTake(FormView):
         self.sitting.remove_first_question()
 
     def final_result_user(self):
+        elapsed = (now() - self.sitting.start).total_seconds()
+
         results = {
             'quiz': self.quiz,
             'score': self.sitting.get_current_score,
@@ -222,6 +259,8 @@ class QuizTake(FormView):
             'percent': self.sitting.get_percent_correct,
             'sitting': self.sitting,
             'previous': self.previous,
+            'elapsed': elapsed,
+            'no_longer_competitive': self.quiz.end_time_expired,
         }
 
         self.sitting.mark_quiz_complete()
@@ -230,7 +269,7 @@ class QuizTake(FormView):
             results['questions'] = self.sitting.get_questions(with_answers=True)
             results['incorrect_questions'] = self.sitting.get_incorrect_questions
 
-        if self.quiz.saved is False:
+        if self.quiz.saved is False and self.quiz.competitive is False:
             self.sitting.delete()
 
         return render(self.request, 'result.html', results)
@@ -260,5 +299,4 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     messages.success(request, 'You have been logged out!')
-    print('logout function working')
     return redirect('login')

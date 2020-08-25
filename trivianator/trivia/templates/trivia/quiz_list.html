@@ -4,38 +4,152 @@
 {% block title %}{% trans "All Quizzes" %}{% endblock %}
 
 {% block content %}
-<h2>{% trans "List of quizzes" %}</h2>
-    {% if quiz_list %}
+	<h5>{% trans "Current Server DateTime: " %}{{ now }}</h5>
+	
+	{% if competitive %}
+		<h2>{% trans "List of Competitive Quizzes" %}</h2>
 		<table class="table table-bordered table-striped">
 
-		  <thead>
+		<thead>
 			<tr>
-			  <th></th>
-			  <th>{% trans "Title" %}</th>
-			  <th>{% trans "Category" %}</th>
-			  <th>{% trans "Will Be Saved" %}</th>
-			  <th>{% trans "Single Attempt" %}</th>
+			<th></th>
+			<th>{% trans "Title" %}</th>
+			<th>{% trans "Start DateTime" %}</th>
+			<th>{% trans "End DateTime" %}</th>
+			<th>{% trans "Num Questions" %}</th>
+			<th>{% trans "Timer" %}</th>
 			</tr>
-		  </thead>
+		</thead>
 
-		  <tbody>
+		<tbody>
+			{% for quiz in competitive %}
+				<tr>
+				<td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Quiz" %}</a></td>
+				<td>{{ quiz.title }}</td>
+				<td>{{ quiz.start_time }}</td>
+				<td>{{ quiz.end_time }}</td>
+				<td>{{ quiz.get_max_score }}</td>
+				{% if quiz.timer > 0 %}
+					<td>{{ quiz.timer|smooth_timedelta }}</td>
+				{% else %}
+					<td>{% trans "Not Timed" %}</td>
+				{% endif %}
+				</tr>
+			{% endfor %}
+		</tbody>
 
-        	{% for quiz in quiz_list %}
+		</table>
+	{% else %}
+		<p>{% trans "There are currently no available Competitive Quizzes" %}.</p>
+	{% endif %}
 
-  			<tr>
-			  <td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Quiz" %}</a></td>
-			  <td>{{ quiz.title }}</td>
-			  <td>{{ quiz.category }}</td>
-			  <td>{{ quiz.saved }}</td>
-			  <td>{{ quiz.single_attempt }}</td>
+	{% if competitive_upcoming_count > 0 %}
+		<h2>{% trans "List of Upcoming Competitive Quizzes" %}</h2>
+		<table class="table table-bordered table-striped">
+
+		<thead>
+			<tr>
+			<th></th>
+			<th>{% trans "Title" %}</th>
+			<th>{% trans "Start DateTime" %}</th>
+			<th>{% trans "End DateTime" %}</th>
+			<th>{% trans "Num Questions" %}</th>
+			<th>{% trans "Timer" %}</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for quiz in competitive_upcoming %}
+				<tr>
+				<td>{% trans "Will Be Available on Start" %}</a></td>
+				<td>{{ quiz.title }}</td>
+				<td>{{ quiz.start_time }}</td>
+				<td>{{ quiz.end_time }}</td>
+				<td>{{ quiz.get_max_score }}</td>
+				{% if quiz.timer > 0 %}
+					<td>{{ quiz.timer|smooth_timedelta }}</td>
+				{% else %}
+					<td>{% trans "Not Timed" %}</td>
+				{% endif %}
+				</tr>
+			{% endfor %}
+		</tbody>
+
+		</table>
+	{% endif %}
+
+	<h2>{% trans "List of Generic Quizzes" %}</h2>
+	{% if generic %}
+		<table class="table table-bordered table-striped">
+
+		<thead>
+			<tr>
+			<th></th>
+			<th>{% trans "Title" %}</th>
+			<th>{% trans "Num Question" %}</th>
+			<th>{% trans "Category" %}</th>
+			<th>{% trans "Answer Reveal" %}</th>
+			</tr>
+		</thead>
+
+		<tbody>
+
+			{% for quiz in generic %}
+
+			<tr>
+			<td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Quiz" %}</a></td>
+			<td>{{ quiz.title }}</td>
+			<td>{{ quiz.get_max_score }}</td>
+			<td>{{ quiz.category }}</td>
+			{% if quiz.answers_reveal_option == 1 %}
+				<td>{% trans "After each question" %}</td>
+			{% elif quiz.answers_reveal_option == 2 %}
+				<td>{% trans "At end of quiz" %}</td>
+			{% endif %}
 			</tr>
 
-        	{% endfor %}
-		  </tbody>
+			{% endfor %}
+		</tbody>
 
 		</table>
 
 	{% else %}
-        <p>{% trans "There are no available quizzes" %}.</p>
-    {% endif %}
+		<p>{% trans "There are no available General Quizzes" %}.</p>
+	{% endif %}
+
+	{% if competitive_old_count > 0 %}
+		<h2>{% trans "List of Expired Competitive Quizzes" %}</h2>
+		<table class="table table-bordered table-striped">
+
+		<thead>
+			<tr>
+			<th></th>
+			<th>{% trans "Title" %}</th>
+			<th>{% trans "Start DateTime" %}</th>
+			<th>{% trans "End DateTime" %}</th>
+			<th>{% trans "Num Questions" %}</th>
+			<th>{% trans "Timer" %}</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			{% for quiz in competitive_old %}
+				<tr>
+				<td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Quiz" %}</a></td>
+				<td>{{ quiz.title }}</td>
+				<td>{{ quiz.start_time }}</td>
+				<td>{{ quiz.end_time }}</td>
+				<td>{{ quiz.get_max_score }}</td>
+				{% if quiz.timer > 0 %}
+					<td>{{ quiz.timer|smooth_timedelta }}</td>
+				{% else %}
+					<td>{% trans "Not Timed" %}</td>
+				{% endif %}
+				</tr>
+			{% endfor %}
+		</tbody>
+
+		</table>
+	{% endif %}
+
 {% endblock %}

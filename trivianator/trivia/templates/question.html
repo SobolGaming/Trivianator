@@ -31,7 +31,7 @@
 
   {% if previous.previous_question.explanation %}
 	<p><strong>{% trans "Explanation" %}:</strong></p>
-	<div class="card">
+	<div class="alert alert-debug">
 	  <p>{{ previous.previous_question.explanation }}</p>
 	</div>
   {% endif %}
@@ -58,7 +58,9 @@
 <p class="lead">{{ question.content }}</p>
 
 {% if question.figure %}
-    <img src="{{ question.figure.url }}" alt="{{ question.content }}" />
+	<p>
+	<img src="{{ question.figure.url }}" alt="{{ question.content }}" />
+	</p>
 {% endif %}
 
 <form action="" method="POST">{% csrf_token %}

@@ -19,7 +19,7 @@
   <thead>
 	<tr>
 	  <th>{% trans "Question" %}</th>
-	  <th>{% trans "User answer" %}</th>
+	  <th>{% trans "User Answer" %}</th>
 	  <th></th>
 	  <th></th>
 	</tr>
@@ -34,8 +34,12 @@
         {% if question.figure %}
           <div style="max-width: 100px;"><img src="{{ question.figure.url }}" alt="{{ question.figure }}"/></div>
         {% endif %}
-      </td>
-	  <td>{{ question|answer_choice_to_string:question.user_answer }}</td>
+	  </td>
+	  {% if question.user_answer %}
+		  <td>{{ question|answer_choice_to_string:question.user_answer }}</td>
+	  {% else %}
+	  	  <td>{% trans "No Answer Provided" %}</td>
+	  {% endif %}
 	  <td>
 		{% if question.id in sitting.get_incorrect_questions %}
 		  <p>{% trans "Incorrect" %}</p>
