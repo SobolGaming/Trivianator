@@ -6,6 +6,6 @@ class QuestionForm(forms.Form):
         super(QuestionForm, self).__init__(*args, **kwargs)
         choice_list = [x for x in question.get_answers_list()]   
         if question.question_type == 'multi_choice':
-            self.fields["answers"] = forms.MultipleChoiceField(choices=choice_list, widget=CheckboxSelectMultiple)
+            self.fields["answers"] = forms.MultipleChoiceField(choices=choice_list, required=False, widget=CheckboxSelectMultiple)
         else:
             self.fields["answers"] = forms.ChoiceField(choices=choice_list, widget=RadioSelect)

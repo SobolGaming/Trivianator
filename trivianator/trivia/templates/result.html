@@ -9,6 +9,10 @@
 
 {% block content %}
 
+  {% if quiz.timer > 0 and elapsed > quiz.timer %}
+    <p>Exceeded maximum allowed quiz timer: {{ quiz.timer|smooth_timedelta }}.</p>
+  {% endif %}
+
   {% if previous.answers %}
 
   <p class="muted"><small>{% trans "The previous question" %}:</small></p>
@@ -110,7 +114,9 @@
 	  {% correct_answer_for_all question %}
 
       {% if question.user_answer %}
-      <p>{% trans "Your answer" %}: {{ question|answer_choice_to_string:question.user_answer }}</p>
+        <p>{% trans "Your answer" %}: {{ question|answer_choice_to_string:question.user_answer }}</p>
+      {% else %}
+        <p>{% trans "Your answer: None" %}</p>
       {% endif %}
 
 	  <p><strong>{% trans "Explanation" %}:</strong></p>

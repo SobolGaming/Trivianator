@@ -191,6 +191,10 @@ class QuizTake(FormView):
             self.form_valid_user(form)
             if self.sitting.get_first_question() is False:
                 return self.final_result_user()
+            if self.quiz.timer > 0:
+                elapsed = now() - self.sitting.start
+                if elapsed.total_seconds() > self.quiz.timer:
+                    return self.final_result_user()
         self.request.POST = {}
 
         return super(QuizTake, self).get(self, self.request)
@@ -215,6 +219,15 @@ class QuizTake(FormView):
         else:
             is_correct = self.question.check_if_correct_sc(guess)
 
+        # if end_time of a competitive quiz has passed and you started the quiz before it ended, disregard last answer
+        if self.quiz.competitive and self.quiz.end_time_expired and self.sitting.start < self.quiz.end_time:
+            is_correct = False
+            guess = ''
+        # if quiz timer was set and expired, disregard last answer
+        if self.quiz.timer > 0 and (now() - self.sitting.start).total_seconds() > self.quiz.timer:
+            is_correct = False
+            guess = ''
+
         if is_correct is True:
             self.sitting.add_to_score(1)
             progress.update_score(self.question, 1, 1)
@@ -228,7 +241,7 @@ class QuizTake(FormView):
                              'previous_question': self.question,
                              'answers': self.question.get_answers(),
                              'question_type': self.question.question_type,
-                             'no_longer_competitive': self.quiz.no_longer_competitive,
+                             'no_longer_competitive': self.quiz.end_time_expired,
             }
         else:
             self.previous = {}
@@ -237,6 +250,8 @@ class QuizTake(FormView):
         self.sitting.remove_first_question()
 
     def final_result_user(self):
+        elapsed = (now() - self.sitting.start).total_seconds()
+
         results = {
             'quiz': self.quiz,
             'score': self.sitting.get_current_score,
@@ -244,7 +259,8 @@ class QuizTake(FormView):
             'percent': self.sitting.get_percent_correct,
             'sitting': self.sitting,
             'previous': self.previous,
-            'no_longer_competitive': self.quiz.no_longer_competitive,
+            'elapsed': elapsed,
+            'no_longer_competitive': self.quiz.end_time_expired,
         }
 
         self.sitting.mark_quiz_complete()
@@ -283,5 +299,4 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     messages.success(request, 'You have been logged out!')
-    print('logout function working')
     return redirect('login')
