@@ -10,7 +10,7 @@
 {% block content %}
 
   {% if quiz.timer > 0 and elapsed > quiz.timer %}
-    <p>Exceeded maximum allowed {{ quiz.timer|smooth_timedelta }}.</p>
+    <p>Exceeded maximum allowed quiz timer: {{ quiz.timer|smooth_timedelta }}.</p>
   {% endif %}
 
   {% if previous.answers %}
