@@ -39,6 +39,24 @@ class QuizListView(ListView):
         queryset = super(QuizListView, self).get_queryset()
         return queryset.filter(draft=False)
 
+    def get_context_data(self, **kwargs):
+        context = super(QuizListView, self).get_context_data(**kwargs)
+        q_competitive = self.get_queryset().filter(competitive=True)
+        context['now'] = now()
+        context['competitive'] = []
+        context['competitive_old'] = []
+        context['competitive_upcoming'] = []
+        for q in q_competitive:
+            if q.start_time <= now() and q.end_time > now():
+                context['competitive'].append(q)
+            elif q.start_time > now():
+                context['competitive_upcoming'].append(q)
+            elif q.end_time <= now():
+                context['competitive_old'].append(q)
+        context['generic'] = self.get_queryset().filter(competitive=False)
+        context['competitive_upcoming_count'] = len(context['competitive_upcoming'])
+        context['competitive_old_count'] = len(context['competitive_old'])
+        return context
 
 class QuizDetailView(DetailView):
     model = Quiz
@@ -92,10 +110,12 @@ class QuizUserProgressView(TemplateView):
         progress, c = Progress.objects.get_or_create(user=self.request.user)
         context['cat_scores'] = progress.list_all_cat_scores
         context['saved'] = progress.show_saved()
-        context['show_leaderboards'] = True
+        context['display_categories'] = True
+        context['hide'] = []
         for quiz in context['saved']:
-            if not quiz.quiz.show_leaderboards:
-                context['show_leaderboards'] = False
+            if quiz.quiz.competitive and now() < quiz.quiz.end_time:
+                context['display_categories'] = False
+                context['hide'].append(quiz.quiz.title)
                 break
         return context
 
@@ -164,7 +184,6 @@ class QuizTake(FormView):
 
     def get_form_kwargs(self):
         kwargs = super(QuizTake, self).get_form_kwargs()
-
         return dict(kwargs, question=self.question)
 
     def form_valid(self, form):
@@ -212,7 +231,9 @@ class QuizTake(FormView):
                              'previous_outcome': is_correct,
                              'previous_question': self.question,
                              'answers': self.question.get_answers(),
-                             'question_type': self.question.question_type }
+                             'question_type': self.question.question_type,
+                             'no_longer_competitive': self.quiz.no_longer_competitive,
+            }
         else:
             self.previous = {}
 
@@ -230,6 +251,7 @@ class QuizTake(FormView):
             'sitting': self.sitting,
             'previous': self.previous,
             'elapsed': elapsed,
+            'no_longer_competitive': self.quiz.no_longer_competitive,
         }
 
         self.sitting.mark_quiz_complete()
@@ -238,7 +260,7 @@ class QuizTake(FormView):
             results['questions'] = self.sitting.get_questions(with_answers=True)
             results['incorrect_questions'] = self.sitting.get_incorrect_questions
 
-        if self.quiz.saved is False:
+        if self.quiz.saved is False and self.quiz.competitive is False:
             self.sitting.delete()
 
         return render(self.request, 'result.html', results)

@@ -32,19 +32,19 @@
 
 	  {% for quiz in saved %}
 		
-		{% if quiz.quiz.show_leaderboards %}
+		{% if quiz.quiz.title in hide %}
+			<tr>
+				<td>{{ quiz.quiz.title }}</td>
+				<td>{% trans "Hidden for Special Quiz Period" %}</td>
+				<td>{% trans "Hidden for Special Quiz Period" %}</td>
+				<td>{% trans "Hidden for Special Quiz Period" %}</td>
+			</tr>
+		{% else %}
 			<tr>
 				<td>{{ quiz.quiz.title }}</td>
 				<td>{{ quiz.current_score }}</td>
 				<td>{{ quiz.get_max_score }}</td>
 				<td>{{ quiz.get_percent_correct }}</td>
-			</tr>
-		{% else %}
-			<tr>
-				<td>{{ quiz.quiz.title }}</td>
-				<td>{% trans "Hidden for Special Quiz Period" %}</td>
-				<td>{% trans "Hidden for Special Quiz Period" %}</td>
-				<td>{% trans "Hidden for Special Quiz Period" %}</td>
 			</tr>
 		{% endif %}
 
@@ -60,7 +60,7 @@
 
 	<h1>{% trans "Question Category Scores" %}</h1>
 
-	{% if show_leaderboards %}
+	{% if display_categories %}
 		<p class="lead">
 			{% trans "Below are the results of each category questions that you have taken." %}
 		</p>
