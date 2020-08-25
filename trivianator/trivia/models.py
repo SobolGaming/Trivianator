@@ -3,7 +3,8 @@ import re
 from django.db import models
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.validators import MaxValueValidator, validate_comma_separated_integer_list
-from django.utils.timezone import now
+from django.utils.dateparse import parse_datetime
+from django.utils.timezone import now, timedelta, is_aware, make_aware
 from django.conf import settings
 from model_utils.managers import InheritanceManager
 from django.utils.translation import ugettext as _
@@ -111,6 +112,21 @@ class Quiz(models.Model):
         verbose_name=_("Show Leaderboards"),
         help_text=_("Boolean if leaderboards should be displayed after quiz completion."))
 
+    competitive = models.BooleanField(blank=True, default=False,
+        verbose_name=_("Competitive"),
+        help_text=_("Boolean if this quiz is competitive. If 'True' it disables "
+                    "displaying results of the quiz or of the leaderboards, although "
+                    "leaderboard data is collected. Requires 'StartTime' and 'EndTime' "
+                    "to be specified."))
+
+    start_time = models.DateTimeField(blank=True, null=True, default=None,
+        verbose_name=_("StartTime"),
+        help_text=_("Start DateTime of the quiz."))
+
+    end_time = models.DateTimeField(blank=True, null=True, default=None,
+        verbose_name=_("EndTime"),
+        help_text=_("End DateTime of the quiz."))
+
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         self.url = re.sub('\s+', '-', self.url).lower()
 
@@ -149,6 +165,14 @@ class Quiz(models.Model):
     def get_leaderboard(self):
         return Leaderboard.objects.filter(quiz=self).order_by('-score', 'completion_time')[:30]
 
+    @property
+    def no_longer_competitive(self):
+        if self.competitive:
+            if now() >= self.end_time:
+                return True
+            else:
+                return False
+        return True
 
 # progress manager
 class ProgressManager(models.Manager):
@@ -412,11 +436,12 @@ class Sitting(models.Model):
         self.end = now()
         self.save()
 
-        # add to leaderboard
-        if not Leaderboard.objects.filter(quiz=self.quiz, user=self.user).exists():
-            ld = Leaderboard.objects.create(
-                quiz=self.quiz, user=self.user, score=self.current_score, completion_time=(self.end - self.start).seconds
-            )
+        # add to leaderboard if quiz was competitive and currently in session
+        if self.quiz.competitive and self.quiz.end_time > now() and self.quiz.start_time < now():
+            if not Leaderboard.objects.filter(quiz=self.quiz, user=self.user).exists():
+                ld = Leaderboard.objects.create(
+                    quiz=self.quiz, user=self.user, score=self.current_score, completion_time=(self.end - self.start).seconds
+                )
 
     def add_incorrect_question(self, question):
         """
@@ -650,6 +675,13 @@ class JSONUpload(models.Model):
 def sanitize_string(data):
     return re.sub('\s+', '-', data)
 
+def process_datetime_string(date_str):
+    ret = parse_datetime(date_str)
+    # make timezone aware if not aware
+    if not is_aware(ret):
+        ret = make_aware(ret)
+    return ret
+
 def json_upload_post_save(sender, instance, created, *args, **kwargs):
     if not instance.completed:
         json_file = instance.file
@@ -670,6 +702,9 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
                 draft = data['Quiz']['Draft'] if 'Draft' in data['Quiz'] else False,
                 timer = max(0, data['Quiz']['Timer']) if 'Timer' in data['Quiz'] else 0,
                 show_leaderboards = data['Quiz']['Leaderboards'] if 'Leaderboards' in data['Quiz'] else True,
+                competitive = data['Quiz']['Competitive'] if 'Competitive' in data['Quiz'] else False,
+                start_time = process_datetime_string(data['Quiz']['StartTime']) if 'StartTime' in data['Quiz'] else now(),
+                end_time = process_datetime_string(data['Quiz']['EndTime']) if 'EndTime' in data['Quiz'] else now() + timedelta(hours=1),
             )
 
             # Create questions
