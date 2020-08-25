@@ -711,8 +711,8 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
                 timer = max(0, data['Quiz']['Timer']) if 'Timer' in data['Quiz'] else 0,
                 show_leaderboards = data['Quiz']['Leaderboards'] if 'Leaderboards' in data['Quiz'] else True,
                 competitive = data['Quiz']['Competitive'] if 'Competitive' in data['Quiz'] else False,
-                start_time = process_datetime_string(data['Quiz']['StartTime']) if 'StartTime' in data['Quiz'] else now(),
-                end_time = process_datetime_string(data['Quiz']['EndTime']) if 'EndTime' in data['Quiz'] else now() + timedelta(hours=1),
+                start_time = process_datetime_string(data['Quiz']['StartTime']) if 'StartTime' in data['Quiz'] else now() + timedelta(minutes=5),
+                end_time = process_datetime_string(data['Quiz']['EndTime']) if 'EndTime' in data['Quiz'] else now() + timedelta(hours=1, minutes=5),
             )
 
             # Create questions
