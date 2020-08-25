@@ -27,6 +27,11 @@ The JSON file for uploading a Quiz, it's associated Questions and their Answers 
             {
                 "QuestionType": Selection of either "single_choice" or "multi_choice" depending if just one, or 0 to All possiblity of answers are correct
                 "Category": (Optional) String - name of Category associated with the question; can be "" or null
+                "Image": (Optional) Uploaded Image Path List; defaults to None
+                    To Use:
+                    1) you must upload the image into the server's Trivianator/media/uploads/YYYY/MM/DD/Filename.FileExtension to use
+                    2) Specify "Image" as a list with directory/file structure starting inside media directory
+                    Example: "Image": ["uploads", "2020", "08", "25", "Nodes.png"],
                 "Content": String - the text of the question
                 "Explanation": (Optional) String - explanation of the reasoning behind the answers or about the question, defaults to ""
                 "Timer": CURRENTLY NOT IMPLEMENTED - (Optional) Positive Integer - value in seconds, if greater than 0, allowed for question attempt; defaults to 0

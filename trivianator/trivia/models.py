@@ -1,3 +1,4 @@
+from os.path import join as path_join
 import json
 import re
 from django.db import models
@@ -12,6 +13,7 @@ from .signals import json_uploaded
 from .validators import json_file_validator
 from django.db.models.signals import pre_save, post_save
 from django.contrib.auth.models import User
+from django.core.files.storage import default_storage
 
 # Create your models here.
 QUESTION_TYPES = (
@@ -698,6 +700,7 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
 
             # Create quiz
             quiz_cat = Category.objects.get_or_create(category=sanitize_string(data['Quiz']['Category']).lower()) if 'Category' in data['Quiz'] and data['Quiz']['Category'] != None else (None, False)
+
             quiz = Quiz.objects.create(
                 title = sanitize_string(data['Quiz']['Title']),
                 url = sanitize_string(data['Quiz']['URL']).lower(),
@@ -718,6 +721,7 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
             # Create questions
             for question in data['Quiz']['Questions']:
                 q_cat = Category.objects.get_or_create(category=sanitize_string(question['Category']).lower()) if 'Category' in question and question['Category'] != "" else (None, False)
+
                 q = Question.objects.create(
                     question_type = question['QuestionType'].lower(),
                     category = q_cat[0],
@@ -725,6 +729,13 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
                     explanation = question['Explanation'] if 'Explanation' in question else "",
                     answer_order = sanitize_string(question['AnswerOrder']) if 'AnswerOrder' in question and question['AnswerOrder'] != "" else 'none',
                 )
+
+                if 'Image' in question and isinstance(question['Image'], list):
+                    image_loc = path_join(*question['Image'])
+                    if default_storage.exists(image_loc):
+                        q.figure = image_loc
+                        q.save()
+
                 for answer in question['Answers']:
                     Answer.objects.create(
                         question = q,

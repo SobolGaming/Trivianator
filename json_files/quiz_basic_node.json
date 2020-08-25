@@ -1,0 +1,284 @@
+{
+    "Quiz": {
+        "Title": "Basic Node Knowledge",
+        "URL": "basic_nodes",
+        "Category": "Nodes_Basic",
+        "RandomOrder": false,
+        "AnswerRevealOption": 2,
+        "Save": false,
+        "SingleAttempt": false,
+        "Draft": false,
+        "Questions": [
+            {
+                "QuestionType": "single_choice",
+                "Category": "Nodes_Basic",
+                "Content": "How many Regular Node locations will there be at launch?",
+                "Explanation": "103 regular node locations at launch, 15 castle nodes (these are not regular).",
+                "AnswerOrder": "none",
+                "Answers": [
+                    {
+                        "Content": "87",
+                        "Correct": false
+                    },
+                    {
+                        "Content": "103",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "118",
+                        "Correct": false
+                    },
+                    {
+                        "Content": "128",
+                        "Correct": false
+                    }
+                ]
+            },
+            {
+                "QuestionType": "multi_choice",
+                "Category": "Nodes_Basic",
+                "Content": "Pick All that Apply: Which of the following Node Types exist in Ashes of Creation?",
+                "Explanation": "https://ashesofcreation.wiki/Node_types",
+                "AnswerOrder": "random",
+                "Answers": [
+                    {
+                        "Content": "Divine Nodes",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "Economic Nodes",
+                        "Correct": true 
+                    },
+                    {
+                        "Content": "Military Nodes",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "Scientific Nodes",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "Artisan Nodes",
+                        "Correct": false
+                    },
+                    {
+                        "Content": "Government Nodes",
+                        "Correct": false
+                    }
+                ]
+            },
+            {
+                "QuestionType": "single_choice",
+                "Category": "Nodes_Basic",
+                "Content": "True or False: Node Types CANNOT change under any circumstance?",
+                "Explanation": "Nodes can delevel and be destroyed (down to stage 0), but cannot change type.",
+                "AnswerOrder": "content",
+                "Answers": [
+                    {
+                        "Content": "True",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "False",
+                        "Correct": false
+                    }
+                ]
+            },
+            {
+                "QuestionType": "single_choice",
+                "Category": "Nodes_Basic",
+                "Content": "What is the maximum stage of a Node?",
+                "Explanation": "Stage 6 - Metropolis",
+                "AnswerOrder": "none",
+                "Answers": [
+                    {
+                        "Content": "Stage 3",
+                        "Correct": false
+                    },
+                    {
+                        "Content": "Stage 5",
+                        "Correct": false
+                    },
+                    {
+                        "Content": "Stage 6",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "Stage 7",
+                        "Correct": false
+                    }
+                ]
+            },
+            {
+                "QuestionType": "single_choice",
+                "Category": "Nodes_Basic",
+                "Content": "True or False: Node Types are Predetermined and the Same Across All Servers?",
+                "Explanation": "",
+                "AnswerOrder": "content",
+                "Answers": [
+                    {
+                        "Content": "True",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "False",
+                        "Correct": false
+                    }
+                ]
+            },
+            {
+                "QuestionType": "single_choice",
+                "Category": "Nodes_Basic",
+                "Content": "What property of Nodes do the colored areas in the image below represent?",
+                "Image": ["uploads", "2020", "08", "25", "Nodes.png"],
+                "Explanation": "",
+                "AnswerOrder": "random",
+                "Answers": [
+                    {
+                        "Content": "The Node's Zone of Influence",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "The Node's Combat Boundary",
+                        "Correct": false
+                    },
+                    {
+                        "Content": "The Type of Crop that can be Planted within the Node Area",
+                        "Correct": false
+                    },
+                    {
+                        "Content": "The Node Type",
+                        "Correct": false
+                    }
+                ]
+            },
+            {
+                "QuestionType": "single_choice",
+                "Category": "Nodes_Basic",
+                "Content": "True or False: Nodes can be located in the Ocean?",
+                "Explanation": "Nodes CANNOT exist in the water or underwater.",
+                "AnswerOrder": "content",
+                "Answers": [
+                    {
+                        "Content": "True",
+                        "Correct": false
+                    },
+                    {
+                        "Content": "False",
+                        "Correct": true
+                    }
+                ]
+            },
+            {
+                "QuestionType": "single_choice",
+                "Category": "Nodes_Basic",
+                "Content": "What is the EARLIEST Node Stage you can become a Mayor?",
+                "Explanation": "Node Stage 3 is the first player-decided stage of development.",
+                "AnswerOrder": "random",
+                "Answers": [
+                    {
+                        "Content": "Expedition",
+                        "Correct": false
+                    },
+                    {
+                        "Content": "Encampment",
+                        "Correct": false
+                    },
+                    {
+                        "Content": "Village",
+                        "Correct": true
+                    }
+                    ,
+                    {
+                        "Content": "Town",
+                        "Correct": false
+                    }
+                ]
+            },
+            {
+                "QuestionType": "single_choice",
+                "Category": "Nodes_Basic",
+                "Content": "True or False: You can be a Citizen of Multiple Nodes simultaneously?",
+                "Explanation": "You can be a Citizen of 1 Node at a time. Switching Citizenship has a 2-week Cooldown.",
+                "AnswerOrder": "content",
+                "Answers": [
+                    {
+                        "Content": "True",
+                        "Correct": false
+                    },
+                    {
+                        "Content": "False",
+                        "Correct": true
+                    }
+                ]
+            },
+            {
+                "QuestionType": "multi_choice",
+                "Category": "Nodes_Basic",
+                "Content": "Pick All that Apply: Which of the following Vassal Node statements are TRUE?",
+                "Explanation": "https://ashesofcreation.wiki/Nodes#Vassal_nodes",
+                "AnswerOrder": "random",
+                "Answers": [
+                    {
+                        "Content": "Vassal Nodes are enslaved nodes by a nearby parent that's at least Stage 3 (Village) or higher",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "Vassal Nodes can have more than one parent",
+                        "Correct": false
+                    },
+                    {
+                        "Content": "Vassal Nodes must remain at least one node stage below their parent node",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "Vassal Nodes give excess experience to their parent nodes",
+                        "Correct": true
+                    }
+                ]
+            },
+            {
+                "QuestionType": "single_choice",
+                "Category": "Nodes_Basic",
+                "Content": "True or False: Nodes accumulate experience deficit each day based on the Node's level?",
+                "Explanation": "",
+                "AnswerOrder": "content",
+                "Answers": [
+                    {
+                        "Content": "True",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "False",
+                        "Correct": false
+                    }
+                ]
+            },
+            {
+                "QuestionType": "multi_choice",
+                "Category": "Nodes_Basic",
+                "Content": "Pick All that Apply: Node Layout and Style is determined by which Factors?",
+                "Explanation": "https://ashesofcreation.wiki/Nodes#Node_development",
+                "AnswerOrder": "random",
+                "Answers": [
+                    {
+                        "Content": "Node Type",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "Node's Mayor",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "Race that contributed Most to the Node's Advancement",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "Location of the Node",
+                        "Correct": true
+                    }
+                ]
+            }
+        ]
+    }
+}
