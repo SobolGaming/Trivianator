@@ -58,7 +58,3 @@ def smooth_timedelta(secs):
     elif secs > 1:
         timetot += " {} seconds".format(int(secs))
     return timetot
-
-@register.simple_tag
-def setvar(val=None):
-    return val

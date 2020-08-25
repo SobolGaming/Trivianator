@@ -67,13 +67,10 @@ class ViewQuizListByCategory(ListView):
             category=self.kwargs['category_name']
         )
 
-        return super(ViewQuizListByCategory, self).\
-            dispatch(request, *args, **kwargs)
+        return super(ViewQuizListByCategory, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(ViewQuizListByCategory, self)\
-            .get_context_data(**kwargs)
-
+        context = super(ViewQuizListByCategory, self).get_context_data(**kwargs)
         context['category'] = self.category
         return context
 
@@ -94,6 +91,11 @@ class QuizUserProgressView(TemplateView):
         progress, c = Progress.objects.get_or_create(user=self.request.user)
         context['cat_scores'] = progress.list_all_cat_scores
         context['saved'] = progress.show_saved()
+        context['show_leaderboards'] = True
+        for quiz in context['saved']:
+            if not quiz.quiz.show_leaderboards:
+                context['show_leaderboards'] = False
+                break
         return context
 
 
