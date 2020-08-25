@@ -25,7 +25,7 @@ The JSON file for uploading a Quiz, it's associated Questions and their Answers 
             DateTime is Provided as "YYYY-MM-DD HH:MM:SS+ZZZZ" (the '+ZZZZ' is optional for specifing timezone offset from local server time)
         "Questions": [  next we have an array of Questions associated with the quiz, each non-optional field must be provided for each question
             {
-                "QuestionType": Selection of either "single_choice" or "multi_choice" depending if just one, or more any possiblity of answers are correct
+                "QuestionType": Selection of either "single_choice" or "multi_choice" depending if just one, or 0 to All possiblity of answers are correct
                 "Category": (Optional) String - name of Category associated with the question; can be "" or null
                 "Content": String - the text of the question
                 "Explanation": (Optional) String - explanation of the reasoning behind the answers or about the question, defaults to ""
