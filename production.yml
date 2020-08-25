@@ -4,6 +4,10 @@ volumes:
   production_postgres_data: {}
   production_postgres_data_backups: {}
   production_traefik: {}
+  static_files_data:
+    external: true
+  media_files_data:
+    external: true
 
 services:
   django: &django
@@ -11,6 +15,8 @@ services:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
     image: trivianator_production_django
+    volumes:
+      - static_files_data:/app/staticfiles
     depends_on:
       - postgres
       - redis
@@ -18,6 +24,8 @@ services:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
     command: /start
+    ports:
+      - "8000:8000"
 
   postgres:
     build:
@@ -61,5 +69,3 @@ services:
     <<: *django
     image: trivianator_production_flower
     command: /start-flower
-
-  
