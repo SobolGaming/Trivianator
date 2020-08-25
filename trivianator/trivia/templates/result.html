@@ -114,7 +114,9 @@
 	  {% correct_answer_for_all question %}
 
       {% if question.user_answer %}
-      <p>{% trans "Your answer" %}: {{ question|answer_choice_to_string:question.user_answer }}</p>
+        <p>{% trans "Your answer" %}: {{ question|answer_choice_to_string:question.user_answer }}</p>
+      {% else %}
+        <p>{% trans "Your answer: None" %}</p>
       {% endif %}
 
 	  <p><strong>{% trans "Explanation" %}:</strong></p>

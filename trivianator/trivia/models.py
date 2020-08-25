@@ -166,13 +166,14 @@ class Quiz(models.Model):
         return Leaderboard.objects.filter(quiz=self).order_by('-score', 'completion_time')[:30]
 
     @property
-    def no_longer_competitive(self):
+    def end_time_expired(self):
         if self.competitive:
             if now() >= self.end_time:
                 return True
             else:
                 return False
         return True
+
 
 # progress manager
 class ProgressManager(models.Manager):
@@ -322,6 +323,7 @@ class SittingManager(models.Manager):
                                   incorrect_questions="",
                                   current_score=0,
                                   complete=False,
+                                  start=now(),
                                   user_answers='{}')
         return new_sitting
 
@@ -493,7 +495,6 @@ class Sitting(models.Model):
                     question.user_answer = user_answers[str(question.id)]
                 except KeyError:
                     # quiz or question timer expired
-                    question.user_answer = '{}'
                     pass
 
         return questions
@@ -614,6 +615,8 @@ class Question(models.Model):
                 ret.append(Answer.objects.get(id=elem).content)
             return ret
         else:
+            if guess == '':
+                return ''
             return Answer.objects.get(id=guess).content
 
 

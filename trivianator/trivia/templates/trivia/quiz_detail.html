@@ -12,7 +12,7 @@
   <h4>{% trans "You will only get one attempt at this quiz" %}.</h4>
 {% endif %}
 {% if quiz.timer > 0 %}
-  <h4>{% trans "This is a Timed Quiz! You will have "%}{{ quiz.timer|smooth_timedelta }}{% trans ". Timer will start when you hit 'Start Quiz'" %}</h4>
+  <p>{% trans "This is a Timed Quiz! You will have "%}<strong>{{ quiz.timer|smooth_timedelta }}</strong>{% trans ". Timer will start when you hit 'Start Quiz'" %}</p>
 {% endif %}
 <p>{{ quiz.description }}</p>
 <p>
@@ -20,6 +20,6 @@
 	{% trans "Start Quiz" %}
   </a>
 </p>
-<h5>NOTE:<br>Some questions ask "Pick All that Apply". For those, the answer could be anywhere from 1 to All checkmared boxes.<br>
-Do not assume that that only 1 checkbox is the correct answer.</h5>
+<p>NOTE:<br>Some questions ask "Pick All that Apply". For those, the answer could be anywhere from <strong>0</strong> to <strong>All</strong> checkmared boxes.<br>
+Do not assume that <strong>Any</strong> or <strong>just 1</strong> checkbox is the correct answer.</p>
 {% endblock %}
