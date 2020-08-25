@@ -464,7 +464,12 @@ class Sitting(models.Model):
         if with_answers:
             user_answers = json.loads(self.user_answers)
             for question in questions:
-                question.user_answer = user_answers[str(question.id)]
+                try: 
+                    question.user_answer = user_answers[str(question.id)]
+                except KeyError:
+                    # quiz or question timer expired
+                    question.user_answer = '{}'
+                    pass
 
         return questions
 
