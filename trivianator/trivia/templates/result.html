@@ -9,6 +9,10 @@
 
 {% block content %}
 
+  {% if quiz.timer > 0 and elapsed > quiz.timer %}
+    <p>Exceeded maximum allowed {{ quiz.timer|smooth_timedelta }}.</p>
+  {% endif %}
+
   {% if previous.answers %}
 
   <p class="muted"><small>{% trans "The previous question" %}:</small></p>

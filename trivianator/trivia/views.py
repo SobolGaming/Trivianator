@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
+from django.utils.timezone import now
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import FormView
 from .forms import QuestionForm
@@ -171,6 +172,10 @@ class QuizTake(FormView):
             self.form_valid_user(form)
             if self.sitting.get_first_question() is False:
                 return self.final_result_user()
+            if self.quiz.timer > 0:
+                elapsed = now() - self.sitting.start
+                if elapsed.total_seconds() > self.quiz.timer:
+                    return self.final_result_user()
         self.request.POST = {}
 
         return super(QuizTake, self).get(self, self.request)
@@ -215,6 +220,8 @@ class QuizTake(FormView):
         self.sitting.remove_first_question()
 
     def final_result_user(self):
+        elapsed = (now() - self.sitting.start).total_seconds()
+
         results = {
             'quiz': self.quiz,
             'score': self.sitting.get_current_score,
@@ -222,6 +229,7 @@ class QuizTake(FormView):
             'percent': self.sitting.get_percent_correct,
             'sitting': self.sitting,
             'previous': self.previous,
+            'elapsed': elapsed,
         }
 
         self.sitting.mark_quiz_complete()
