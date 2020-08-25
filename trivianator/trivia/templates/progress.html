@@ -31,12 +31,8 @@
 	<tbody>
 
 	  {% for quiz in saved %}
-
+		
 		{% if quiz.quiz.show_leaderboards %}
-			{% setvar 1 as display %}
-		{% endif %}
-
-		{% if display %}
 			<tr>
 				<td>{{ quiz.quiz.title }}</td>
 				<td>{{ quiz.current_score }}</td>
@@ -46,9 +42,9 @@
 		{% else %}
 			<tr>
 				<td>{{ quiz.quiz.title }}</td>
-				<td>{% trans "Currently Not Available" %}</td>
-				<td>{% trans "Currently Not Available" %}</td>
-				<td>{% trans "Currently Not Available" %}</td>
+				<td>{% trans "Hidden for Special Quiz Period" %}</td>
+				<td>{% trans "Hidden for Special Quiz Period" %}</td>
+				<td>{% trans "Hidden for Special Quiz Period" %}</td>
 			</tr>
 		{% endif %}
 
@@ -62,35 +58,44 @@
 
   {% if cat_scores %}
 
-  <h1>{% trans "Question Category Scores" %}</h1>
+	<h1>{% trans "Question Category Scores" %}</h1>
 
-  <table class="table table-bordered table-striped">
+	{% if show_leaderboards %}
+		<p class="lead">
+			{% trans "Below are the results of each category questions that you have taken." %}
+		</p>
+		<table class="table table-bordered table-striped">
 
-	<thead>
-	  <tr>
-		<th>{% trans "Category" %}</th>
-		<th>{% trans "Correctly Answered" %}</th>
-		<th>{% trans "Total Number of Questions" %}</th>
-		<th>%</th>
-	  </tr>
-	</thead>
+			<thead>
+			<tr>
+				<th>{% trans "Category" %}</th>
+				<th>{% trans "Correctly Answered" %}</th>
+				<th>{% trans "Total Number of Questions" %}</th>
+				<th>%</th>
+			</tr>
+			</thead>
 
-	<tbody>
+			<tbody>
 
-	  {% for cat, value in cat_scores.items %}
+			{% for cat, value in cat_scores.items %}
 
-	  <tr>
-		<td>{{ cat }}</td>
-		<td>{{ value.0 }}</td>
-		<td>{{ value.1 }}</td>
-		<td>{{ value.2 }}</td>
-	  </tr>
+			<tr>
+				<td>{{ cat }}</td>
+				<td>{{ value.0 }}</td>
+				<td>{{ value.1 }}</td>
+				<td>{{ value.2 }}</td>
+			</tr>
 
-	  {% endfor %}
+			{% endfor %}
 
-	</tbody>
+			</tbody>
 
-  </table>
+		</table>
+	{% else %}
+		<p class="lead">
+			{% trans "Per category questions performance currently disabled during special quiz evaluation." %}
+		</p>
+	{% endif %}
 
   {% endif %}
 
