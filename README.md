@@ -13,6 +13,11 @@ Django-based Trivia Quiz Framework
 2) ### Dependencies
   This is a Docker-based Django framework. Please make sure you have Docker installed.
 
+3) ### Preparation
+  Create the external volume mounts so that your existing apache or nginx can reach static files
+  * `docker volume create -o type=none -o o=bind -o device=/opt/staticfiles static_files_data`
+  * `docker volume create -o type=none -o o=bind -o device=/opt/staticfiles media_files_data`
+
 3) ### Docker Build
   The following commands builds all the docker containers and then instantiates them for a running system.<br>
   `docker-compose -f local.yml up` <br>

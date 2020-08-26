@@ -17,6 +17,7 @@ services:
     image: trivianator_production_django
     volumes:
       - static_files_data:/app/staticfiles
+      - media_files_data:/app/mediafiles
     depends_on:
       - postgres
       - redis
@@ -38,19 +39,31 @@ services:
     env_file:
       - ./.envs/.production/.postgres
 
-  traefik:
+  apache:
     build:
       context: .
-      dockerfile: ./compose/production/traefik/Dockerfile
-    image: trivianator_production_traefik
+      dockerfile: ./compose/production/apache2/Dockerfile
+    image: trivianator_production_apache
+    container_name: apache
+    volumes:
+      - static_files_data:/opt/staticfiles
+    ports:
+      - "8090:80"
     depends_on:
       - django
-    volumes:
-      - production_traefik:/etc/traefik/acme
-    ports:
-      - "0.0.0.0:80:80"
-      - "0.0.0.0:443:443"
-      - "0.0.0.0:5555:5555"
+  # traefik:
+  #   build:
+  #     context: .
+  #     dockerfile: ./compose/production/traefik/Dockerfile
+  #   image: trivianator_production_traefik
+  #   depends_on:
+  #     - django
+  #   volumes:
+  #     - production_traefik:/etc/traefik/acme
+  #   ports:
+  #     - "0.0.0.0:80:80"
+  #     - "0.0.0.0:443:443"
+  #     - "0.0.0.0:5555:5555"
 
   redis:
     image: redis:5.0
@@ -59,13 +72,17 @@ services:
     <<: *django
     image: trivianator_production_celeryworker
     command: /start-celeryworker
+    ports: []
 
   celerybeat:
     <<: *django
     image: trivianator_production_celerybeat
     command: /start-celerybeat
+    ports: []
 
   flower:
     <<: *django
     image: trivianator_production_flower
     command: /start-flower
+    ports:
+      - "5555:5555"
