@@ -49,7 +49,6 @@ class QuizListView(ListView):
         for q in q_competitive:
             if q.start_time <= now() and q.end_time > now():
                 context['competitive'].append(q)
-                context['competitive_done'] = {}
             elif q.start_time > now():
                 context['competitive_upcoming'].append(q)
             elif q.end_time <= now():

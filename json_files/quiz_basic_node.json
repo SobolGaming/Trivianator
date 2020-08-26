@@ -130,7 +130,7 @@
                 "QuestionType": "single_choice",
                 "Category": "Nodes_Basic",
                 "Content": "What property of Nodes do the colored areas in the image below represent?",
-                "Image": ["uploads", "2020", "08", "25", "Nodes.png"],
+                "Image": ["uploads", "manual", "Nodes.png"],
                 "Explanation": "",
                 "AnswerOrder": "random",
                 "Answers": [
