@@ -79,7 +79,7 @@
 	{% endif %}
 
 	<h2>{% trans "List of Generic Quizzes" %}</h2>
-	{% if generic %}
+	{% if generic_new or generic_taken %}
 		<table class="table table-bordered table-striped">
 
 		<thead>
@@ -93,14 +93,22 @@
 		</thead>
 
 		<tbody>
-
-			{% for quiz in generic %}
+			{% for quiz in generic_new %}
 				<tr>
-				{% if quiz.title in generic_done %}
-					<td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Again - Prev Score: " %}{{ generic_done|get_item:quiz.title }}{% trans "%" %}</a></td>
-				{% else %}
-					<td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Quiz" %}</a></td>
+				<td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Quiz" %}</a></td>
+				<td>{{ quiz.title }}</td>
+				<td>{{ quiz.get_max_score }}</td>
+				<td>{{ quiz.category }}</td>
+				{% if quiz.answers_reveal_option == 1 %}
+					<td>{% trans "After each question" %}</td>
+				{% elif quiz.answers_reveal_option == 2 %}
+					<td>{% trans "At end of quiz" %}</td>
 				{% endif %}
+				</tr>
+			{% endfor %}
+			{% for quiz in generic_taken %}
+				<tr>
+				<td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Again - Prev Score: " %}{{ generic_results|get_item:quiz.title }}{% trans "%" %}</a></td>
 				<td>{{ quiz.title }}</td>
 				<td>{{ quiz.get_max_score }}</td>
 				<td>{{ quiz.category }}</td>

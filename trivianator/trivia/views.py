@@ -54,12 +54,17 @@ class QuizListView(ListView):
             elif q.end_time <= now():
                 context['competitive_old'].append(q)
         
-        context['generic_done'] = {}
-        context['generic'] = self.get_queryset().filter(competitive=False)
-        for q in context['generic']:
+        context['generic_new'] = []
+        context['generic_taken'] = []
+        context['generic_results'] = {}
+        non_competitive_quizzes = self.get_queryset().filter(competitive=False)
+        for q in non_competitive_quizzes:
             prev_score, _ = q.get_quiz_sit_info(self.request.user)
             if prev_score != None:
-                context['generic_done'][q.title] = prev_score
+                context['generic_taken'].append(q)
+                context['generic_results'][q.title] = prev_score
+            else:
+                context['generic_new'].append(q)
 
         context['competitive_upcoming_count'] = len(context['competitive_upcoming'])
         context['competitive_old_count'] = len(context['competitive_old'])
