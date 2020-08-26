@@ -176,6 +176,27 @@ class Quiz(models.Model):
                 return False
         return True
 
+    def get_quiz_sit_info(self, user):
+        try:
+            sitting = Sitting.objects.get(quiz=self, user=user)
+            return sitting.get_percent_correct, sitting
+        except Sitting.MultipleObjectsReturned:
+            sittings = Sitting.objects.filter(quiz=self, user=user)
+            best_sit = (None, 0)
+            for sit in sittings:
+                if best_sit[0] == None:
+                    best_sit = (sit, sit.get_percent_correct)
+                elif sit.get_percent_correct > best_sit[1]:
+                    print('Deleting Sitting: ', best_sit[0])
+                    best_sit[0].delete()
+                    best_sit = (sit, sit.get_percent_correct)
+                elif sit.get_percent_correct <= best_sit[1]:
+                    print('Deleting Sitting: ', sit)
+                    sit.delete()
+            return best_sit[1], best_sit[0]
+        except Sitting.DoesNotExist:
+            return None, None
+
 
 # progress manager
 class ProgressManager(models.Manager):

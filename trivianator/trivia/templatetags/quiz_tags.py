@@ -58,3 +58,7 @@ def smooth_timedelta(secs):
     elif secs > 1:
         timetot += " {} seconds".format(int(secs))
     return timetot
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
