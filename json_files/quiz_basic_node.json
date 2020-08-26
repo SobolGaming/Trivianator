@@ -278,6 +278,66 @@
                         "Correct": true
                     }
                 ]
+            },
+            {
+                "QuestionType": "single_choice",
+                "Category": "Nodes_Basic",
+                "Content": "True or False: Nodes CANNOT be DESTROYED through Sieging before progressing to Stage 3 (Village)?",
+                "Explanation": "Stage 3 is the earliest a Node can be Sieged. There is a 21 day grace period for a Node when Stage 3 is achieved before it can be sieged.",
+                "AnswerOrder": "content",
+                "Answers": [
+                    {
+                        "Content": "True",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "False",
+                        "Correct": false
+                    }
+                ]
+            },
+            {
+                "QuestionType": "single_choice",
+                "Category": "Nodes_Basic",
+                "Content": "What happens to a Node AFTER it is successfully sieged?",
+                "Explanation": "Nodes revert to Stage 0 (Wilderness) after a successful siege.",
+                "AnswerOrder": "random",
+                "Answers": [
+                    {
+                        "Content": "It delevels by 1 level (e.g., Stage 3 becomes a Stage 2)",
+                        "Correct": false
+                    },
+                    {
+                        "Content": "It disappears and a new Node with a random Type appears in the Zone",
+                        "Correct": false
+                    },
+                    {
+                        "Content": "It reverts back to Stage 0 (Wilderness)",
+                        "Correct": true
+                    }
+                    ,
+                    {
+                        "Content": "All Node services are disabled until each Building is Repaired by the Node's Citizens",
+                        "Correct": false
+                    }
+                ]
+            },
+            {
+                "QuestionType": "single_choice",
+                "Category": "Nodes_Basic",
+                "Content": "True or False: Nodes can be located in the Underrealm?",
+                "Explanation": "True, even Underrealm Metropolises are possible.",
+                "AnswerOrder": "content",
+                "Answers": [
+                    {
+                        "Content": "True",
+                        "Correct": true
+                    },
+                    {
+                        "Content": "False",
+                        "Correct": false
+                    }
+                ]
             }
         ]
     }
