@@ -1,6 +1,6 @@
 {
     "Quiz": {
-        "Title": "Basic Node Knowledge",
+        "Title": "Basic Class Knowledge",
         "URL": "basic_classes",
         "Category": "Classes_Basic",
         "RandomOrder": false,
@@ -13,7 +13,7 @@
                 "QuestionType": "single_choice",
                 "Category": "Classes_Basic",
                 "Content": "What is the expected Level Cap at Ashes of Creation launch?",
-                "Explanation": ".",
+                "Explanation": "",
                 "AnswerOrder": "none",
                 "Answers": [
                     {
@@ -42,7 +42,7 @@
                 "QuestionType": "single_choice",
                 "Category": "Classes_Basic",
                 "Content": "A player may choose their Secondary Archetype when they reach what Level?",
-                "Explanation": ".",
+                "Explanation": "",
                 "AnswerOrder": "none",
                 "Answers": [
                     {

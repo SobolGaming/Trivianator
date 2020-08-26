@@ -3926,7 +3926,7 @@ input[type="button"].btn-block {
   word-wrap: break-word;
   background-color: rgba(230, 151, 16, 0.5);
   background-clip: border-box;
-  border: 1px solid #fff;
+  border: 1px solid #666;
   border-radius: 0.25rem; }
   .card > hr {
     margin-right: 0;
@@ -3974,7 +3974,7 @@ input[type="button"].btn-block {
   padding: 0.75rem 1.25rem;
   margin-bottom: 0;
   background-color: rgba(0, 0, 0, 0.03);
-  border-bottom: 1px solid #fff; }
+  border-bottom: 1px solid #666; }
   .card-header:first-child {
     border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0; }
   .card-header + .list-group .list-group-item:first-child {
@@ -3984,7 +3984,7 @@ input[type="button"].btn-block {
   padding: 12px 20px;
   padding: 0.75rem 1.25rem;
   background-color: rgba(0, 0, 0, 0.03);
-  border-top: 1px solid #fff; }
+  border-top: 1px solid #666; }
   .card-footer:last-child {
     border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px); }
 
@@ -4600,7 +4600,7 @@ input[type="button"].btn-block {
   padding: 0.75rem 1.25rem;
   margin-bottom: -1px;
   color: #e69710;
-  background-color: #fff;
+  background-color: #666;
   border: 1px solid rgba(0, 0, 0, 0.125); }
   .list-group-item:first-child {
     border-top-left-radius: 4px;
@@ -4616,7 +4616,7 @@ input[type="button"].btn-block {
   .list-group-item.disabled, .list-group-item:disabled {
     color: rgba(230, 151, 16, 0.25);
     pointer-events: none;
-    background-color: rgba(255, 255, 255, 0.25); }
+    background-color: rgba(102, 102, 102, 0.25); }
   .list-group-item.active {
     z-index: 2;
     color: #fff;
