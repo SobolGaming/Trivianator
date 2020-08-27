@@ -7,6 +7,14 @@ urlpatterns = [
         view=views.QuizListView.as_view(),
         name='quiz_index'),
 
+    path(route='progress/',
+        view=views.QuizUserProgressView.as_view(),
+        name='quiz_progress'),
+
+    path(route='leaderboards/',
+        view=views.QuizLeaderboardsView.as_view(),
+        name='quiz_leaderboards'),
+
     re_path(route=r'^category/$',
         view=views.CategoriesListView.as_view(),
         name='quiz_category_list_all'),
@@ -14,10 +22,6 @@ urlpatterns = [
     re_path(route=r'^category/(?P<category_name>[\w|\W-]+)/$',
         view=views.ViewQuizListByCategory.as_view(),
         name='quiz_category_list_matching'),
-
-    re_path(route=r'^progress/$',
-        view=views.QuizUserProgressView.as_view(),
-        name='quiz_progress'),
 
     re_path(route=r'^marking/$',
         view=views.QuizMarkingList.as_view(),

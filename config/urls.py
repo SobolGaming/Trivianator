@@ -20,6 +20,8 @@ urlpatterns = [
     path("users/", include("trivianator.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    path("progress/",view=tviews.QuizUserProgressView.as_view(), name="progress"),
+    path("leaderboards/",view=tviews.QuizLeaderboardsView.as_view(), name="leaderboards"),
     re_path('^trivia/', include('trivianator.trivia.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

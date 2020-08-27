@@ -52,12 +52,10 @@
             </li>
             {% if request.user.is_authenticated %}
               <li class="nav-item">
-                {# URL provided by django-allauth/account/urls.py #}
-                <a class="nav-link" href="{% url 'trivia/progress' request.user.username  %}">{% trans "Progress" %}</a>
+                <a class="nav-link" href="{% url 'progress' %}">{% trans "Progress" %}</a>
               </li>
               <li class="nav-item">
-                {# URL provided by django-allauth/account/urls.py #}
-                <a class="nav-link" href="{% url 'trivia/leaderboards' request.user.username  %}">{% trans "Leaderboards" %}</a>
+                <a class="nav-link" href="{% url 'leaderboards' %}">{% trans "Leaderboards" %}</a>
               </li>
               <li class="nav-item">
                 {# URL provided by django-allauth/account/urls.py #}
