@@ -3,14 +3,7 @@ Django-based Trivia Quiz Framework
 
 # Instructions
 
-1) ### Installation
-   Make sure to have python version 3 install on you pc or laptop.
-   If not install it from [here](https://www.python.org)
-   **Clone repository**
-   `https://github.com/SobolGaming/Trivianator.git`
-   `cd Trivianator`
-
-2) ### Dependencies
+1) ### Dependencies
    This is a Docker-based Django framework. Please make sure you have Docker installed.
 
 3) ### Preparation
@@ -19,20 +12,16 @@ Django-based Trivia Quiz Framework
    * `docker volume create -o type=none -o o=bind -o device=/opt/mediafiles media_files_data`
 
 4) ### Docker Build
-   The following commands builds all the docker containers and then instantiates them for a running system.<br>
-   `docker-compose -f local.yml up` <br>
+   The following command builds all the docker containers and then instantiates them for a running system.
+   `docker-compose -f local.yml up`
    When complete, your site will be hosted on `http://127.0.0.1:8000`
 
 5) ### Running Django Management Commands
    To run any `python manage.py <CMD>` like you would typically, you need to:
-
-    Find the django container ID using: `docker ps`
-
-    Enter the django container using: `docker exec -it <CONTAINER_ID> /bin/bash`
-
-    Source the entrypoint file: `source /entrypoint`
-
-    Run the command: `python manage.py <CMD>`
+   Find the django container ID using: `docker ps`
+   Enter the django container using: `docker exec -it <CONTAINER_ID> /bin/bash`
+   Source the entrypoint file: `source /entrypoint`
+   Run the command: `python manage.py <CMD>`
 
 6) ### For production standup
    In production you would need to `django python manage.py makemigrations` and `django python manage.py migrate`.

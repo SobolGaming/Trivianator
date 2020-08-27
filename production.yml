@@ -47,6 +47,7 @@ services:
     container_name: apache
     volumes:
       - static_files_data:/opt/staticfiles
+      - media_files_data:/opt/mediafiles
     ports:
       - "8090:80"
     depends_on:
@@ -60,6 +61,7 @@ services:
     container_name: nginx
     volumes:
       - static_files_data:/opt/staticfiles
+      - media_files_data:/opt/mediafiles
     ports:
     - "8080:80"
     depends_on:
