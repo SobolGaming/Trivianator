@@ -8,6 +8,10 @@ Django-based Trivia Quiz Framework
 
 3) ### Preparation
    Create the external volume mounts so that your existing apache or nginx can reach static files
+   * `mkdir /opt/mediafiles`
+   * `mkdir /opt/staticfiles`
+   * `chmod /opt/staticfiles`
+   * `chmod /opt/mediafiles`
    * `docker volume create -o type=none -o o=bind -o device=/opt/staticfiles static_files_data`
    * `docker volume create -o type=none -o o=bind -o device=/opt/mediafiles media_files_data`
 
@@ -24,7 +28,7 @@ Django-based Trivia Quiz Framework
    Run the command: `python manage.py <CMD>`
 
 6) ### For production standup
-   In production you would need to `django python manage.py makemigrations` and `django python manage.py migrate`.
+   In production you would need to `django python manage.py makemigrations` and `django python manage.py migrate` in the docker container
 
 6) ### Useful Commands when getting started
    Once system is up and running create a superuser:
