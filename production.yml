@@ -26,7 +26,7 @@ services:
       - ./.envs/.production/.postgres
     command: /start
     ports:
-      - "8000:8000"
+      - "8000:5000"
 
   postgres:
     build:
@@ -49,6 +49,19 @@ services:
       - static_files_data:/opt/staticfiles
     ports:
       - "8090:80"
+    depends_on:
+      - django
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./compose/production/nginx/Dockerfile
+    image: trivianator_production_nginx
+    container_name: nginx
+    volumes:
+      - static_files_data:/opt/staticfiles
+    ports:
+    - "8080:80"
     depends_on:
       - django
   # traefik:
