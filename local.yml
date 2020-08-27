@@ -35,31 +35,31 @@ services:
     env_file:
       - ./.envs/.local/.postgres
 
-  nginx:
-    build:
-      context: .
-      dockerfile: ./compose/production/nginx/Dockerfile
-    image: trivianator_production_nginx
-    container_name: nginx
-    # volumes:
-    #   - static_files_data:/opt/staticfiles
-    ports:
-    - "8080:80"
-    depends_on:
-      - django
-
-  apache:
-    build:
-      context: .
-      dockerfile: ./compose/production/apache2/Dockerfile
-    image: trivianator_production_apache
-    container_name: apache
-    # volumes:
-    #   - static_files_data:/opt/staticfiles
-    ports:
-    - "8090:80"
-    depends_on:
-      - django
+  # nginx:
+  #   build:
+  #     context: .
+  #     dockerfile: ./compose/production/nginx/Dockerfile
+  #   image: trivianator_production_nginx
+  #   container_name: nginx
+  #   # volumes:
+  #   #   - static_files_data:/opt/staticfiles
+  #   ports:
+  #   - "8080:80"
+  #   depends_on:
+  #     - django
+  #
+  # apache:
+  #   build:
+  #     context: .
+  #     dockerfile: ./compose/production/apache2/Dockerfile
+  #   image: trivianator_production_apache
+  #   container_name: apache
+  #   # volumes:
+  #   #   - static_files_data:/opt/staticfiles
+  #   ports:
+  #   - "8090:80"
+  #   depends_on:
+  #     - django
 
   # docs:
   #   image: trivianator_local_docs
