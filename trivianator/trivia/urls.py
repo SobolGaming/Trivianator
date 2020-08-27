@@ -42,7 +42,7 @@ urlpatterns = [
         name='quiz_question'),
 
     #  passes variable 'leaderboard' to leaderboard detail view
-    re_path(route=r'leaderboards/(?P<slug>[\w-]+)/$',
-        view=views.QuizLeaderboardsDetailView.as_view(),
+    re_path(route=r'leaderboards/(?P<leaderboard>\d+)/$',
+        view=views.QuizLeaderboardsDetailView.as_view(pk_url_kwarg='leaderboard'),
         name='quiz_leaderboards'),
 ]

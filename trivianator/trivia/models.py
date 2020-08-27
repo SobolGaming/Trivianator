@@ -751,7 +751,7 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
                     question_type = question['QuestionType'].lower(),
                     category = q_cat[0],
                     content = question['Content'],
-                    explanation = question['Explanation'] if 'Explanation' in question else "",
+                    explanation = question['Explanation'] if 'Explanation' in question else None,
                     answer_order = sanitize_string(question['AnswerOrder']) if 'AnswerOrder' in question and question['AnswerOrder'] != "" else 'none',
                 )
 
