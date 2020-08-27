@@ -12,7 +12,7 @@ Django-based Trivia Quiz Framework
 
 # To Be Done
 * Minify files for production
-* Support
+* Support postgres DB backup
 
 # Dependencies
 This is a Docker-based Django framework. Please make sure you have Docker and
@@ -125,8 +125,11 @@ fit your particular environment.  The examples do NOT include ssl customization
 
 6) Check out [First Steps](#first-steps-after-running)
 
-You may add the apache and nginx servers in to  and use the `.envs/.insecure.production`
-file to see an example of "production"
+If you feel like experimenting with a dockerized example of a production apache
+or nginx setup (serving static files for django, etc NOT SECURITY) You may add
+the apache and nginx servers in to the `production.yml` and use the
+`.envs/.insecure.production` file to see an example of "production".  It does
+not configure SSL.
 
 ## First Steps after Running
 
