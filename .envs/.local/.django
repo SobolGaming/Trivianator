@@ -13,3 +13,6 @@ REDIS_URL=redis://redis:6379/0
 CELERY_FLOWER_USER=VgMIPKrMhlHoZHqumWrgbhBXWfBnQTXu
 CELERY_FLOWER_PASSWORD=5cS1qPfO1kxo3IaQ2dTW1KCqleuJLZv4fdYJgVK7Du8CEq9KS8hsgr42TQms9JNh
 
+# Logging
+# ------------------------------------------------------------------------------
+DJANGO_LOG_LEVEL=DEBUG
