@@ -83,21 +83,21 @@ services:
   redis:
     image: redis:5.0
 
-  celeryworker:
-    <<: *django
-    image: trivianator_production_celeryworker
-    command: /start-celeryworker
-    ports: []
-
-  celerybeat:
-    <<: *django
-    image: trivianator_production_celerybeat
-    command: /start-celerybeat
-    ports: []
-
-  flower:
-    <<: *django
-    image: trivianator_production_flower
-    command: /start-flower
-    ports:
-      - "5555:5555"
+  # celeryworker:
+  #   <<: *django
+  #   image: trivianator_production_celeryworker
+  #   command: /start-celeryworker
+  #   ports: []
+  #
+  # celerybeat:
+  #   <<: *django
+  #   image: trivianator_production_celerybeat
+  #   command: /start-celerybeat
+  #   ports: []
+  #
+  # flower:
+  #   <<: *django
+  #   image: trivianator_production_flower
+  #   command: /start-flower
+  #   ports:
+  #     - "5555:5555"
