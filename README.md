@@ -20,16 +20,13 @@ Django-based Trivia Quiz Framework
 3) ### Docker Build
    The following command builds all the docker containers and then instantiates them for a running system.
 
-      Locally:
+      **Locally**: `docker-compose -f local.yml up`
 
-         `docker-compose -f local.yml up`
+      When complete, your site will be hosted on `http://127.0.0.1:8000`
 
-         When complete, your site will be hosted on `http://127.0.0.1:8000`
+      **Production**: `docker-compose -f production.yml up`
 
-      Production:
-         `docker-compose -f production.yml up`
-
-         When complete, your site will be hosted on `<one of the DJANGO_ALLOWED_HOSTS>:8000`
+      When complete, your site will be hosted on `<one of the DJANGO_ALLOWED_HOSTS>:8000`
 
 4) ### Running Django Management Commands
    To run any `python manage.py <CMD>` like you would typically, you need to:
@@ -64,7 +61,8 @@ Django-based Trivia Quiz Framework
 
       NOTE: the actual URL for `/admin/` should be different for `production` as it should be a long unique URL for sercurity reasons.
 
-            this is specified in `.envs/.production/.django` with `DJANGO_ADMIN_URL` parameter
+      this is specified in `.envs/.production/.django` with `DJANGO_ADMIN_URL` parameter
+      
    If you ever modify the data_type of existing model fields you will need to edit the Postgres DB for it to work.
 
    During development you can just `docker-compose -f .\local.yml down -v`. Adding the `-v` deletes the volume and wipes the DB.
@@ -79,5 +77,5 @@ Django-based Trivia Quiz Framework
    `http://127.0.0.1:8000/trivia/progress/` lists all quizzes taken by the user and their result
 
    `http://127.0.0.1:8000/trivia/category/` lists all quiz/question related categories
-   
+
    `http://127.0.0.1:8000/trivia/<FriendlyURL>` direct URL to a quiz identified by the friendly URL set when creating the quiz
