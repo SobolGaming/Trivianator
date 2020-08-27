@@ -150,9 +150,18 @@ class QuizLeaderboardsView(QuizListView):
             if q.end_time <= now():
                 context['competitive_old'].append(q)
 
-        context['competitive_upcoming_count'] = len(context['competitive_upcoming'])
         context['competitive_old_count'] = len(context['competitive_old'])
         return context
+
+
+class QuizLeaderboardsDetailView(DetailView):
+    model = Quiz
+    leaderboard_field = 'url'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
 
 
 class QuizMarkingList(QuizMarkerMixin, SittingFilterTitleMixin, ListView):

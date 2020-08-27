@@ -13,7 +13,7 @@ urlpatterns = [
 
     path(route='leaderboards/',
         view=views.QuizLeaderboardsView.as_view(),
-        name='quiz_leaderboards'),
+        name='leaderboards'),
 
     re_path(route=r'^category/$',
         view=views.CategoriesListView.as_view(),
@@ -40,4 +40,9 @@ urlpatterns = [
     re_path(route=r'^(?P<quiz_name>[\w-]+)/take/$',
         view=views.QuizTake.as_view(),
         name='quiz_question'),
+
+    #  passes variable 'slug' to leaderboard detail view
+    re_path(route=r'^(?P<leaderboard>[\w-]+)/$',
+        view=views.QuizLeaderboardsDetailView.as_view(),
+        name='quiz_leaderboards'),
 ]
