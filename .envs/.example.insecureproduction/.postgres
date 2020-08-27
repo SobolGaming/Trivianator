@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=trivianator
+POSTGRES_USER=NgwLbSihcgvpeYIjyQjrScuveawGTINr
+POSTGRES_PASSWORD=qFRf6pTeuXnbyOgFvGJsrcZULREgjhUI9OzT8JoonQUdj9xnZwWUr49dgiCK1snC
