@@ -190,4 +190,10 @@ it connects with `migrate`
 ### Clear migrations to start from scratch
 
 rm -rf all the `000*` files in any migrations folders of the trivia app or other
-self created apps.
+self created apps.  Do not touch the `trivianator/contrib/sites/migrations`
+folder unless you know what you are doing.
+
+### General Help links
+
+* https://cookiecutter-django.readthedocs.io/en/latest/index.html
+* https://docs.djangoproject.com/en/3.1/
