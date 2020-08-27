@@ -156,12 +156,20 @@ class QuizLeaderboardsView(QuizListView):
 
 class QuizLeaderboardsDetailView(DetailView):
     model = Quiz
-    leaderboard_field = 'url'
+    template_name = 'leaderboard_detail.html'
+    slug_field = 'url'
 
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        context = self.get_context_data(object=self.object)
-        return self.render_to_response(context)
+    def get_queryset(self):
+        queryset = super(QuizLeaderboardsDetailView, self).get_queryset()
+        return queryset.filter(draft=False)
+
+    def get_context_data(self, **kwargs):
+        context = super(QuizLeaderboardsDetailView, self).get_context_data(**kwargs)
+
+    #def get(self, request, *args, **kwargs):
+    #    self.object = self.get_object()
+    #    context = self.get_context_data(object=self.object)
+    #    return self.render_to_response(context)
 
 
 class QuizMarkingList(QuizMarkerMixin, SittingFilterTitleMixin, ListView):

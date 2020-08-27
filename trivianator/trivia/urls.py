@@ -9,7 +9,7 @@ urlpatterns = [
 
     path(route='progress/',
         view=views.QuizUserProgressView.as_view(),
-        name='quiz_progress'),
+        name='progress'),
 
     path(route='leaderboards/',
         view=views.QuizLeaderboardsView.as_view(),
@@ -41,8 +41,8 @@ urlpatterns = [
         view=views.QuizTake.as_view(),
         name='quiz_question'),
 
-    #  passes variable 'slug' to leaderboard detail view
-    re_path(route=r'^(?P<leaderboard>[\w-]+)/$',
+    #  passes variable 'leaderboard' to leaderboard detail view
+    re_path(route=r'leaderboards/(?P<slug>[\w-]+)/$',
         view=views.QuizLeaderboardsDetailView.as_view(),
         name='quiz_leaderboards'),
 ]

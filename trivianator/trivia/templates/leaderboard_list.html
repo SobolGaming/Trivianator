@@ -19,7 +19,7 @@
       <tbody>
   			{% for quiz in competitive_old %}
   				<tr>
-  				  <td><a href="{% url 'quiz_leaderboards' leaderboard=quiz.url %}">{{ quiz.title }}</a></td>
+  				  <td><a href="{% url 'quiz_leaderboards' slug=quiz.url %}">{{ quiz.title }}</a></td>
             <td>{{ quiz.get_leaderboard_count }}</td>
             <td>{{ quiz.end_time }}</td>
   				</tr>
