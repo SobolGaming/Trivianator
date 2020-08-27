@@ -53,10 +53,23 @@ class QuizListView(ListView):
                 context['competitive_upcoming'].append(q)
             elif q.end_time <= now():
                 context['competitive_old'].append(q)
-        context['generic'] = self.get_queryset().filter(competitive=False)
+        
+        context['generic_new'] = []
+        context['generic_taken'] = []
+        context['generic_results'] = {}
+        non_competitive_quizzes = self.get_queryset().filter(competitive=False)
+        for q in non_competitive_quizzes:
+            prev_score, _ = q.get_quiz_sit_info(self.request.user)
+            if prev_score != None:
+                context['generic_taken'].append(q)
+                context['generic_results'][q.title] = prev_score
+            else:
+                context['generic_new'].append(q)
+
         context['competitive_upcoming_count'] = len(context['competitive_upcoming'])
         context['competitive_old_count'] = len(context['competitive_old'])
         return context
+
 
 class QuizDetailView(DetailView):
     model = Quiz
@@ -270,7 +283,9 @@ class QuizTake(FormView):
             results['incorrect_questions'] = self.sitting.get_incorrect_questions
 
         if self.quiz.saved is False and self.quiz.competitive is False:
-            self.sitting.delete()
+            prev_score, prev_sit = self.quiz.get_quiz_sit_info(self.request.user)
+            if prev_score == None:
+                raise Exception("Invalid Sitting at End!")
 
         return render(self.request, 'result.html', results)
 
