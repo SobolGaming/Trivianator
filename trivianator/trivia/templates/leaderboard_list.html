@@ -12,6 +12,7 @@
       <thead>
         <tr>
           <th>{% trans "Quiz Leaderboards Link" %}</th>
+          <th>{% trans "Quiz Title" %}</th>
           <th>{% trans "Num Participants" %}</th>
           <th>{% trans "DateTime Ended" %}</th>
         </tr>
@@ -19,7 +20,8 @@
       <tbody>
   			{% for quiz in competitive_old %}
   				<tr>
-  				  <td><a href="{% url 'quiz_leaderboards' leaderboard=quiz.pk %}">{{ quiz.title }}</a></td>
+            <td><a href="{% url 'quiz_leaderboards' leaderboard=quiz.pk %}">{% trans "Leaderboard" %}</a></td>
+            <td>{{ quiz.title }}</td>
             <td>{{ quiz.get_leaderboard_count }}</td>
             <td>{{ quiz.end_time }}</td>
   				</tr>
