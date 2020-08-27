@@ -168,6 +168,10 @@ class Quiz(models.Model):
         return Leaderboard.objects.filter(quiz=self).order_by('-score', 'completion_time')[:30]
 
     @property
+    def get_leaderboard_count(self):
+        return Leaderboard.objects.filter(quiz=self).count()
+
+    @property
     def end_time_expired(self):
         if self.competitive:
             if now() >= self.end_time:
@@ -514,7 +518,7 @@ class Sitting(models.Model):
         if with_answers:
             user_answers = json.loads(self.user_answers)
             for question in questions:
-                try: 
+                try:
                     question.user_answer = user_answers[str(question.id)]
                 except KeyError:
                     # quiz or question timer expired
@@ -747,7 +751,7 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
                     question_type = question['QuestionType'].lower(),
                     category = q_cat[0],
                     content = question['Content'],
-                    explanation = question['Explanation'] if 'Explanation' in question else "",
+                    explanation = question['Explanation'] if 'Explanation' in question else None,
                     answer_order = sanitize_string(question['AnswerOrder']) if 'AnswerOrder' in question and question['AnswerOrder'] != "" else 'none',
                 )
 

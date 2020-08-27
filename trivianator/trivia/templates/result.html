@@ -37,7 +37,7 @@
   {% if previous.previous_question.explanation %}
   <p><strong>{% trans "Explanation" %}:</strong></p>
   <div class="alert alert-debug">
-    <p>{{ previous.previous_question.explanation }}</p>
+    {{ previous.previous_question.explanation }}
   </div>
   <hr>
   {% endif %}
@@ -59,31 +59,11 @@
   {% endif %}
 
   <hr><p class="lead">{{ sitting.result_message }}</p>
-    
+
   <hr>
-  {% if sitting.complete and quiz.show_leaderboards and quiz.competitive and no_longer_competitive %}
-    <div>
-      <h2>{% trans "Leaderboards" %}</h2>
-      <table class="table table-bordered table-striped">
-      <thead>
-        <tr>
-            <th>{% trans "Username" %}</th>
-            <th>{% trans "Score" %}</th>
-            <th>{% trans "Completion Time" %}</th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for entry in quiz.get_leaderboard %}
-          <tr>
-              <td>{{ entry.user.username }}</td>
-              <td>{{ entry.score }}</td>
-              <td>{{ entry.completion_time|smooth_timedelta }}</td>
-          </tr>
-      {% endfor %}
-      </tbody>
-      </table>
-    </div>
-  {% endif %}
+    {% if sitting.complete and quiz.show_leaderboards and quiz.competitive and no_longer_competitive %}
+      {% include 'leaderboard_block.html' %}
+    {% endif %}
   <hr>
 
   <div>
@@ -121,7 +101,7 @@
 
 	  <p><strong>{% trans "Explanation" %}:</strong></p>
 	  <div class="alert alert-debug">
-		  <p>{{ question.explanation }}</p>
+		  {{ question.explanation }}
 	  </div>
 
 	  <hr>

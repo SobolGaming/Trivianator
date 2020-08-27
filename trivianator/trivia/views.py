@@ -53,7 +53,7 @@ class QuizListView(ListView):
                 context['competitive_upcoming'].append(q)
             elif q.end_time <= now():
                 context['competitive_old'].append(q)
-        
+
         context['generic_new'] = []
         context['generic_taken'] = []
         context['generic_results'] = {}
@@ -131,6 +131,32 @@ class QuizUserProgressView(TemplateView):
                 context['hide'].append(quiz.quiz.title)
                 break
         return context
+
+
+class QuizLeaderboardsView(QuizListView):
+    template_name = 'leaderboard_list.html'
+    model = Quiz
+    # @login_required
+    def get_queryset(self):
+        queryset = super(QuizLeaderboardsView, self).get_queryset()
+        return queryset.filter(draft=False)
+
+    def get_context_data(self, **kwargs):
+        context = super(QuizLeaderboardsView, self).get_context_data(**kwargs)
+        q_competitive = self.get_queryset().filter(competitive=True)
+        context['now'] = now()
+        context['competitive_old'] = []
+        for q in q_competitive:
+            if q.end_time <= now():
+                context['competitive_old'].append(q)
+
+        context['competitive_old_count'] = len(context['competitive_old'])
+        return context
+
+
+class QuizLeaderboardsDetailView(SittingFilterTitleMixin, DetailView):
+    model = Quiz
+    template_name = 'leaderboard_detail.html'
 
 
 class QuizMarkingList(QuizMarkerMixin, SittingFilterTitleMixin, ListView):

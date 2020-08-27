@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load quiz_tags %}
+
+{% block content %}
+  {% with object as quiz %}
+    {% include 'leaderboard_block.html' %}
+  {% endwith %}
+{% endblock %}
