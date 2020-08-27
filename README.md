@@ -11,7 +11,8 @@ Django-based Trivia Quiz Framework
 * Automatically minimizes static files in develop/local mode.
 
 # To Be Done
-* minify files for production
+* Minify files for production
+* Support
 
 # Dependencies
 This is a Docker-based Django framework. Please make sure you have Docker and
@@ -35,30 +36,31 @@ Email output is handled by a local mailhog instance that will print emails to
 stdout.  If you need to view it, simply have the docker output for the entire
 compose stack up or specifically run `docker logs` on the mailhog container.
 
-If you need to quickly clear the entire database to start over
+If you need to quickly clear the entire database to start over then follow
+[this](#clear-development-db)
 
 
 1) #### Django Compose file Customization
 
-   * Edit the `production.yml` file to suite your setup.
-   * Enable or disable additional containers
-   * Remap ports as you desire
+   * (Unnecessary) Edit the `local.yml` file to suite your setup if you feel
+     like it.
+   * (Unnecessary) Enable or disable additional containers if you feel like it
+     (apache/nginx perhaps)
+   * (Unnecessary) Remap ports if you feel like it
 
 2) #### Django & Postgres Env Customization
 
    * Edit the `.envs/.local` file to suite your setup.
-   * You will need to understand some Django configuration to setup options.
-   * Specifically setup the usernames and passwords BEFORE you `makemigrations`
-     and `migrate`
-   * Configure the `ALLOWED_HOSTS` and `INTERNAL_IPS` to match your setup (to
-     show you debug traces when bad things happen in the webpage)
-   * Configure email stuff.  This will depend on how you expect to send email or
-     currently do.
+   * If accessing from anything other than the `localhost`: Configure the
+     `ALLOWED_HOSTS` and `INTERNAL_IPS` to match your setup (to show you debug
+     traces when bad things happen in the webpage)
 
 3) #### Actually deploy
 
    * `docker-compose -f local.yml up --build`
    * When complete, your site will be hosted on `127.0.0.1:8000`
+
+4) Check out [First Steps](#first-steps-after-running)
 
 ## Running in Production
 
@@ -88,7 +90,7 @@ fit your particular environment.  The examples do NOT include ssl customization
    * `docker volume create -o type=none -o o=bind -o device=/opt/mediafiles media_files_data`
 
    If you would like to change the staticfiles or mediafiles location then you
-   will need to [update the compose files](django-compose-file-customization),
+   will need to [update the compose files](#django-compose-file-customization),
    and the docker volume create command. The containers themselves should still
    be fine.
 
@@ -117,17 +119,22 @@ fit your particular environment.  The examples do NOT include ssl customization
    * `docker-compose -f production.yml`
    * When complete, your site will be hosted on `<Host Running Docker>:8000`
 
-4) #### Makemigrations and migrate if there are Model Changes (Or First Time)
+5) #### Makemigrations and migrate if there are Model Changes (Or First Time)
 
-   * Follow [this](how-to-perform-migrations-in-production)
+   * Follow [this](#how-to-perform-migrations-in-production)
+
+6) Check out [First Steps](#first-steps-after-running)
+
+You may add the apache and nginx servers in to  and use the `.envs/.insecure.production`
+file to see an example of "production"
 
 ## First Steps after Running
 
 1) Create a super user
    * Run `python manage.py createsuperuser` following
-     [this](how-to-perform-management-commands-in-docker)
+     [this](#how-to-perform-management-commands-in-docker)
 2) Upload quizzes for users to take
-  * Login to the [admin page](urls-of-note) with the superuser/admin
+  * Login to the [admin page](#urls-of-note) with the superuser/admin
   * navigate to the quiz_uploads (TDB INSTRUCTIONS)
   * Add the quiz and select the zip file containing one or more quizzes
 
@@ -141,7 +148,7 @@ fit your particular environment.  The examples do NOT include ssl customization
 
 ### How to perform model migrations in production
 
-* Same as [above](how-to-perform-management-commands-in-docker)
+* Same as [above](#how-to-perform-management-commands-in-docker)
 * For the commands:
   * `python management.py makemigrations`
   * `python management.py migrate`
