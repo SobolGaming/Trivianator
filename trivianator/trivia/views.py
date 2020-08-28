@@ -240,6 +240,8 @@ class QuizTake(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(QuizTake, self).get_context_data(**kwargs)
+        if Sitting.objects.filter(quiz=self.quiz,user=self.request.user).exists():
+            context['time_remaining'] = Sitting.objects.user_sitting(quiz=self.quiz,user=self.request.user).get_quiz_time_remaining()
         context['question'] = self.question
         context['quiz'] = self.quiz
         if hasattr(self, 'previous'):

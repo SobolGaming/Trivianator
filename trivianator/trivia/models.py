@@ -206,8 +206,7 @@ class Quiz(models.Model):
 class ProgressManager(models.Manager):
 
     def new_progress(self, user):
-        new_progress = self.create(user=user,
-                                   score="")
+        new_progress = self.create(user=user, score="")
         new_progress.save()
         return new_progress
 
@@ -545,6 +544,10 @@ class Sitting(models.Model):
         total = self.get_max_score
         return answered, total
 
+    def get_quiz_time_remaining(self):
+        if self.quiz.timer > 0:
+            return int(round(self.quiz.timer - (now() - self.start).total_seconds()))
+        return None
 
 class Question(models.Model):
     """

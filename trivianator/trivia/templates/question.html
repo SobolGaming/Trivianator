@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n%}
-
+{% load quiz_tags %}
 
 
 {% block title %} {{ quiz.title }} {% endblock %}
@@ -45,12 +45,15 @@
 {% if question %}
 
 {% if progress %}
-<div style="float: right;">
-{% trans "Question" %} {{ progress.0|add:1 }} {% trans "of" %} {{ progress.1 }}
-</div>
+	<div style="float: right;">
+		{% trans "Question" %} {{ progress.0|add:1 }} {% trans "of" %} {{ progress.1 }}
+	</div>
 {% endif %}
 
 <p>
+	{% if time_remaining %}
+		{% trans "Time Remaining: " %}<strong>{{ time_remaining|smooth_timedelta }}</strong><br>
+	{% endif %}
   <small class="muted">{% trans "Question category" %}:</small>
   <strong>{{ question.category }}</strong>
 </p>
@@ -58,9 +61,7 @@
 <p class="lead">{{ question.content }}</p>
 
 {% if question.figure %}
-	<p>
-	<img src="{{ question.figure.url }}" alt="{{ question.content }}" />
-	</p>
+	<p><img src="{{ question.figure.url }}" alt="{{ question.content }}" /></p>
 {% endif %}
 
 <form action="" method="POST">{% csrf_token %}
