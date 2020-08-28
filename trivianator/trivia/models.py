@@ -546,7 +546,7 @@ class Sitting(models.Model):
 
     def get_quiz_time_remaining(self):
         if self.quiz.timer > 0:
-            return int(round(self.quiz.timer - (now() - self.start).total_seconds()))
+            return max(0, int(round(self.quiz.timer - (now() - self.start).total_seconds())))
         return None
 
 class Question(models.Model):

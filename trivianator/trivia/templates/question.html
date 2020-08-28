@@ -50,13 +50,24 @@
 	</div>
 {% endif %}
 
-<p>
-	{% if time_remaining %}
-		{% trans "Time Remaining: " %}<strong>{{ time_remaining|smooth_timedelta }}</strong><br>
-	{% endif %}
-  <small class="muted">{% trans "Question category" %}:</small>
-  <strong>{{ question.category }}</strong>
-</p>
+{% if time_remaining %}
+	<div id="counter"></div>
+	<script>
+		var seconds = {{ time_remaining }};
+		document.getElementById("counter").innerHTML = "Quiz Time Remaining: " + seconds;
+		var x = setInterval(function() {
+			seconds -= 1; 
+			if (seconds <= 0) {
+				document.getElementById("counter").style.color = "red";
+				document.getElementById("counter").innerHTML = "Quiz Time: EXPIRED";
+			} else {
+				document.getElementById("counter").innerHTML = "Quiz Time Remaining: " + seconds;
+			}
+		}, 1000);
+		</script>
+{% endif %}
+<small class="muted">{% trans "Question Category: " %}</small><strong>{{ question.category }}</strong>
+<br><br>
 
 <p class="lead">{{ question.content }}</p>
 
