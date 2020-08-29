@@ -116,7 +116,7 @@ fit your particular environment.  The examples do NOT include ssl customization
 
 4) #### Actually deploy
 
-   * `docker-compose -f production.yml`
+   * `docker-compose -f production.yml up --build`
    * When complete, your site will be hosted on `<Host Running Docker>:8000`
 
 5) #### Makemigrations and migrate if there are Model Changes (Or First Time)
@@ -158,15 +158,19 @@ not configure SSL.
 
 ### URLs of note
 
-* `http://server:8000/admin` admin interface for superusers
+* `http://server:8000/admin` admin interface for superusers (could be at a different URL in `production`)
+
+This is specified in `.envs/.production/.django` with `DJANGO_ADMIN_URL`
+parameter
+
 * `http://server:8000/` landing page and list all available quizzes for a user
-* `http://server:8000/trivia/marking/` lists results of users for each quiz
-(for admins)
-* `http://server:8000/trivia/progress/` lists all quizzes taken by the user
+* `http://server:8000/marking/` lists results of users for each quiz (for admins)
+* `http://server:8000/progress/` lists all quizzes taken by the user
 and their result
-* `http://server8000/trivia/category/` lists all quiz/question related
+* `http://server:8000/leaderboards/` lists all available leaderboards
+* `http://server:8000/category/` lists all quiz/question related
 categories
-* `http://server:8000/trivia/<FriendlyURL>` direct URL to a quiz identified by
+* `http://server:8000/<FriendlyURL>` direct URL to a quiz identified by
 the friendly URL set when creating the quiz
 
 ### How to add Quizzes
