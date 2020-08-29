@@ -1,3 +1,3 @@
 import django.dispatch
 
-json_uploaded = django.dispatch.Signal(providing_args=["user", "json_file_list"])
+archive_uploaded = django.dispatch.Signal(providing_args=["user", "archive_file_list"])

@@ -9,6 +9,7 @@ celery==4.4.7  # pyup: < 5.0  # https://github.com/celery/celery
 django-celery-beat==2.0.0  # https://github.com/celery/django-celery-beat
 flower==0.9.5  # https://github.com/mher/flower
 uvicorn==0.11.8  # https://github.com/encode/uvicorn
+zipfile38==0.0.2 # https://pypi.org/project/zipfile38/
 
 # Django
 # ------------------------------------------------------------------------------

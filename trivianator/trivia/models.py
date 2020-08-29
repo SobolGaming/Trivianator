@@ -9,8 +9,8 @@ from django.utils.timezone import now, timedelta, is_aware, make_aware
 from django.conf import settings
 from model_utils.managers import InheritanceManager
 from django.utils.translation import ugettext as _
-from .signals import json_uploaded
-from .validators import json_file_validator
+from .signals import archive_uploaded
+from .validators import archive_file_validator
 from django.db.models.signals import pre_save, post_save
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
@@ -691,19 +691,19 @@ class Leaderboard(models.Model):
         verbose_name_plural = _("Leaderboards")
 
 
-def upload_json_file(instance, filename):
+def upload_archive_file(instance, filename):
     qs = instance.__class__.objects.filter(user=instance.user)
     if qs.exists():
         num_ = qs.last().id + 1
     else:
         num_ = 1
-    return f'json_files/{num_}/{instance.user.username}/{filename}'
+    return f'archive_files/{num_}/{instance.user.username}/{filename}'
 
 
-class JSONUpload(models.Model):
+class ArchiveUpload(models.Model):
     title       = models.CharField(max_length=100, verbose_name=_('Title'), blank=False)
     user        = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE)
-    file        = models.FileField(upload_to=upload_json_file, validators=[json_file_validator])
+    file        = models.FileField(upload_to=upload_archive_file, validators=[archive_file_validator])
     completed   = models.BooleanField(default=False)
 
     def __str__(self):
@@ -720,7 +720,12 @@ def process_datetime_string(date_str):
         ret = make_aware(ret)
     return ret
 
-def json_upload_post_save(sender, instance, created, *args, **kwargs):
+def extract_archive_file(file_instance):
+    from zipfile38 import ZipFile
+    with ZipFile(file_instance, 'r') as zip_ref:
+        zip_ref.extractall('extract')
+
+def archive_upload_post_save(sender, instance, created, *args, **kwargs):
     if not instance.completed:
         json_file = instance.file
         try:
@@ -778,4 +783,4 @@ def json_upload_post_save(sender, instance, created, *args, **kwargs):
         except ValueError as err:
             raise err
 
-post_save.connect(json_upload_post_save, sender=JSONUpload)
+post_save.connect(archive_upload_post_save, sender=ArchiveUpload)
