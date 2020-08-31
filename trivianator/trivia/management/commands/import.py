@@ -43,7 +43,7 @@ class Command(BaseCommand):
     """
     Create a compressed backup of the database tables and stored media.
     """
-    help = 'Exports compressed copy of db tables and media'
+    help = 'Imports compressed copy of db tables and media. Mostly for complete backup and reimport.  Will throw errors if the destination already has the same media file paths'
 
     def add_arguments(self, parser):
         # Positional arguments
