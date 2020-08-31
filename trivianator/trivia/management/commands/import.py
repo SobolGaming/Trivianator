@@ -101,8 +101,9 @@ class Command(BaseCommand):
         if not os.path.isdir(str(mediaroot)): os.mkdir(str(mediaroot))
 
         for name in tmpdir.glob('mediafiles/*'):
-            self.stdout.write(self.style.WARNING('Trying to copy {} to {}'.format(str(name),str(mediaroot))))
-            shutil.copytree(name), str(mediaroot), dirs_exist_ok=True)
+            basename = os.path.basename(name)
+            self.stdout.write(self.style.WARNING('Trying to copy {} to {}'.format(str(name),str(mediaroot/basename))))
+            shutil.copytree(name, str(mediaroot/basename), dirs_exist_ok=True)
 
     def _check_meta(self, tar, tmpdir):
         """
