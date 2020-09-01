@@ -9,9 +9,7 @@ from django.utils.timezone import now, timedelta, is_aware, make_aware
 from django.conf import settings
 from model_utils.managers import InheritanceManager
 from django.utils.translation import ugettext as _
-from .signals import archive_uploaded
 from .validators import archive_file_validator
-from django.db.models.signals import pre_save, post_save
 from django.contrib.auth.models import User
 
 

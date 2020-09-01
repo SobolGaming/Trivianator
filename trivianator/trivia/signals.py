@@ -20,7 +20,7 @@ def archive_upload_post_save(sender, instance, created, *args, **kwargs):
 
     # Guard against duplicate signal delivery?
     if not instance.completed:
-        json_file = instance.file
+        archive = instance.file
         try:
             data = json.load(json_file)
 
