@@ -47,11 +47,11 @@ def handle_media_files(tmpdir):
 
     # Attempt not to cause problems with docker mounted volume (and watchgod
     # from uvicorn) by unzipping just below the mediafiles directory
-    for name in tmpdir.glob('images/*'):
+    for name in tmpdir.glob('images'):
         basename = os.path.basename(name)
-        image_dest = path_join(str(mediaroot), "images", basename)
+        image_dest = str(mediaroot/basename)
         print('Trying to copy {} to {}'.format(str(name),image_dest))
-        shutil.copy2(name, image_dest)
+        shutil.copytree(name, image_dest, dirs_exist_ok=True)
     
     for name in tmpdir.glob('*.json'):
         basename = os.path.basename(name)
@@ -111,8 +111,10 @@ def archive_upload_post_save(sender, instance, created, *args, **kwargs):
                 # Put on filesystem with shutil
 
                 if 'Image' in question and isinstance(question['Image'], list):
-                    image_loc = path_join(*question['Image'])
+                    image_loc = path_join(os.path.basename(str(Path(getattr(settings, 'MEDIA_ROOT')))), *question['Image'])
+                    print("Checking Image File Existance: ", image_loc)
                     if default_storage.exists(image_loc):
+                        print("Setting Questions Figure")
                         q.figure = image_loc
                         q.save()
 
