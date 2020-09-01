@@ -56,7 +56,7 @@
 		var seconds = {{ time_remaining }};
 		document.getElementById("counter").innerHTML = "Quiz Time Remaining: " + seconds;
 		var x = setInterval(function() {
-			seconds -= 1; 
+			seconds -= 1;
 			if (seconds <= 0) {
 				document.getElementById("counter").style.color = "red";
 				document.getElementById("counter").innerHTML = "Quiz Time: EXPIRED";
@@ -72,7 +72,7 @@
 <p class="lead">{{ question.content }}</p>
 
 {% if question.figure %}
-	<p><img src="{{ question.figure.url }}" alt="{{ question.content }}" /></p>
+	<p><img src="{{question.figure.url}}" alt="{{ question.content }}" /></p>
 {% endif %}
 
 <form action="" method="POST">{% csrf_token %}
