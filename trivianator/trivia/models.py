@@ -1,11 +1,9 @@
-from os.path import join as path_join
 import json
 import re
 from django.db import models
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.validators import MaxValueValidator, validate_comma_separated_integer_list
-from django.utils.dateparse import parse_datetime
-from django.utils.timezone import now, timedelta, is_aware, make_aware
+from django.utils.timezone import now
 from django.conf import settings
 from model_utils.managers import InheritanceManager
 from django.utils.translation import ugettext as _
