@@ -23,7 +23,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
 import json
-from tarfile import TarInfo, TarFile
+from tarfile import TarFile
 import tempfile
 from pathlib import Path
 import shutil
@@ -35,7 +35,6 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.db import models
-from django.utils.encoding import smart_bytes
 
 from ... import __version__
 
@@ -67,7 +66,7 @@ class Command(BaseCommand):
 
     def _check_and_extract_archive(self,tmpdir,data_file):
         """
-        Create the archive and return the TarFile.
+        Extract the archive and return if success.
         """
 
         tar = TarFile.open(data_file, 'r:*')
@@ -100,6 +99,8 @@ class Command(BaseCommand):
         mediaroot = Path(getattr(settings, 'MEDIA_ROOT'))
         if not os.path.isdir(str(mediaroot)): os.mkdir(str(mediaroot))
 
+        # Attempt not to cause problems with docker mounted volume (and watchgod
+        # from uvicorn) by unzipping just below the mediafiles directory
         for name in tmpdir.glob('mediafiles/*'):
             basename = os.path.basename(name)
             self.stdout.write(self.style.WARNING('Trying to copy {} to {}'.format(str(name),str(mediaroot/basename))))

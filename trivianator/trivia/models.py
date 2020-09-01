@@ -1,19 +1,15 @@
-from os.path import join as path_join
 import json
 import re
 from django.db import models
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.validators import MaxValueValidator, validate_comma_separated_integer_list
-from django.utils.dateparse import parse_datetime
-from django.utils.timezone import now, timedelta, is_aware, make_aware
+from django.utils.timezone import now
 from django.conf import settings
 from model_utils.managers import InheritanceManager
 from django.utils.translation import ugettext as _
-from .signals import json_uploaded
-from .validators import json_file_validator
-from django.db.models.signals import pre_save, post_save
+from .validators import archive_file_validator
 from django.contrib.auth.models import User
-from django.core.files.storage import default_storage
+
 
 # Create your models here.
 QUESTION_TYPES = (
@@ -691,91 +687,30 @@ class Leaderboard(models.Model):
         verbose_name_plural = _("Leaderboards")
 
 
-def upload_json_file(instance, filename):
+class MOTD(models.Model):
+    msg = models.TextField(null=True, blank=True,
+                           help_text=_("Message of The Day in Navigator Bar."),
+                           verbose_name=_("Message of the Day"))
+
+    def __str__(self):
+        return self.msg
+
+
+# Auto name and increment the upload?
+def upload_archive_file(instance, filename):
     qs = instance.__class__.objects.filter(user=instance.user)
     if qs.exists():
         num_ = qs.last().id + 1
     else:
         num_ = 1
-    return f'json_files/{num_}/{instance.user.username}/{filename}'
+    return f'archive_files/{num_}/{instance.user.username}/{filename}'
 
 
-class JSONUpload(models.Model):
+class ArchiveUpload(models.Model):
     title       = models.CharField(max_length=100, verbose_name=_('Title'), blank=False)
     user        = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE)
-    file        = models.FileField(upload_to=upload_json_file, validators=[json_file_validator])
-    completed   = models.BooleanField(default=False)
+    file        = models.FileField(upload_to=upload_archive_file, validators=[archive_file_validator])
+    completed   = models.BooleanField(default=False) # What does this mean?
 
     def __str__(self):
         return self.user.username
-
-
-def sanitize_string(data):
-    return re.sub('\s+', '-', data)
-
-def process_datetime_string(date_str):
-    ret = parse_datetime(date_str)
-    # make timezone aware if not aware
-    if not is_aware(ret):
-        ret = make_aware(ret)
-    return ret
-
-def json_upload_post_save(sender, instance, created, *args, **kwargs):
-    if not instance.completed:
-        json_file = instance.file
-        try:
-            data = json.load(json_file)
-
-            # Create quiz
-            quiz_cat = Category.objects.get_or_create(category=sanitize_string(data['Quiz']['Category']).lower()) if 'Category' in data['Quiz'] and data['Quiz']['Category'] != None else (None, False)
-
-            quiz = Quiz.objects.create(
-                title = sanitize_string(data['Quiz']['Title']),
-                url = sanitize_string(data['Quiz']['URL']).lower(),
-                category = quiz_cat[0],
-                random_order = data['Quiz']['RandomOrder'] if 'RandomOrder' in data['Quiz'] else False,
-                max_questions = data['Quiz']['MaxQuestions'] if 'MaxQuestions' in data['Quiz'] else None,
-                answers_reveal_option = min(max(data['Quiz']['AnswerRevealOption'], 1), 3) if 'AnswerRevealOption' in data['Quiz'] else 1,
-                saved = data['Quiz']['Save'] if 'Save' in data['Quiz'] else True,
-                single_attempt = data['Quiz']['SingleAttempt'] if 'SingleAttempt' in data['Quiz'] else False,
-                draft = data['Quiz']['Draft'] if 'Draft' in data['Quiz'] else False,
-                timer = max(0, data['Quiz']['Timer']) if 'Timer' in data['Quiz'] else 0,
-                show_leaderboards = data['Quiz']['Leaderboards'] if 'Leaderboards' in data['Quiz'] else True,
-                competitive = data['Quiz']['Competitive'] if 'Competitive' in data['Quiz'] else False,
-                start_time = process_datetime_string(data['Quiz']['StartTime']) if 'StartTime' in data['Quiz'] else now() + timedelta(minutes=5),
-                end_time = process_datetime_string(data['Quiz']['EndTime']) if 'EndTime' in data['Quiz'] else now() + timedelta(hours=1, minutes=5),
-            )
-
-            # Create questions
-            for question in data['Quiz']['Questions']:
-                q_cat = Category.objects.get_or_create(category=sanitize_string(question['Category']).lower()) if 'Category' in question and question['Category'] != "" else (None, False)
-
-                q = Question.objects.create(
-                    question_type = question['QuestionType'].lower(),
-                    category = q_cat[0],
-                    content = question['Content'],
-                    explanation = question['Explanation'] if 'Explanation' in question else None,
-                    answer_order = sanitize_string(question['AnswerOrder']) if 'AnswerOrder' in question and question['AnswerOrder'] != "" else 'none',
-                )
-
-                if 'Image' in question and isinstance(question['Image'], list):
-                    image_loc = path_join(*question['Image'])
-                    if default_storage.exists(image_loc):
-                        q.figure = image_loc
-                        q.save()
-
-                for answer in question['Answers']:
-                    Answer.objects.create(
-                        question = q,
-                        content = answer['Content'],
-                        correct = True if answer['Correct'] == 1 else False,
-                    )
-                # add each question to the quiz parent, can't set direcly as other parameters since it's a ManyToMany parameter
-                q.quiz.add(quiz)
-
-            instance.completed = True
-            instance.save()
-        except ValueError as err:
-            raise err
-
-post_save.connect(json_upload_post_save, sender=JSONUpload)

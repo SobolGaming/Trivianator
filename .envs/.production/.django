@@ -4,7 +4,7 @@
 DJANGO_SETTINGS_MODULE=config.settings.production
 DJANGO_SECRET_KEY=n28HXbUYGadoPPDK9irRhrDbBMb3nievQaYTuUHaURvZGgfa3b8PBFSjeEUfYfEf
 DJANGO_ADMIN_URL=t94s6Jtknri7HLSSKS0ZEi6G3nSG8cLH/
-DJANGO_ALLOWED_HOSTS=192.168.1.14,192.168.1.11,quiz.ashesofcreation.wiki
+DJANGO_ALLOWED_HOSTS=192.168.1.14,192.168.1.11,quiz.ashesofcreation.wiki,127.0.0.1
 
 # Security
 # ------------------------------------------------------------------------------
