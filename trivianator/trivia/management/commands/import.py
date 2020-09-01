@@ -100,6 +100,8 @@ class Command(BaseCommand):
         mediaroot = Path(getattr(settings, 'MEDIA_ROOT'))
         if not os.path.isdir(str(mediaroot)): os.mkdir(str(mediaroot))
 
+        # Attempt not to cause problems with docker mounted volume (and watchgod
+        # from uvicorn) by unzipping just below the mediafiles directory
         for name in tmpdir.glob('mediafiles/*'):
             basename = os.path.basename(name)
             self.stdout.write(self.style.WARNING('Trying to copy {} to {}'.format(str(name),str(mediaroot/basename))))

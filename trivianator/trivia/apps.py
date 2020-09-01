@@ -7,6 +7,10 @@ class TriviaConfig(AppConfig):
 
     def ready(self):
         try:
-            import trivianator.trivia.signals  # noqa F401
+            import trivianator.trivia.signals as tsignals # noqa F401
+
+            #Archive Upload Post save
+            post_save.connect(tsignals.archive_upload_post_save, sender=ArchiveUpload)
+
         except ImportError:
             pass
