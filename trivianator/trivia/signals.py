@@ -23,7 +23,7 @@ def process_datetime_string(date_str):
         ret = make_aware(ret)
     return ret
 
-def extract_archive(archive_file):
+def extract_archive(archive_file, sub_dir):
     """
     Extract the archive and return JSON file.
     """
@@ -31,14 +31,14 @@ def extract_archive(archive_file):
     with tempfile.TemporaryDirectory() as tmpdir:
         tdir = Path(tmpdir)
         # Extract the archive
-        tar = TarFile.open(archive_file)
+        tar = TarFile.open(fileobj=archive_file)
         tar.extractall(str(tdir))
         tar.close()
 
-        return handle_media_files(tdir)
+        return handle_media_files(tdir, sub_dir)
     return None
 
-def handle_media_files(tmpdir):
+def handle_media_files(tmpdir, subdir):
     """
     Import all uploaded media from the archive.
     """
@@ -46,16 +46,17 @@ def handle_media_files(tmpdir):
     if not os.path.isdir(str(mediaroot)): os.mkdir(str(mediaroot))
 
     # Attempt not to cause problems with docker mounted volume (and watchgod
-    # from uvicorn) by unzipping just below the mediafiles directory
-    for name in tmpdir.glob('images'):
+    # from uvicorn) by unarchiving just below the mediafiles directory
+    for name in tmpdir.glob('images/*'):
         basename = os.path.basename(name)
-        image_dest = str(mediaroot/basename)
+        image_dest = path_join(mediaroot, subdir, basename)
+        os.makedirs(os.path.dirname(image_dest), exist_ok=True)
         print('Trying to copy {} to {}'.format(str(name),image_dest))
-        shutil.copytree(name, image_dest, dirs_exist_ok=True)
+        shutil.copy2(name, image_dest)
     
     for name in tmpdir.glob('*.json'):
         basename = os.path.basename(name)
-        image_dest = str(mediaroot/basename)
+        image_dest = path_join(mediaroot, basename)
         print('Trying to copy {} to {}'.format(str(name),image_dest))
         shutil.copy2(name, image_dest)
         return image_dest
@@ -67,7 +68,10 @@ def archive_upload_post_save(sender, instance, created, *args, **kwargs):
         # extract the archive
         # move all the images in media directory
         # returns JSON quiz file
-        json_file = extract_archive(archive.path)
+        _, file_name = os.path.split(archive.name)
+        sub_dir, _ = os.path.splitext(file_name)
+        sub_dir = sub_dir.lower()
+        json_file = extract_archive(archive, sub_dir)
 
         if not json_file:
             raise Exception("Invalid JSON File.")
@@ -110,8 +114,8 @@ def archive_upload_post_save(sender, instance, created, *args, **kwargs):
                 # Get image relative dir.
                 # Put on filesystem with shutil
 
-                if 'Image' in question and isinstance(question['Image'], list):
-                    image_loc = path_join(os.path.basename(str(Path(getattr(settings, 'MEDIA_ROOT')))), *question['Image'])
+                if 'Image' in question:
+                    image_loc = path_join(Path(getattr(settings, 'MEDIA_ROOT')), sub_dir, question['Image'])
                     print("Checking Image File Existance: ", image_loc)
                     if default_storage.exists(image_loc):
                         print("Setting Questions Figure")
