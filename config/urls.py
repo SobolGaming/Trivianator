@@ -9,8 +9,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from trivianator.trivia import views as tviews
 
 urlpatterns = [
-    path(route='',view=tviews.QuizListView.as_view(), name="home"
-    ),
+    path("",tviews.QuizListView.as_view(),name="home"),
     path(
         "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
     ),
