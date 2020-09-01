@@ -8,7 +8,7 @@ from django.utils.timezone import now
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.edit import FormView
 from .forms import QuestionForm
-from .models import Quiz, Category, Progress, Sitting, Question
+from .models import Quiz, Category, Progress, Sitting, Question, MOTD
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -68,6 +68,10 @@ class QuizListView(ListView):
 
         context['competitive_upcoming_count'] = len(context['competitive_upcoming'])
         context['competitive_old_count'] = len(context['competitive_old'])
+
+        # see if there is any admin messages to display
+        get_motd(self.request)
+
         return context
 
 
@@ -130,6 +134,10 @@ class QuizUserProgressView(TemplateView):
                 context['display_categories'] = False
                 context['hide'].append(quiz.quiz.title)
                 break
+
+        # see if there is any admin messages to display
+        get_motd(self.request)
+
         return context
 
 
@@ -317,6 +325,13 @@ class QuizTake(FormView):
 
         return render(self.request, 'result.html', results)
 
+
+def get_motd(request):
+    try:
+        obj = MOTD.objects.get()
+        messages.error(request, obj.msg)
+    except Exception as e:
+        pass
 
 def index(request):
     return render(request, 'index.html', {})

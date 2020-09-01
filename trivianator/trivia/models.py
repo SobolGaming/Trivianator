@@ -686,6 +686,16 @@ class Leaderboard(models.Model):
         verbose_name = _("Leaderboard")
         verbose_name_plural = _("Leaderboards")
 
+
+class MOTD(models.Model):
+    msg = models.TextField(null=True, blank=True,
+                           help_text=_("Message of The Day in Navigator Bar."),
+                           verbose_name=_("Message of the Day"))
+
+    def __str__(self):
+        return self.msg
+
+
 # Auto name and increment the upload?
 def upload_archive_file(instance, filename):
     qs = instance.__class__.objects.filter(user=instance.user)

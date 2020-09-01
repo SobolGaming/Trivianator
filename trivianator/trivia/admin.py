@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 # Register your models here.
-from .models import Quiz, Category, Question, Progress, Answer, Leaderboard
+from .models import Quiz, Category, Question, Progress, Answer, Leaderboard, MOTD
 from django.utils.translation import ugettext_lazy as _
 from .models import ArchiveUpload
 
@@ -10,6 +10,13 @@ from .models import ArchiveUpload
 class ArchiveUploadsAdmin(admin.ModelAdmin):
     model = ArchiveUpload
     list_display = ('title', 'user', 'file', 'completed', )
+    readonly_fields  = ('completed',)
+
+
+class MOTDAdmin(admin.ModelAdmin):
+    model = MOTD
+    list_display = ('msg',)
+
 
 class AnswerInline(admin.TabularInline):
     model = Answer
@@ -93,3 +100,4 @@ admin.site.register(Question, QuestionAdmin)
 admin.site.register(Progress, ProgressAdmin)
 admin.site.register(Leaderboard, LeaderboardAdmin)
 admin.site.register(ArchiveUpload, ArchiveUploadsAdmin)
+admin.site.register(MOTD, MOTDAdmin)
