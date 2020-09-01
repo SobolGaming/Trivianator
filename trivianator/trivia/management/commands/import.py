@@ -23,7 +23,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
 import json
-from tarfile import TarInfo, TarFile
+from tarfile import TarFile
 import tempfile
 from pathlib import Path
 import shutil
@@ -35,7 +35,6 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.db import models
-from django.utils.encoding import smart_bytes
 
 from ... import __version__
 
@@ -67,7 +66,7 @@ class Command(BaseCommand):
 
     def _check_and_extract_archive(self,tmpdir,data_file):
         """
-        Create the archive and return the TarFile.
+        Extract the archive and return if success.
         """
 
         tar = TarFile.open(data_file, 'r:*')

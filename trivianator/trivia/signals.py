@@ -1,5 +1,17 @@
 import django.dispatch
+from django.conf import settings
 from django.core.files.storage import default_storage
+
+from tarfile import TarFile
+from pathlib import Path
+import tempfile
+import shutil
+import os
+import json
+import re
+from trivianator.trivia.models import Category, Quiz, Question, Answer
+from django.utils.timezone import now, timedelta, is_aware, make_aware
+from os.path import join as path_join
 
 def sanitize_string(data):
     return re.sub('\s+', '-', data)
@@ -11,18 +23,57 @@ def process_datetime_string(date_str):
         ret = make_aware(ret)
     return ret
 
-def extract_archive_file(file_instance):
-    from zipfile38 import ZipFile
-    with ZipFile(file_instance, 'r') as zip_ref:
-        zip_ref.extractall('extract')
+def extract_archive(archive_file):
+    """
+    Extract the archive and return JSON file.
+    """
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tdir = Path(tmpdir)
+        # Extract the archive
+        tar = TarFile.open(archive_file)
+        tar.extractall(str(tdir))
+        tar.close()
+
+        return handle_media_files(tdir)
+    return None
+
+def handle_media_files(tmpdir):
+    """
+    Import all uploaded media from the archive.
+    """
+    mediaroot = Path(getattr(settings, 'MEDIA_ROOT'))
+    if not os.path.isdir(str(mediaroot)): os.mkdir(str(mediaroot))
+
+    # Attempt not to cause problems with docker mounted volume (and watchgod
+    # from uvicorn) by unzipping just below the mediafiles directory
+    for name in tmpdir.glob('images/*'):
+        basename = os.path.basename(name)
+        image_dest = path_join(str(mediaroot), "images", basename)
+        print('Trying to copy {} to {}'.format(str(name),image_dest))
+        shutil.copy2(name, image_dest)
+    
+    for name in tmpdir.glob('*.json'):
+        basename = os.path.basename(name)
+        image_dest = str(mediaroot/basename)
+        print('Trying to copy {} to {}'.format(str(name),image_dest))
+        shutil.copy2(name, image_dest)
+        return image_dest
 
 def archive_upload_post_save(sender, instance, created, *args, **kwargs):
-
-    # Guard against duplicate signal delivery?
     if not instance.completed:
         archive = instance.file
+        print("File Name: ", archive.name)
+        # extract the archive
+        # move all the images in media directory
+        # returns JSON quiz file
+        json_file = extract_archive(archive.path)
+
+        if not json_file:
+            raise Exception("Invalid JSON File.")
+
         try:
-            data = json.load(json_file)
+            data = json.load(open(json_file, "r"))
 
             # Create quiz
             quiz_cat = Category.objects.get_or_create(category=sanitize_string(data['Quiz']['Category']).lower()) if 'Category' in data['Quiz'] and data['Quiz']['Category'] != None else (None, False)
