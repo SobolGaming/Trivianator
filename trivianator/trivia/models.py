@@ -609,6 +609,11 @@ class Question(models.Model):
                                                   "to the user"),
                                     verbose_name=_("Answer Order"))
 
+    asked_count = models.PositiveIntegerField(null = False, blank = False,
+                                              default = 0,
+                                              help_text=_("Number of times question is asked."),
+                                              verbose_name=_("Number of times asked."))
+
     objects = InheritanceManager()
 
     class Meta:
@@ -618,8 +623,14 @@ class Question(models.Model):
     def __str__(self):
         return self.content
 
+    # increment the asked count parameter by 1 as the question was asked
+    def inc(self):
+        self.asked_count += 1
+        self.save()
+
     def check_if_correct_sc(self, guess):
         answer = Answer.objects.get(id=guess)
+        answer.inc()
         if answer.correct is True:
             return True
         else:
@@ -628,6 +639,7 @@ class Question(models.Model):
     def check_if_correct_mc(self, guess, choices):
         for choice in choices:
             answer = Answer.objects.get(id=str(choice))
+            answer.inc()
             if answer.correct is True and str(choice) not in guess:
                 return False
             if answer.correct is False and str(choice) in guess:
@@ -646,6 +658,9 @@ class Question(models.Model):
 
     def get_answers_list(self):
         return [(answer.id, answer.content) for answer in self.order_answers(Answer.objects.filter(question=self))]
+
+    def get_answers_count_list(self):
+        return [(answer.content, answer.selected_count) for answer in Answer.objects.filter(question=self)]
 
     def answer_choice_to_string(self, guess):
         if isinstance(guess, list):
@@ -673,8 +688,18 @@ class Answer(models.Model):
                                   help_text=_("Is this a correct answer?"),
                                   verbose_name=_("Correct"))
 
+    selected_count = models.PositiveIntegerField(null = False, blank = False,
+                                                 default = 0,
+                                                 help_text=_("Number of times selected."),
+                                                 verbose_name=_("Number of times selected."))
+
     def __str__(self):
         return self.content
+
+    # increment the selected_count parameter by 1 as someone chose this answer
+    def inc(self):
+        self.selected_count += 1
+        self.save()
 
     class Meta:
         verbose_name = _("Answer")
