@@ -4,6 +4,10 @@
 
 {% block content %}
   {% with object as quiz %}
-    {% include 'leaderboard_block.html' %}
+    {% if quiz.competitive and quiz.end_time_expired %}
+      {% include 'leaderboard_block.html' %}
+    {% elseif not quiz.competitive %}
+      {% include 'leaderboard_block.html' %}
+    {% endif %}
   {% endwith %}
 {% endblock %}

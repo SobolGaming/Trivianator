@@ -186,7 +186,7 @@ class Quiz(models.Model):
             # check first for saved/competitive/single-attempt quizzes
             delete_list = []
             for sit in sittings:
-                if sit.quiz.saved or sit.quiz.competitive or sit.quiz.single_attempt:
+                if (sit.quiz.saved is True or sit.quiz.competitive is True or sit.quiz.single_attempt is True) and best_sit[0] == None:
                     best_sit = (sit, sit.get_percent_correct)
                 else:
                     delete_list.append(sit)
@@ -363,7 +363,7 @@ class SittingManager(models.Manager):
         return new_sitting
 
     def user_sitting(self, user, quiz):
-        if quiz.single_attempt is True and self.filter(user=user, quiz=quiz, complete=True).exists():
+        if (quiz.single_attempt or (quiz.competitive and not quiz.end_time_expired)) and self.filter(user=user, quiz=quiz, complete=True).exists():
             return False
 
         try:
@@ -476,9 +476,8 @@ class Sitting(models.Model):
         # add to leaderboard if quiz was competitive and currently in session
         if self.quiz.competitive and self.quiz.end_time > now() and self.quiz.start_time < now():
             if not Leaderboard.objects.filter(quiz=self.quiz, user=self.user).exists():
-                ld = Leaderboard.objects.create(
-                    quiz=self.quiz, user=self.user, score=self.current_score, completion_time=(self.end - self.start).seconds
-                )
+                ld = Leaderboard.objects.create(quiz=self.quiz, user=self.user, score=self.current_score,
+                                                completion_time=(self.end - self.start).seconds)
 
     def add_incorrect_question(self, question):
         """
@@ -531,7 +530,6 @@ class Sitting(models.Model):
                 except KeyError:
                     # quiz or question timer expired
                     pass
-
         return questions
 
     @property
@@ -557,6 +555,7 @@ class Sitting(models.Model):
         if self.quiz.timer > 0:
             return max(0, int(round(self.quiz.timer - (now() - self.start).total_seconds())))
         return None
+
 
 class Question(models.Model):
     """
@@ -639,7 +638,8 @@ class Question(models.Model):
     def check_if_correct_mc(self, guess, choices):
         for choice in choices:
             answer = Answer.objects.get(id=str(choice))
-            answer.inc()
+            if str(choice) in guess:
+                answer.inc()
             if answer.correct is True and str(choice) not in guess:
                 return False
             if answer.correct is False and str(choice) in guess:

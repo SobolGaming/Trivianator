@@ -7,45 +7,45 @@
 {% block description %} {% trans "Answer Statistics for Quiz: " %} {{ quiz.title }} {% endblock %}
 
 {% block content %}
+    {% if quiz.competitive and quiz.end_time_expired or not quiz.competitive %}
+        {% if questions %}
+            {% for question in questions %}
+                <p class="lead">{{ question.q_content }}</p>
 
-    {% if questions %}
-        {% for question in questions %}
-            <p class="lead">{{ question.q_content }}</p>
+                {% if question.q_figure %}
+                    <p><img src="{{question.q_figure.url}}" alt="{{ question.q_content }}" /></p>
+                {% endif %}
 
-            {% if question.q_figure %}
-                <p><img src="{{question.q_figure.url}}" alt="{{ question.q_content }}" /></p>
-            {% endif %}
-
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>{% trans "Answer" %}</th>
-                        <th>{% trans "%" %}</th>
-                        <th>{% trans "Count" %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for answer in question.answers %}
-                        
-                        {% if answer.a_correct %}
-                            <tr class="alert alert-debug">
-                                <td>{{ answer.a_content }}</td>
-                                <td>{{ answer.a_percent|floatformat:2 }}</td>
-                                <td>{{ answer.a_count }}</td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td>{{ answer.a_content }}</td>
-                                <td>{{ answer.a_percent|floatformat:2 }}</td>
-                                <td>{{ answer.a_count }}</td>
-                            </tr>
-                        {% endif %}
-                        
-                    {% endfor %}
-                </tbody>
-            </table>
-            <br>
-        {% endfor %}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Answer" %}</th>
+                            <th>{% trans "%" %}</th>
+                            <th>{% trans "Count" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for answer in question.answers %}
+                            
+                            {% if answer.a_correct %}
+                                <tr class="alert alert-debug">
+                                    <td>{{ answer.a_content }}</td>
+                                    <td>{{ answer.a_percent|floatformat:2 }}</td>
+                                    <td>{{ answer.a_count }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td>{{ answer.a_content }}</td>
+                                    <td>{{ answer.a_percent|floatformat:2 }}</td>
+                                    <td>{{ answer.a_count }}</td>
+                                </tr>
+                            {% endif %}
+                            
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <br>
+            {% endfor %}
+        {% endif %}
     {% endif %}
-
 {% endblock %}

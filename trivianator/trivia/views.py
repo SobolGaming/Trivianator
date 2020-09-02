@@ -44,16 +44,24 @@ class QuizListView(ListView):
         q_competitive = self.get_queryset().filter(competitive=True)
         context['now'] = now()
         context['competitive'] = []
+        context['competitive_taken'] = []
         context['competitive_old'] = []
         context['competitive_old_taken'] = []
         context['competitive_upcoming'] = []
         for q in q_competitive:
+            # see if we have a sitting for this quiz already
+            prev_score, prev_sit = q.get_quiz_sit_info(self.request.user)
+
             if q.start_time <= now() and q.end_time > now():
-                context['competitive'].append(q)
+                context['competitive'].append(
+                    {
+                        'quiz': q,
+                        'taken': prev_sit != None,
+                    }
+                )
             elif q.start_time > now():
                 context['competitive_upcoming'].append(q)
             elif q.end_time <= now():
-                prev_score, prev_sit = q.get_quiz_sit_info(self.request.user)
                 if prev_sit != None:
                     results = {
                         'quiz': prev_sit.quiz,
@@ -229,8 +237,8 @@ class QuizTake(FormView):
 
         if self.logged_in_user:
             self.sitting = Sitting.objects.user_sitting(request.user, self.quiz)
-        if self.sitting is False:
-            return render(request, 'single_complete.html')
+            if self.sitting is False:
+                return render(request, 'single_complete.html')
 
         return super(QuizTake, self).dispatch(request, *args, **kwargs)
 
@@ -333,10 +341,9 @@ class QuizTake(FormView):
         if self.quiz.end_time_expired is True:
             results['reveal_answer'] = True
 
-        if self.quiz.saved is False and self.quiz.competitive is False:
-            prev_score, prev_sit = self.quiz.get_quiz_sit_info(self.request.user)
-            if prev_score == None:
-                raise Exception("Invalid Sitting at End!")
+        prev_score, prev_sit = self.quiz.get_quiz_sit_info(self.request.user)
+        if prev_score == None:
+            raise Exception("Invalid Sitting at End!")
 
         return render(self.request, 'result.html', results)
 
@@ -382,7 +389,7 @@ class QuizAnswerStatView(DetailView):
                 answers = question.get_answers_percent_list()
                 q_stat = {
                     'q_content': question.content,
-                    'q_figure': quesion.figure,
+                    'q_figure': question.figure,
                     'answers': [],
                 }
                 for entry in answers:
@@ -396,12 +403,14 @@ class QuizAnswerStatView(DetailView):
                 context['questions'].append(q_stat)
         return context
 
+
 def get_motd(request):
     try:
         obj = MOTD.objects.get()
         messages.error(request, obj.msg)
     except Exception as e:
         pass
+
 
 def index(request):
     return render(request, 'index.html', {})

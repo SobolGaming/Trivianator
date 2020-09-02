@@ -22,15 +22,19 @@
 		</thead>
 
 		<tbody>
-			{% for quiz in competitive %}
+			{% for entry in competitive %}
 				<tr>
-				<td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Quiz" %}</a></td>
-				<td>{{ quiz.title }}</td>
-				<td>{{ quiz.start_time }}</td>
-				<td>{{ quiz.end_time }}</td>
-				<td>{{ quiz.get_max_score }}</td>
-				{% if quiz.timer > 0 %}
-					<td>{{ quiz.timer|smooth_timedelta }}</td>
+				{% if entry.quiz.taken %}
+					<td>{% trans "Quiz Already Taken" %}</td>
+				{% else %}
+					<td><a href="{% url 'quiz_start_page' slug=entry.quiz.url %}">{% trans "Take Quiz" %}</a></td>
+				{% endif %}
+				<td>{{ entry.quiz.title }}</td>
+				<td>{{ entry.quiz.start_time }}</td>
+				<td>{{ entry.quiz.end_time }}</td>
+				<td>{{ entry.quiz.get_max_score }}</td>
+				{% if entry.quiz.timer > 0 %}
+					<td>{{ entry.quiz.timer|smooth_timedelta }}</td>
 				{% else %}
 					<td>{% trans "Not Timed" %}</td>
 				{% endif %}
