@@ -170,8 +170,9 @@
 			<tr>
 			<th>{% trans "Title" %}</th>
 			<th>{% trans "Performance" %}</th>
-			<th>{% trans "Result Link" %}</th>
-			<th>{% trans "Leaderboard Link" %}</th>
+			<th>{% trans "My Results" %}</th>
+			<th>{% trans "Leaderboards" %}</th>
+			<th>{% trans "Quiz Stats" %}</th>
 			<th>{% trans "Taken DateTime" %}</th>
 			</tr>
 		</thead>
@@ -182,6 +183,7 @@
 					<td>{{ result_table.percent }}{% trans "%" %}</td>
 					<td><a href="{% url 'quiz_results' sitting_id=result_table.sitting.pk %}">{% trans "Your Results" %}</a></td>
 					<td><a href="{% url 'quiz_leaderboards' leaderboard=result_table.quiz.pk %}">{% trans "Leaderboard" %}</a></td>
+					<td><a href="{% url 'quiz_stats' quiz_id=result_table.quiz.pk %}">{% trans "Stats" %}</a></td>
 					<td>{{ result_table.sitting.start }}</td>
 				</tr>
 			{% endfor %}

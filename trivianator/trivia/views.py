@@ -306,6 +306,7 @@ class QuizTake(FormView):
         else:
             self.previous = {}
 
+        self.question.inc()
         self.sitting.add_user_answer(self.question, guess)
         self.sitting.remove_first_question()
 
@@ -362,6 +363,37 @@ class SittingResultView(DetailView):
         context['no_longer_competitive'] = True
         return context
 
+
+class QuizAnswerStatView(DetailView):
+    model = Quiz
+    template_name = 'answer_stats.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(QuizAnswerStatView, self).get_context_data(**kwargs)
+        quiz = self.get_object()
+        try:
+            sitting = Sitting.objects.get(quiz=quiz, complete=True)
+        except Sitting.MultipleObjectsReturned:
+            sitting = Sitting.objects.filter(quiz=quiz, complete=True)[0]
+        finally:
+            questions = sitting.get_questions()
+            context['questions'] = []
+            for question in questions:
+                answers = question.get_answers_percent_list()
+                q_stat = {
+                    'q_content': question.content,
+                    'answers': [],
+                }
+                for entry in answers:
+                    a_stat = {
+                        'a_content': entry[0],
+                        'a_percent': entry[1],
+                        'a_correct': entry[2],
+                        'a_count': entry[3],
+                    }
+                    q_stat['answers'].append(a_stat)
+                context['questions'].append(q_stat)
+        return context
 
 def get_motd(request):
     try:

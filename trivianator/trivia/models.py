@@ -659,8 +659,8 @@ class Question(models.Model):
     def get_answers_list(self):
         return [(answer.id, answer.content) for answer in self.order_answers(Answer.objects.filter(question=self))]
 
-    def get_answers_count_list(self):
-        return [(answer.content, answer.selected_count) for answer in Answer.objects.filter(question=self)]
+    def get_answers_percent_list(self):
+        return [(answer.content, answer.selected_count / self.asked_count * 100, answer.correct, answer.selected_count) for answer in Answer.objects.filter(question=self)]
 
     def answer_choice_to_string(self, guess):
         if isinstance(guess, list):
