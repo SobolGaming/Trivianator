@@ -3,7 +3,8 @@ import os
 from django.core.exceptions import ValidationError
 
 def archive_file_validator(value):
-    filename, ext = os.path.splitext(value.name)
-    if str(ext) != '.tgz':
-        raise ValidationError("Must be a *.tgz file")
-    return True
+    filename, ext = (value.name).split('.', 1)
+    print(ext)
+    if str(ext) == 'tgz' or str(ext) == 'tar.gz' or str(ext) == 'tar':
+        return True
+    raise ValidationError("Must be a *.tgz file")

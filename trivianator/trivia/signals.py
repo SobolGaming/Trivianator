@@ -46,9 +46,9 @@ def handle_media_files(tmpdir, subdir):
     mediaroot = Path(getattr(settings, 'MEDIA_ROOT'))
     if not os.path.isdir(str(mediaroot)): os.mkdir(str(mediaroot))
     image_dest = path_join(mediaroot, subdir, '')
+    os.makedirs(os.path.dirname(image_dest), exist_ok=True)
 
     for name in tmpdir.glob('images/*'):
-        os.makedirs(os.path.dirname(image_dest), exist_ok=True)
         print('Trying to copy {} to {}'.format(str(name),image_dest))
         shutil.copy2(name, image_dest)
 

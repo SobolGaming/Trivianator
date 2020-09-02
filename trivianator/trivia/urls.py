@@ -16,7 +16,7 @@ urlpatterns = [
         name='leaderboards'),
 
     #  passes variable 'sitting_id' to quiz result view
-    path(route=r'quiz_result/<sitting_id:int>',
+    path(route=r'quiz_result/<int:sitting_id>',
         view=views.SittingResultView.as_view(pk_url_kwarg='sitting_id'),
         name='quiz_results'),
 
