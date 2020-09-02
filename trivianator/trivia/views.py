@@ -382,6 +382,7 @@ class QuizAnswerStatView(DetailView):
                 answers = question.get_answers_percent_list()
                 q_stat = {
                     'q_content': question.content,
+                    'q_figure': quesion.figure,
                     'answers': [],
                 }
                 for entry in answers:

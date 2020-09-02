@@ -11,6 +11,11 @@
     {% if questions %}
         {% for question in questions %}
             <p class="lead">{{ question.q_content }}</p>
+
+            {% if question.q_figure %}
+                <p><img src="{{question.q_figure.url}}" alt="{{ question.q_content }}" /></p>
+            {% endif %}
+
             <table class="table table-bordered">
                 <thead>
                     <tr>
