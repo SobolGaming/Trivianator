@@ -162,4 +162,31 @@
 		</table>
 	{% endif %}
 
+	{% if competitive_old_taken_count > 0 %}
+		<h2>{% trans "List of Previously Completed Competitive Quizzes" %}</h2>
+		<table class="table table-bordered table-striped">
+
+		<thead>
+			<tr>
+			<th>{% trans "Title" %}</th>
+			<th>{% trans "Taken DateTime" %}</th>
+			<th>{% trans "Performance" %}</th>
+			<th>{% trans "Result Link" %}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for result_table in competitive_old_taken %}
+				<tr>
+					<td>{{ result_table.quiz.title }}</td>
+					<td>{{ result_table.sitting.start }}</td>
+					<td>{{ result_table.percent }}{% trans "%" %}</td>
+					<td><a href="{% url 'quiz_results' sitting_id=result_table.sitting.pk %}">{% trans "Your Results" %}</a></td>
+				</tr>
+			{% endfor %}
+		</tbody>
+
+		</table>
+
+	{% endif %}
+
 {% endblock %}

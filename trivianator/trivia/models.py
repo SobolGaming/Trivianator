@@ -183,16 +183,29 @@ class Quiz(models.Model):
         except Sitting.MultipleObjectsReturned:
             sittings = Sitting.objects.filter(quiz=self, user=user)
             best_sit = (None, 0)
+            # check first for saved/competitive/single-attempt quizzes
+            delete_list = []
             for sit in sittings:
-                if best_sit[0] == None:
+                if sit.quiz.saved or sit.quiz.competitive or sit.quiz.single_attempt:
                     best_sit = (sit, sit.get_percent_correct)
-                elif sit.get_percent_correct > best_sit[1]:
-                    print('Deleting Sitting: ', best_sit[0])
-                    best_sit[0].delete()
-                    best_sit = (sit, sit.get_percent_correct)
-                elif sit.get_percent_correct <= best_sit[1]:
-                    print('Deleting Sitting: ', sit)
-                    sit.delete()
+                else:
+                    delete_list.append(sit)
+            
+            if best_sit[0] != None:
+                for entry in delete_list:
+                    entry.delete()
+            else:
+                # check next for best attempt from priors
+                for sit in sittings:
+                    if best_sit[0] == None:
+                        best_sit = (sit, sit.get_percent_correct)
+                    elif sit.get_percent_correct > best_sit[1]:
+                        print('Deleting Sitting: ', best_sit[0])
+                        best_sit[0].delete()
+                        best_sit = (sit, sit.get_percent_correct)
+                    elif sit.get_percent_correct <= best_sit[1]:
+                        print('Deleting Sitting: ', sit)
+                        sit.delete()
             return best_sit[1], best_sit[0]
         except Sitting.DoesNotExist:
             return None, None

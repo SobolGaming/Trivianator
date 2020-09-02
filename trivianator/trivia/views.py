@@ -45,6 +45,7 @@ class QuizListView(ListView):
         context['now'] = now()
         context['competitive'] = []
         context['competitive_old'] = []
+        context['competitive_old_taken'] = []
         context['competitive_upcoming'] = []
         for q in q_competitive:
             if q.start_time <= now() and q.end_time > now():
@@ -52,7 +53,16 @@ class QuizListView(ListView):
             elif q.start_time > now():
                 context['competitive_upcoming'].append(q)
             elif q.end_time <= now():
-                context['competitive_old'].append(q)
+                prev_score, prev_sit = q.get_quiz_sit_info(self.request.user)
+                if prev_sit != None:
+                    results = {
+                        'quiz': prev_sit.quiz,
+                        'percent': prev_sit.get_percent_correct,
+                        'sitting': prev_sit,
+                    }
+                    context['competitive_old_taken'].append(results)
+                else:
+                    context['competitive_old'].append(q)
 
         context['generic_new'] = []
         context['generic_taken'] = []
@@ -68,6 +78,7 @@ class QuizListView(ListView):
 
         context['competitive_upcoming_count'] = len(context['competitive_upcoming'])
         context['competitive_old_count'] = len(context['competitive_old'])
+        context['competitive_old_taken_count'] = len(context['competitive_old_taken'])
 
         # see if there is any admin messages to display
         get_motd(self.request)
@@ -314,9 +325,12 @@ class QuizTake(FormView):
 
         self.sitting.mark_quiz_complete()
 
-        if self.quiz.answers_reveal_option == 2:
+        if self.quiz.answers_reveal_option == 2 or (self.quiz.end_time_expired is True and self.quiz.answers_reveal_option == 3):
             results['questions'] = self.sitting.get_questions(with_answers=True)
             results['incorrect_questions'] = self.sitting.get_incorrect_questions
+        
+        if self.quiz.end_time_expired is True:
+            results['reveal_answer'] = True
 
         if self.quiz.saved is False and self.quiz.competitive is False:
             prev_score, prev_sit = self.quiz.get_quiz_sit_info(self.request.user)
@@ -324,6 +338,29 @@ class QuizTake(FormView):
                 raise Exception("Invalid Sitting at End!")
 
         return render(self.request, 'result.html', results)
+
+
+class SittingResultView(DetailView):
+    model = Sitting
+    template_name = 'result.html'
+
+    def get_queryset(self):
+        queryset = super(SittingResultView, self).get_queryset()
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(SittingResultView, self).get_context_data(**kwargs)
+        sitting = self.get_object()
+        context['quiz'] = sitting.quiz
+        context['reveal_answer'] = True
+        context['score'] = sitting.get_current_score
+        context['max_score'] = sitting.get_max_score
+        context['percent'] = sitting.get_percent_correct
+        context['sitting'] = sitting
+        context['questions'] = sitting.get_questions(with_answers=True)
+        context['incorrect_questions'] = sitting.get_incorrect_questions
+        context['no_longer_competitive'] = True
+        return context
 
 
 def get_motd(request):
