@@ -45,6 +45,7 @@ class QuizListView(ListView):
         context['now'] = now()
         context['competitive'] = []
         context['competitive_old'] = []
+        context['competitive_old_taken'] = []
         context['competitive_upcoming'] = []
         for q in q_competitive:
             if q.start_time <= now() and q.end_time > now():
@@ -52,7 +53,20 @@ class QuizListView(ListView):
             elif q.start_time > now():
                 context['competitive_upcoming'].append(q)
             elif q.end_time <= now():
-                context['competitive_old'].append(q)
+                prev_score, prev_sit = q.get_quiz_sit_info(self.request.user)
+                if prev_sit != None:
+                    results = {
+                        'quiz': prev_sit.quiz,
+                        'score': prev_sit.get_current_score,
+                        'max_score': prev_sit.get_max_score,
+                        'percent': prev_sit.get_percent_correct,
+                        'sitting': prev_sit,
+                        'questions': prev_sit.get_questions(with_answers=True),
+                        'incorrect_questions': prev_sit.get_incorrect_questions,
+                    }
+                    context['competitive_old_taken'].append(results)
+                else:
+                    context['competitive_old'].append(q)
 
         context['generic_new'] = []
         context['generic_taken'] = []
@@ -68,6 +82,7 @@ class QuizListView(ListView):
 
         context['competitive_upcoming_count'] = len(context['competitive_upcoming'])
         context['competitive_old_count'] = len(context['competitive_old'])
+        context['competitive_old_taken_count'] = len(context['competitive_old_taken'])
 
         # see if there is any admin messages to display
         get_motd(self.request)
