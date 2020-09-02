@@ -57,12 +57,8 @@ class QuizListView(ListView):
                 if prev_sit != None:
                     results = {
                         'quiz': prev_sit.quiz,
-                        'score': prev_sit.get_current_score,
-                        'max_score': prev_sit.get_max_score,
                         'percent': prev_sit.get_percent_correct,
                         'sitting': prev_sit,
-                        'questions': prev_sit.get_questions(with_answers=True),
-                        'incorrect_questions': prev_sit.get_incorrect_questions,
                     }
                     context['competitive_old_taken'].append(results)
                 else:
@@ -339,6 +335,24 @@ class QuizTake(FormView):
                 raise Exception("Invalid Sitting at End!")
 
         return render(self.request, 'result.html', results)
+
+
+class SittingResultView(DetailView):
+    model = Sitting
+    template_name = 'result.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(SittingResultView, self).get_context_data(**kwargs)
+        context['quiz'] = self.quiz
+        context['quiz']['answers_reveal_option'] = 2
+        context['score'] = self.get_current_score
+        context['max_score'] = self.get_max_score
+        context['percent'] = self.get_percent_correct
+        context['sitting'] = self
+        context['questions'] = self.get_questions(with_answers=True)
+        context['incorrect_questions'] = self.get_incorrect_questions
+        context['no_longer_competitive'] = True
+        return context
 
 
 def get_motd(request):

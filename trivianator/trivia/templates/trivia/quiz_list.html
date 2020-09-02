@@ -180,8 +180,7 @@
 					<td>{{ result_table.quiz.title }}</td>
 					<td>{{ result_table.sitting.start }}</td>
 					<td>{{ result_table.percent }}{% trans "%" %}</td>
-					<td>{% trans "TODO" %}</td>
-					<!-- <a href="{% url 'result.html':result_table %}"> -->
+					<td><a href="{% url 'quiz_results' sitting_id=result_table.sitting.pk %}">{% trans "Your Results" %}</a></td>
 				</tr>
 			{% endfor %}
 		</tbody>
