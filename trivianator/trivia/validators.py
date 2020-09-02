@@ -7,4 +7,4 @@ def archive_file_validator(value):
     print(ext)
     if str(ext) == 'tgz' or str(ext) == 'tar.gz' or str(ext) == 'tar':
         return True
-    raise ValidationError("Must be a *.tgz file")
+    raise ValidationError("Must be a *.tgz, *.tar.gz, or *.tar file")
