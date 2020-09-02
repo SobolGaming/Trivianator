@@ -45,6 +45,9 @@ services:
       dockerfile: ./compose/production/apache2/Dockerfile
     image: trivianator_production_apache
     container_name: apache
+    environment:
+      DJANGO_UPSTREAM_SERVER: ${DJANGO_UPSTREAM_SERVER}
+      DJANGO_UPSTREAM_PORT: ${DJANGO_UPSTREAM_PORT:-8000}
     volumes:
       - static_files_data:/opt/staticfiles
       - media_files_data:/opt/mediafiles
@@ -59,6 +62,9 @@ services:
       dockerfile: ./compose/production/nginx/Dockerfile
     image: trivianator_production_nginx
     container_name: nginx
+    environment:
+      DJANGO_UPSTREAM_SERVER: ${DJANGO_UPSTREAM_SERVER}
+      DJANGO_UPSTREAM_PORT: ${DJANGO_UPSTREAM_PORT:-8000}
     volumes:
       - static_files_data:/opt/staticfiles
       - media_files_data:/opt/mediafiles
