@@ -92,7 +92,7 @@ EMAIL_SUBJECT_PREFIX = env(
 )
 # By Default look at the docker host ip (within docker networking) for the mail server
 EMAIL_HOST = env("DJANGO_EMAIL_HOST", default="host.docker.internal")
-EMIAL_PORT = env("DJANGO_EMAIL_PORT", default=587)
+EMAIL_PORT = env("DJANGO_EMAIL_PORT", default=587)
 # EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER", default="trivianator")
 # EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD", default="password")
 EMAIL_USE_TLS = env.bool("DJANGO_EMAIL_USE_TLS", default=True)
