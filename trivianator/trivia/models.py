@@ -592,6 +592,7 @@ class Question(models.Model):
 
     explanation = models.TextField(max_length=2000,
                                    blank=True,
+                                   default=None,
                                    help_text=_("Explanation to be shown "
                                                "after the question has "
                                                "been answered."),
@@ -624,12 +625,19 @@ class Question(models.Model):
 
     # increment the asked count parameter by 1 as the question was asked
     def inc(self):
-        self.asked_count += 1
-        self.save()
+        # only increment for competitive quizzes while they are active
+        # otherwise we will be blending all kinds of things
+        if self.competitive and not self.end_time_expired:
+            self.asked_count += 1
+            self.save()
 
     def check_if_correct_sc(self, guess):
         answer = Answer.objects.get(id=guess)
-        answer.inc()
+
+        # increment answer count for competitive & active quizzes
+        if self.competitive and not self.end_time_expired:
+            answer.inc()
+
         if answer.correct is True:
             return True
         else:
@@ -638,8 +646,12 @@ class Question(models.Model):
     def check_if_correct_mc(self, guess, choices):
         for choice in choices:
             answer = Answer.objects.get(id=str(choice))
-            if str(choice) in guess:
-                answer.inc()
+
+            # increment answer count for competitive & active quizzes
+            if self.competitive and not self.end_time_expired:
+                if str(choice) in guess:
+                    answer.inc()
+
             if answer.correct is True and str(choice) not in guess:
                 return False
             if answer.correct is False and str(choice) in guess:
