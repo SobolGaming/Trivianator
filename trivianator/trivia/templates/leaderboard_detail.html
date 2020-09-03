@@ -6,7 +6,7 @@
   {% with object as quiz %}
     {% if quiz.competitive and quiz.end_time_expired %}
       {% include 'leaderboard_block.html' %}
-    {% elseif not quiz.competitive %}
+    {% elif not quiz.competitive %}
       {% include 'leaderboard_block.html' %}
     {% endif %}
   {% endwith %}

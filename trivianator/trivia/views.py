@@ -59,6 +59,7 @@ class QuizListView(ListView):
                         'taken': prev_sit != None,
                     }
                 )
+                print(context['competitive'])
             elif q.start_time > now():
                 context['competitive_upcoming'].append(q)
             elif q.end_time <= now():
@@ -283,9 +284,9 @@ class QuizTake(FormView):
 
         is_correct = False
         if 'multi_choice' == self.question.question_type:
-            is_correct = self.question.check_if_correct_mc(guess, [id for id, val in self.question.get_answers_list()])
+            is_correct = self.question.check_if_correct_mc(guess, [id for id, val in self.question.get_answers_list()], self.quiz.competitive and not self.quiz.end_time_expired)
         else:
-            is_correct = self.question.check_if_correct_sc(guess)
+            is_correct = self.question.check_if_correct_sc(guess, self.quiz.competitive and not self.quiz.end_time_expired)
 
         # if end_time of a competitive quiz has passed and you started the quiz before it ended, disregard last answer
         if self.quiz.competitive and self.quiz.end_time_expired and self.sitting.start < self.quiz.end_time:
@@ -314,7 +315,10 @@ class QuizTake(FormView):
         else:
             self.previous = {}
 
-        self.question.inc()
+        # increment question count if competitive and active
+        if self.quiz.competitive and not self.quiz.end_time_expired:
+            self.question.inc()
+
         self.sitting.add_user_answer(self.question, guess)
         self.sitting.remove_first_question()
 
@@ -359,15 +363,20 @@ class SittingResultView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(SittingResultView, self).get_context_data(**kwargs)
         sitting = self.get_object()
-        context['quiz'] = sitting.quiz
-        context['reveal_answer'] = True
-        context['score'] = sitting.get_current_score
-        context['max_score'] = sitting.get_max_score
-        context['percent'] = sitting.get_percent_correct
-        context['sitting'] = sitting
-        context['questions'] = sitting.get_questions(with_answers=True)
-        context['incorrect_questions'] = sitting.get_incorrect_questions
-        context['no_longer_competitive'] = True
+        print(sitting.quiz.competitive)
+        print(sitting.quiz.end_time_expired)
+        if sitting.quiz.competitive and not sitting.quiz.end_time_expired:
+            return context
+        else:
+            context['quiz'] = sitting.quiz
+            context['reveal_answer'] = True
+            context['score'] = sitting.get_current_score
+            context['max_score'] = sitting.get_max_score
+            context['percent'] = sitting.get_percent_correct
+            context['sitting'] = sitting
+            context['questions'] = sitting.get_questions(with_answers=True)
+            context['incorrect_questions'] = sitting.get_incorrect_questions
+            context['no_longer_competitive'] = True
         return context
 
 
@@ -382,7 +391,10 @@ class QuizAnswerStatView(DetailView):
             sitting = Sitting.objects.get(quiz=quiz, complete=True)
         except Sitting.MultipleObjectsReturned:
             sitting = Sitting.objects.filter(quiz=quiz, complete=True)[0]
-        finally:
+        except Sitting.DoesNotExist:
+            return context
+
+        if sitting:
             questions = sitting.get_questions()
             context['questions'] = []
             for question in questions:

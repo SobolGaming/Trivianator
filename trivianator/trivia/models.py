@@ -250,7 +250,7 @@ class Progress(models.Model):
         output = {}
 
         for cat in Category.objects.all():
-            to_find = re.escape(cat.category) + r",(\d+),(\d+),"
+            to_find = r"(?:^|,)" + re.escape(cat.category) + r",(\d+),(\d+)"
             #  group 1 is score, group 2 is highest possible
 
             match = re.search(to_find, self.serialized_performance, re.IGNORECASE)
@@ -625,17 +625,14 @@ class Question(models.Model):
 
     # increment the asked count parameter by 1 as the question was asked
     def inc(self):
-        # only increment for competitive quizzes while they are active
-        # otherwise we will be blending all kinds of things
-        if self.competitive and not self.end_time_expired:
-            self.asked_count += 1
-            self.save()
+        self.asked_count += 1
+        self.save()
 
-    def check_if_correct_sc(self, guess):
+    def check_if_correct_sc(self, guess, competitive):
         answer = Answer.objects.get(id=guess)
 
         # increment answer count for competitive & active quizzes
-        if self.competitive and not self.end_time_expired:
+        if competitive:
             answer.inc()
 
         if answer.correct is True:
@@ -643,12 +640,12 @@ class Question(models.Model):
         else:
             return False
 
-    def check_if_correct_mc(self, guess, choices):
+    def check_if_correct_mc(self, guess, choices, competitive):
         for choice in choices:
             answer = Answer.objects.get(id=str(choice))
 
             # increment answer count for competitive & active quizzes
-            if self.competitive and not self.end_time_expired:
+            if competitive:
                 if str(choice) in guess:
                     answer.inc()
 
@@ -672,7 +669,7 @@ class Question(models.Model):
         return [(answer.id, answer.content) for answer in self.order_answers(Answer.objects.filter(question=self))]
 
     def get_answers_percent_list(self):
-        return [(answer.content, answer.selected_count / self.asked_count * 100, answer.correct, answer.selected_count) for answer in Answer.objects.filter(question=self)]
+        return [(answer.content, answer.selected_count / self.asked_count * 100 if self.asked_count else 0, answer.correct, answer.selected_count) for answer in Answer.objects.filter(question=self)]
 
     def answer_choice_to_string(self, guess):
         if isinstance(guess, list):

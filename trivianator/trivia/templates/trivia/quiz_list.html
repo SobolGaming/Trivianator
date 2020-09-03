@@ -24,7 +24,7 @@
 		<tbody>
 			{% for entry in competitive %}
 				<tr>
-				{% if entry.quiz.taken %}
+				{% if entry.taken %}
 					<td>{% trans "Quiz Already Taken" %}</td>
 				{% else %}
 					<td><a href="{% url 'quiz_start_page' slug=entry.quiz.url %}">{% trans "Take Quiz" %}</a></td>
