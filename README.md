@@ -121,7 +121,7 @@ fit your particular environment.  The examples do NOT include ssl customization
 
 5) #### Makemigrations and migrate if there are Model Changes (Or First Time)
 
-   * Follow [this](#how-to-perform-migrations-in-production)
+   * Follow [this](#how-to-perform-model-migrations-in-production)
 
 6) Check out [First Steps](#first-steps-after-running)
 
@@ -146,6 +146,7 @@ not configure SSL.
 ### How to perform management commands in docker
 
 * `docker exec -it <CONTAINER_ID> /bin/bash`
+  * The container you want for all `python management.py` commands in the Django one
 * `source /entrypoint` to set DATABASE_URL and CELERY_BROKER_URL
 * perform actual command `python management.py <commandargs>`
 
