@@ -21,6 +21,10 @@ DJANGO_SERVER_EMAIL=
 MAILGUN_API_KEY=
 MAILGUN_DOMAIN=
 
+EMAIL_HOST_USER=trivianator
+EMAIL_HOST_PASSWORD=password
+EMAIL_USE_TLS=True
+EMAIL_USE_SSL=True
 
 # django-allauth
 # ------------------------------------------------------------------------------

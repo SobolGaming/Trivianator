@@ -46,8 +46,9 @@ services:
     image: trivianator_production_apache
     container_name: apache
     environment:
-      DJANGO_UPSTREAM_SERVER: ${DJANGO_UPSTREAM_SERVER}
+      DJANGO_UPSTREAM_SERVER: ${DJANGO_SELF_HOST}
       DJANGO_UPSTREAM_PORT: ${DJANGO_UPSTREAM_PORT:-8000}
+      DJANGO_SELF_HOST: ${DJANGO_SELF_HOST}
     volumes:
       - static_files_data:/opt/staticfiles
       - media_files_data:/opt/mediafiles
@@ -63,8 +64,9 @@ services:
     image: trivianator_production_nginx
     container_name: nginx
     environment:
-      DJANGO_UPSTREAM_SERVER: ${DJANGO_UPSTREAM_SERVER}
+      DJANGO_UPSTREAM_SERVER: ${DJANGO_SELF_HOST}
       DJANGO_UPSTREAM_PORT: ${DJANGO_UPSTREAM_PORT:-8000}
+      DJANGO_SELF_HOST: ${DJANGO_SELF_HOST}
     volumes:
       - static_files_data:/opt/staticfiles
       - media_files_data:/opt/mediafiles
