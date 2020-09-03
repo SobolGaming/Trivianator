@@ -13,10 +13,13 @@ DJANGO_SECURE_SSL_REDIRECT=False
 
 # Email
 # ------------------------------------------------------------------------------
-DJANGO_SERVER_EMAIL=
+# DJANGO_SERVER_EMAIL=
 
-MAILGUN_API_KEY=
-MAILGUN_DOMAIN=
+# MAILGUN_API_KEY=
+# MAILGUN_DOMAIN=
+
+DJANGO_EMAIL_USE_TLS=False
+DJANGO_EMAIL_USE_SSL=False
 
 
 # django-allauth
@@ -38,4 +41,3 @@ REDIS_URL=redis://redis:6379/0
 # Flower
 CELERY_FLOWER_USER=VgMIPKrMhlHoZHqumWrgbhBXWfBnQTXu
 CELERY_FLOWER_PASSWORD=7RSI7wLXq4VOkriGRrfuA7EBONbeo11vZRo96d82yNFtG7zv8lUPTnDCVAMPV6xP
-

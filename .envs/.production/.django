@@ -4,7 +4,7 @@
 DJANGO_SETTINGS_MODULE=config.settings.production
 DJANGO_SECRET_KEY=n28HXbUYGadoPPDK9irRhrDbBMb3nievQaYTuUHaURvZGgfa3b8PBFSjeEUfYfEf
 DJANGO_ADMIN_URL=t94s6Jtknri7HLSSKS0ZEi6G3nSG8cLH/
-DJANGO_ALLOWED_HOSTS=192.168.1.14,192.168.1.11,quiz.ashesofcreation.wiki,127.0.0.1
+#DJANGO_ALLOWED_HOSTS=192.168.1.14,192.168.1.11,quiz.ashesofcreation.wiki,127.0.0.1
 
 # Security
 # ------------------------------------------------------------------------------
@@ -16,15 +16,13 @@ DJANGO_SECURE_HSTS_SECONDS=0
 
 # Email
 # ------------------------------------------------------------------------------
-DJANGO_SERVER_EMAIL=
+# DJANGO_SERVER_EMAIL=
 
-MAILGUN_API_KEY=
-MAILGUN_DOMAIN=
+# MAILGUN_API_KEY=
+# MAILGUN_DOMAIN=
 
-EMAIL_HOST_USER=trivianator
-EMAIL_HOST_PASSWORD=password
-EMAIL_USE_TLS=True
-EMAIL_USE_SSL=True
+DJANGO_EMAIL_USE_TLS=False
+DJANGO_EMAIL_USE_SSL=False
 
 # django-allauth
 # ------------------------------------------------------------------------------

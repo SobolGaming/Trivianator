@@ -15,6 +15,8 @@ services:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
     image: trivianator_production_django
+    environment:
+      DJANGO_SELF_HOST: ${DJANGO_SELF_HOST}
     volumes:
       - static_files_data:/app/staticfiles
       - media_files_data:/app/mediafiles

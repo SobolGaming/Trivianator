@@ -11,7 +11,7 @@ SELF_HOST = env("DJANGO_SELF_HOST")
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["quiz.ashesofcreation.wiki,"+SELF_HOST])
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["quiz.ashesofcreation.wiki",SELF_HOST,"127.0.0.1","localhost"])
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -90,13 +90,13 @@ SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
 EMAIL_SUBJECT_PREFIX = env(
     "DJANGO_EMAIL_SUBJECT_PREFIX", default="[Trivianator]"
 )
-# By Default look at the docker host ip for the mail server
-EMAIL_HOST = env("DJANGO_EMAIL_HOST", default=DJANGO_SELF_IP)
-EMIAL_PORT = env("DJANGO_EMAIL_PORT", default=25)
+# By Default look at the docker host ip (within docker networking) for the mail server
+EMAIL_HOST = env("DJANGO_EMAIL_HOST", default="host.docker.internal")
+EMIAL_PORT = env("DJANGO_EMAIL_PORT", default=587)
 # EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER", default="trivianator")
 # EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD", default="password")
-EMAIL_USE_TLS = env.bool("DJANGO_EMAIL_USE_TLS", default=true)
-EMAIL_USE_SSL = env.bool("DJANGO_EMAIL_USE_SSL", default=true)
+EMAIL_USE_TLS = env.bool("DJANGO_EMAIL_USE_TLS", default=True)
+EMAIL_USE_SSL = env.bool("DJANGO_EMAIL_USE_SSL", default=True)
 
 
 # ADMIN
