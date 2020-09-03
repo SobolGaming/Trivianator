@@ -116,7 +116,7 @@ fit your particular environment.  The examples do NOT include ssl customization
 
 4) #### Actually deploy
 
-   * `docker-compose -f production.yml up --build`
+   * `DJANGO_SELF_HOST=<selfhostip> docker-compose -f production.yml up --build`
    * When complete, your site will be hosted on `<Host Running Docker>:8000`
 
 5) #### Makemigrations and migrate if there are Model Changes (Or First Time)

@@ -1,12 +1,17 @@
 from .base import *  # noqa
 from .base import env
 
+
+# This needs to be the external ip address of the docker host so that the
+# sendmail app running on the docker host can be used
+SELF_HOST = env("DJANGO_SELF_HOST")
+
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["quiz.ashesofcreation.wiki"])
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["quiz.ashesofcreation.wiki",SELF_HOST,"127.0.0.1","localhost"])
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -85,6 +90,14 @@ SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
 EMAIL_SUBJECT_PREFIX = env(
     "DJANGO_EMAIL_SUBJECT_PREFIX", default="[Trivianator]"
 )
+# By Default look at the docker host ip (within docker networking) for the mail server
+EMAIL_HOST = env("DJANGO_EMAIL_HOST", default="host.docker.internal")
+EMIAL_PORT = env("DJANGO_EMAIL_PORT", default=587)
+# EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER", default="trivianator")
+# EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD", default="password")
+EMAIL_USE_TLS = env.bool("DJANGO_EMAIL_USE_TLS", default=True)
+EMAIL_USE_SSL = env.bool("DJANGO_EMAIL_USE_SSL", default=True)
+
 
 # ADMIN
 # ------------------------------------------------------------------------------
@@ -94,16 +107,16 @@ ADMIN_URL = env("DJANGO_ADMIN_URL")
 # Anymail
 # ------------------------------------------------------------------------------
 # https://anymail.readthedocs.io/en/stable/installation/#installing-anymail
-INSTALLED_APPS += ["anymail"]  # noqa F405
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-# https://anymail.readthedocs.io/en/stable/installation/#anymail-settings-reference
-# https://anymail.readthedocs.io/en/stable/esps/mailgun/
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-ANYMAIL = {
-    "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
-    "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN"),
-    "MAILGUN_API_URL": env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
-}
+# INSTALLED_APPS += ["anymail"]  # noqa F405
+# # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
+# # https://anymail.readthedocs.io/en/stable/installation/#anymail-settings-reference
+# # https://anymail.readthedocs.io/en/stable/esps/mailgun/
+# EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+# ANYMAIL = {
+#     "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
+#     "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN"),
+#     "MAILGUN_API_URL": env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
+# }
 
 
 # LOGGING
