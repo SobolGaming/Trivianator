@@ -20,6 +20,11 @@ urlpatterns = [
         view=views.SittingResultView.as_view(pk_url_kwarg='sitting_id'),
         name='quiz_results'),
 
+    #  passes variable 'quiz.pk' to quiz stats view
+    path(route=r'quiz_stats/<int:quiz_id>',
+        view=views.QuizAnswerStatView.as_view(pk_url_kwarg='quiz_id'),
+        name='quiz_stats'),
+
     re_path(route=r'^category/$',
         view=views.CategoriesListView.as_view(),
         name='quiz_category_list_all'),

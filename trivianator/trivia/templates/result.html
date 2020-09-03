@@ -3,7 +3,7 @@
 
 {% load quiz_tags %}
 
-{% block title %} {{ quiz.title}} {% endblock %}
+{% block title %} {{ quiz.title }} {% endblock %}
 {% block description %} {% trans "Quiz Results for" %} {{ quiz.title }} {% endblock %}
 
 
@@ -67,7 +67,7 @@
   <hr>
 
   <div>
-  {% if quiz.answers_reveal_option == 2 and no_longer_competitive == True or reveal_answer == True %}
+  {% if quiz.answers_reveal_option == 2 and no_longer_competitive or reveal_answer %}
     <p>{% trans "Review the questions below and try the quiz again in the future" %}.</p>
     {% if user.is_authenticated %}
       <p>{% trans "The result of this quiz will be stored in your progress section so you can review and monitor your progression" %}.</p>
@@ -76,35 +76,39 @@
   {% endif %}
 
   <hr>
-  {% if possible and no_longer_competitive == True or reveal_answer == True %}
+  {% if possible and no_longer_competitive or reveal_answer %}
     <p class="lead">
       {% trans "Your session score is" %} {{ session }} {% trans "out of a possible" %} {{ possible }}
     </p>
     <hr>
   {% endif %}
 
-  {% if questions and no_longer_competitive == True or reveal_answer == True %}
+  {% if questions and no_longer_competitive or reveal_answer %}
 
     {% for question in questions %}
 
-    <p class="lead">
-		  {{ question.content }}
-	  </p>
-
-	  {% correct_answer_for_all question %}
-
-      {% if question.user_answer %}
-        <p>{% trans "Your answer" %}: {{ question|answer_choice_to_string:question.user_answer }}</p>
-      {% else %}
-        <p>{% trans "Your answer: None" %}</p>
+      <p class="lead">
+        {{ question.content }}
+      </p>
+      
+      {% if question.figure %}
+        <p><img src="{{question.figure.url}}" alt="{{ question.content }}" /></p>
       {% endif %}
 
-	  <p><strong>{% trans "Explanation" %}:</strong></p>
-	  <div class="alert alert-debug">
-		  {{ question.explanation }}
-	  </div>
+      {% correct_answer_for_all question %}
 
-	  <hr>
+        {% if question.user_answer %}
+          <p>{% trans "Your answer" %}: {{ question|answer_choice_to_string:question.user_answer }}</p>
+        {% else %}
+          <p>{% trans "Your answer: None" %}</p>
+        {% endif %}
+
+      <p><strong>{% trans "Explanation" %}:</strong></p>
+      <div class="alert alert-debug">
+        {{ question.explanation }}
+      </div>
+
+      <hr>
 
     {% endfor %}
 

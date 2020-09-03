@@ -186,7 +186,7 @@ class Quiz(models.Model):
             # check first for saved/competitive/single-attempt quizzes
             delete_list = []
             for sit in sittings:
-                if sit.quiz.saved or sit.quiz.competitive or sit.quiz.single_attempt:
+                if (sit.quiz.saved is True or sit.quiz.competitive is True or sit.quiz.single_attempt is True) and best_sit[0] == None:
                     best_sit = (sit, sit.get_percent_correct)
                 else:
                     delete_list.append(sit)
@@ -250,7 +250,7 @@ class Progress(models.Model):
         output = {}
 
         for cat in Category.objects.all():
-            to_find = re.escape(cat.category) + r",(\d+),(\d+),"
+            to_find = r"(?:^|,)" + re.escape(cat.category) + r",(\d+),(\d+)"
             #  group 1 is score, group 2 is highest possible
 
             match = re.search(to_find, self.serialized_performance, re.IGNORECASE)
@@ -363,7 +363,7 @@ class SittingManager(models.Manager):
         return new_sitting
 
     def user_sitting(self, user, quiz):
-        if quiz.single_attempt is True and self.filter(user=user, quiz=quiz, complete=True).exists():
+        if (quiz.single_attempt or (quiz.competitive and not quiz.end_time_expired)) and self.filter(user=user, quiz=quiz, complete=True).exists():
             return False
 
         try:
@@ -476,9 +476,8 @@ class Sitting(models.Model):
         # add to leaderboard if quiz was competitive and currently in session
         if self.quiz.competitive and self.quiz.end_time > now() and self.quiz.start_time < now():
             if not Leaderboard.objects.filter(quiz=self.quiz, user=self.user).exists():
-                ld = Leaderboard.objects.create(
-                    quiz=self.quiz, user=self.user, score=self.current_score, completion_time=(self.end - self.start).seconds
-                )
+                ld = Leaderboard.objects.create(quiz=self.quiz, user=self.user, score=self.current_score,
+                                                completion_time=(self.end - self.start).seconds)
 
     def add_incorrect_question(self, question):
         """
@@ -531,7 +530,6 @@ class Sitting(models.Model):
                 except KeyError:
                     # quiz or question timer expired
                     pass
-
         return questions
 
     @property
@@ -557,6 +555,7 @@ class Sitting(models.Model):
         if self.quiz.timer > 0:
             return max(0, int(round(self.quiz.timer - (now() - self.start).total_seconds())))
         return None
+
 
 class Question(models.Model):
     """
@@ -593,6 +592,7 @@ class Question(models.Model):
 
     explanation = models.TextField(max_length=2000,
                                    blank=True,
+                                   default=None,
                                    help_text=_("Explanation to be shown "
                                                "after the question has "
                                                "been answered."),
@@ -609,6 +609,11 @@ class Question(models.Model):
                                                   "to the user"),
                                     verbose_name=_("Answer Order"))
 
+    asked_count = models.PositiveIntegerField(null = False, blank = False,
+                                              default = 0,
+                                              help_text=_("Number of times question is asked."),
+                                              verbose_name=_("Number of times asked."))
+
     objects = InheritanceManager()
 
     class Meta:
@@ -618,16 +623,32 @@ class Question(models.Model):
     def __str__(self):
         return self.content
 
-    def check_if_correct_sc(self, guess):
+    # increment the asked count parameter by 1 as the question was asked
+    def inc(self):
+        self.asked_count += 1
+        self.save()
+
+    def check_if_correct_sc(self, guess, competitive):
         answer = Answer.objects.get(id=guess)
+
+        # increment answer count for competitive & active quizzes
+        if competitive:
+            answer.inc()
+
         if answer.correct is True:
             return True
         else:
             return False
 
-    def check_if_correct_mc(self, guess, choices):
+    def check_if_correct_mc(self, guess, choices, competitive):
         for choice in choices:
             answer = Answer.objects.get(id=str(choice))
+
+            # increment answer count for competitive & active quizzes
+            if competitive:
+                if str(choice) in guess:
+                    answer.inc()
+
             if answer.correct is True and str(choice) not in guess:
                 return False
             if answer.correct is False and str(choice) in guess:
@@ -646,6 +667,9 @@ class Question(models.Model):
 
     def get_answers_list(self):
         return [(answer.id, answer.content) for answer in self.order_answers(Answer.objects.filter(question=self))]
+
+    def get_answers_percent_list(self):
+        return [(answer.content, answer.selected_count / self.asked_count * 100 if self.asked_count else 0, answer.correct, answer.selected_count) for answer in Answer.objects.filter(question=self)]
 
     def answer_choice_to_string(self, guess):
         if isinstance(guess, list):
@@ -673,8 +697,18 @@ class Answer(models.Model):
                                   help_text=_("Is this a correct answer?"),
                                   verbose_name=_("Correct"))
 
+    selected_count = models.PositiveIntegerField(null = False, blank = False,
+                                                 default = 0,
+                                                 help_text=_("Number of times selected."),
+                                                 verbose_name=_("Number of times selected."))
+
     def __str__(self):
         return self.content
+
+    # increment the selected_count parameter by 1 as someone chose this answer
+    def inc(self):
+        self.selected_count += 1
+        self.save()
 
     class Meta:
         verbose_name = _("Answer")

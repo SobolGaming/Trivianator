@@ -44,16 +44,25 @@ class QuizListView(ListView):
         q_competitive = self.get_queryset().filter(competitive=True)
         context['now'] = now()
         context['competitive'] = []
+        context['competitive_taken'] = []
         context['competitive_old'] = []
         context['competitive_old_taken'] = []
         context['competitive_upcoming'] = []
         for q in q_competitive:
+            # see if we have a sitting for this quiz already
+            prev_score, prev_sit = q.get_quiz_sit_info(self.request.user)
+
             if q.start_time <= now() and q.end_time > now():
-                context['competitive'].append(q)
+                context['competitive'].append(
+                    {
+                        'quiz': q,
+                        'taken': prev_sit != None,
+                    }
+                )
+                print(context['competitive'])
             elif q.start_time > now():
                 context['competitive_upcoming'].append(q)
             elif q.end_time <= now():
-                prev_score, prev_sit = q.get_quiz_sit_info(self.request.user)
                 if prev_sit != None:
                     results = {
                         'quiz': prev_sit.quiz,
@@ -229,8 +238,8 @@ class QuizTake(FormView):
 
         if self.logged_in_user:
             self.sitting = Sitting.objects.user_sitting(request.user, self.quiz)
-        if self.sitting is False:
-            return render(request, 'single_complete.html')
+            if self.sitting is False:
+                return render(request, 'single_complete.html')
 
         return super(QuizTake, self).dispatch(request, *args, **kwargs)
 
@@ -275,9 +284,9 @@ class QuizTake(FormView):
 
         is_correct = False
         if 'multi_choice' == self.question.question_type:
-            is_correct = self.question.check_if_correct_mc(guess, [id for id, val in self.question.get_answers_list()])
+            is_correct = self.question.check_if_correct_mc(guess, [id for id, val in self.question.get_answers_list()], self.quiz.competitive and not self.quiz.end_time_expired)
         else:
-            is_correct = self.question.check_if_correct_sc(guess)
+            is_correct = self.question.check_if_correct_sc(guess, self.quiz.competitive and not self.quiz.end_time_expired)
 
         # if end_time of a competitive quiz has passed and you started the quiz before it ended, disregard last answer
         if self.quiz.competitive and self.quiz.end_time_expired and self.sitting.start < self.quiz.end_time:
@@ -306,6 +315,10 @@ class QuizTake(FormView):
         else:
             self.previous = {}
 
+        # increment question count if competitive and active
+        if self.quiz.competitive and not self.quiz.end_time_expired:
+            self.question.inc()
+
         self.sitting.add_user_answer(self.question, guess)
         self.sitting.remove_first_question()
 
@@ -332,10 +345,9 @@ class QuizTake(FormView):
         if self.quiz.end_time_expired is True:
             results['reveal_answer'] = True
 
-        if self.quiz.saved is False and self.quiz.competitive is False:
-            prev_score, prev_sit = self.quiz.get_quiz_sit_info(self.request.user)
-            if prev_score == None:
-                raise Exception("Invalid Sitting at End!")
+        prev_score, prev_sit = self.quiz.get_quiz_sit_info(self.request.user)
+        if prev_score == None:
+            raise Exception("Invalid Sitting at End!")
 
         return render(self.request, 'result.html', results)
 
@@ -351,15 +363,56 @@ class SittingResultView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(SittingResultView, self).get_context_data(**kwargs)
         sitting = self.get_object()
-        context['quiz'] = sitting.quiz
-        context['reveal_answer'] = True
-        context['score'] = sitting.get_current_score
-        context['max_score'] = sitting.get_max_score
-        context['percent'] = sitting.get_percent_correct
-        context['sitting'] = sitting
-        context['questions'] = sitting.get_questions(with_answers=True)
-        context['incorrect_questions'] = sitting.get_incorrect_questions
-        context['no_longer_competitive'] = True
+        print(sitting.quiz.competitive)
+        print(sitting.quiz.end_time_expired)
+        if sitting.quiz.competitive and not sitting.quiz.end_time_expired:
+            return context
+        else:
+            context['quiz'] = sitting.quiz
+            context['reveal_answer'] = True
+            context['score'] = sitting.get_current_score
+            context['max_score'] = sitting.get_max_score
+            context['percent'] = sitting.get_percent_correct
+            context['sitting'] = sitting
+            context['questions'] = sitting.get_questions(with_answers=True)
+            context['incorrect_questions'] = sitting.get_incorrect_questions
+            context['no_longer_competitive'] = True
+        return context
+
+
+class QuizAnswerStatView(DetailView):
+    model = Quiz
+    template_name = 'answer_stats.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(QuizAnswerStatView, self).get_context_data(**kwargs)
+        quiz = self.get_object()
+        try:
+            sitting = Sitting.objects.get(quiz=quiz, complete=True)
+        except Sitting.MultipleObjectsReturned:
+            sitting = Sitting.objects.filter(quiz=quiz, complete=True)[0]
+        except Sitting.DoesNotExist:
+            return context
+
+        if sitting:
+            questions = sitting.get_questions()
+            context['questions'] = []
+            for question in questions:
+                answers = question.get_answers_percent_list()
+                q_stat = {
+                    'q_content': question.content,
+                    'q_figure': question.figure,
+                    'answers': [],
+                }
+                for entry in answers:
+                    a_stat = {
+                        'a_content': entry[0],
+                        'a_percent': entry[1],
+                        'a_correct': entry[2],
+                        'a_count': entry[3],
+                    }
+                    q_stat['answers'].append(a_stat)
+                context['questions'].append(q_stat)
         return context
 
 
@@ -369,6 +422,7 @@ def get_motd(request):
         messages.error(request, obj.msg)
     except Exception as e:
         pass
+
 
 def index(request):
     return render(request, 'index.html', {})

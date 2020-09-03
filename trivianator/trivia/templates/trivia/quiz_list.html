@@ -22,15 +22,19 @@
 		</thead>
 
 		<tbody>
-			{% for quiz in competitive %}
+			{% for entry in competitive %}
 				<tr>
-				<td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Quiz" %}</a></td>
-				<td>{{ quiz.title }}</td>
-				<td>{{ quiz.start_time }}</td>
-				<td>{{ quiz.end_time }}</td>
-				<td>{{ quiz.get_max_score }}</td>
-				{% if quiz.timer > 0 %}
-					<td>{{ quiz.timer|smooth_timedelta }}</td>
+				{% if entry.taken %}
+					<td>{% trans "Quiz Already Taken" %}</td>
+				{% else %}
+					<td><a href="{% url 'quiz_start_page' slug=entry.quiz.url %}">{% trans "Take Quiz" %}</a></td>
+				{% endif %}
+				<td>{{ entry.quiz.title }}</td>
+				<td>{{ entry.quiz.start_time }}</td>
+				<td>{{ entry.quiz.end_time }}</td>
+				<td>{{ entry.quiz.get_max_score }}</td>
+				{% if entry.quiz.timer > 0 %}
+					<td>{{ entry.quiz.timer|smooth_timedelta }}</td>
 				{% else %}
 					<td>{% trans "Not Timed" %}</td>
 				{% endif %}
@@ -170,8 +174,9 @@
 			<tr>
 			<th>{% trans "Title" %}</th>
 			<th>{% trans "Performance" %}</th>
-			<th>{% trans "Result Link" %}</th>
-			<th>{% trans "Leaderboard Link" %}</th>
+			<th>{% trans "My Results" %}</th>
+			<th>{% trans "Leaderboards" %}</th>
+			<th>{% trans "Quiz Stats" %}</th>
 			<th>{% trans "Taken DateTime" %}</th>
 			</tr>
 		</thead>
@@ -182,6 +187,7 @@
 					<td>{{ result_table.percent }}{% trans "%" %}</td>
 					<td><a href="{% url 'quiz_results' sitting_id=result_table.sitting.pk %}">{% trans "Your Results" %}</a></td>
 					<td><a href="{% url 'quiz_leaderboards' leaderboard=result_table.quiz.pk %}">{% trans "Leaderboard" %}</a></td>
+					<td><a href="{% url 'quiz_stats' quiz_id=result_table.quiz.pk %}">{% trans "Stats" %}</a></td>
 					<td>{{ result_table.sitting.start }}</td>
 				</tr>
 			{% endfor %}
