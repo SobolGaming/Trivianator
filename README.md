@@ -12,7 +12,7 @@ Django-based Trivia Quiz Framework
 
 # To Be Done
 * Minify files for production
-* Support postgres DB backup
+* Add OAuth Google-supported User Credentials
 
 # Dependencies
 This is a Docker-based Django framework. Please make sure you have Docker and
@@ -137,9 +137,9 @@ not configure SSL.
    * Run `python manage.py createsuperuser` following
      [this](#how-to-perform-management-commands-in-docker)
 2) Upload quizzes for users to take
-  * Login to the [admin page](#urls-of-note) with the superuser/admin
-  * navigate to the quiz_uploads (TDB INSTRUCTIONS)
-  * Add the quiz and select the zip file containing one or more quizzes
+   * Login to the [admin page](#urls-of-note) with the superuser/admin
+   * navigate to the quiz_uploads (TBD INSTRUCTIONS)
+   * Add the *.tgz file containing the quiz you wish to upload
 
 ## FAQ
 
