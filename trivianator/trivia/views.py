@@ -59,7 +59,6 @@ class QuizListView(ListView):
                         'taken': prev_sit != None,
                     }
                 )
-                print(context['competitive'])
             elif q.start_time > now():
                 context['competitive_upcoming'].append(q)
             elif q.end_time <= now():
@@ -363,8 +362,6 @@ class SittingResultView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(SittingResultView, self).get_context_data(**kwargs)
         sitting = self.get_object()
-        print(sitting.quiz.competitive)
-        print(sitting.quiz.end_time_expired)
         if sitting.quiz.competitive and not sitting.quiz.end_time_expired:
             return context
         else:
