@@ -200,11 +200,11 @@ class Quiz(models.Model):
                     if best_sit[0] == None:
                         best_sit = (sit, sit.get_percent_correct)
                     elif sit.get_percent_correct > best_sit[1]:
-                        print('Deleting Sitting: ', best_sit[0])
+                        # print('Deleting Sitting: ', best_sit[0])
                         best_sit[0].delete()
                         best_sit = (sit, sit.get_percent_correct)
                     elif sit.get_percent_correct <= best_sit[1]:
-                        print('Deleting Sitting: ', sit)
+                        # print('Deleting Sitting: ', sit)
                         sit.delete()
             return best_sit[1], best_sit[0]
         except Sitting.DoesNotExist:
