@@ -4,7 +4,7 @@
 
 
 {% block title %} {{ quiz.title }} {% endblock %}
-{% block description %} {{ quiz.title }} - {{ quiz.description }} {% endblock %}
+{% block description %} {{ quiz.title|smooth_title }} - {{ quiz.description }} {% endblock %}
 
 {% block content %}
 

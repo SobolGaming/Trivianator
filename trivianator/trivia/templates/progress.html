@@ -34,14 +34,14 @@
 		
 		{% if quiz.quiz.title in hide %}
 			<tr>
-				<td>{{ quiz.quiz.title }}</td>
+				<td>{{ quiz.quiz.title|smooth_title }}</td>
 				<td>{% trans "Hidden for Special Quiz Period" %}</td>
 				<td>{% trans "Hidden for Special Quiz Period" %}</td>
 				<td>{% trans "Hidden for Special Quiz Period" %}</td>
 			</tr>
 		{% else %}
 			<tr>
-				<td>{{ quiz.quiz.title }}</td>
+				<td>{{ quiz.quiz.title|smooth_title }}</td>
 				<td>{{ quiz.current_score }}</td>
 				<td>{{ quiz.get_max_score }}</td>
 				<td>{{ quiz.get_percent_correct }}</td>

@@ -59,6 +59,10 @@ def smooth_timedelta(secs):
         timetot += " {} seconds".format(int(secs))
     return timetot
 
+@register.filter()
+def smooth_title(str):
+    return str.replace('-', ' ')
+
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)

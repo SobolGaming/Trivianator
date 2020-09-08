@@ -29,7 +29,7 @@
 				{% else %}
 					<td><a href="{% url 'quiz_start_page' slug=entry.quiz.url %}">{% trans "Take Quiz" %}</a></td>
 				{% endif %}
-				<td>{{ entry.quiz.title }}</td>
+				<td>{{ entry.quiz.title|smooth_title }}</td>
 				<td>{{ entry.quiz.start_time }}</td>
 				<td>{{ entry.quiz.end_time }}</td>
 				<td>{{ entry.quiz.get_max_score }}</td>
@@ -66,7 +66,7 @@
 			{% for quiz in competitive_upcoming %}
 				<tr>
 				<td>{% trans "Will Be Available on Start" %}</a></td>
-				<td>{{ quiz.title }}</td>
+				<td>{{ quiz.title|smooth_title }}</td>
 				<td>{{ quiz.start_time }}</td>
 				<td>{{ quiz.end_time }}</td>
 				<td>{{ quiz.get_max_score }}</td>
@@ -100,7 +100,7 @@
 			{% for quiz in generic_new %}
 				<tr>
 				<td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Quiz" %}</a></td>
-				<td>{{ quiz.title }}</td>
+				<td>{{ quiz.title|smooth_title }}</td>
 				<td>{{ quiz.get_max_score }}</td>
 				<td>{{ quiz.category }}</td>
 				{% if quiz.answers_reveal_option == 1 %}
@@ -113,7 +113,7 @@
 			{% for quiz in generic_taken %}
 				<tr>
 				<td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Again - Prev Score: " %}{{ generic_results|get_item:quiz.title }}{% trans "%" %}</a></td>
-				<td>{{ quiz.title }}</td>
+				<td>{{ quiz.title|smooth_title }}</td>
 				<td>{{ quiz.get_max_score }}</td>
 				<td>{{ quiz.category }}</td>
 				{% if quiz.answers_reveal_option == 1 %}
@@ -150,7 +150,7 @@
 			{% for quiz in competitive_old %}
 				<tr>
 				<td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Quiz" %}</a></td>
-				<td>{{ quiz.title }}</td>
+				<td>{{ quiz.title|smooth_title }}</td>
 				<td>{{ quiz.start_time }}</td>
 				<td>{{ quiz.end_time }}</td>
 				<td>{{ quiz.get_max_score }}</td>
@@ -183,7 +183,7 @@
 		<tbody>
 			{% for result_table in competitive_old_taken %}
 				<tr>
-					<td>{{ result_table.quiz.title }}</td>
+					<td>{{ result_table.quiz.title|smooth_title }}</td>
 					<td>{{ result_table.percent }}{% trans "%" %}</td>
 					<td><a href="{% url 'quiz_results' sitting_id=result_table.sitting.pk %}">{% trans "Your Results" %}</a></td>
 					<td><a href="{% url 'quiz_leaderboards' leaderboard=result_table.quiz.pk %}">{% trans "Leaderboard" %}</a></td>

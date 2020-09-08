@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load quiz_tags %}
 {% block title %}{% trans "Quizzes related to" %} {{ category.category }}{% endblock %}
 
 {% block content %}
@@ -10,10 +11,8 @@
         <ul>
         {% for quiz in quizzes %}
             <li>
-			  <a href="{% url 'quiz_question' quiz_name=quiz.url %}">
-				{{ quiz.title }}
-			  </a>
-			</li>
+			      <a href="{% url 'quiz_question' quiz_name=quiz.url %}">{{ quiz.title|smooth_title }}</a>
+			      </li>
         {% endfor %}
         </ul>
     {% else %}

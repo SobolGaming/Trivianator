@@ -4,15 +4,14 @@
 {% load quiz_tags %}
 
 {% block title %} {{ quiz.title }} {% endblock %}
-{% block description %} {{ quiz.title }} - {{ quiz.description }} {% endblock %}
+{% block description %} {{ quiz.title|smooth_title }} - {{ quiz.description }} {% endblock %}
 
 {% block content %}
 
-
-{% if user.is_authenticated %}
-  <p>{% trans "You have already taken this quiz and only one attempt is permitted" %}.</p>
-{% else %}
-  <p>{% trans "This quiz is only accessible to signed in users" %}.</p>
-{% endif %}
+  {% if user.is_authenticated %}
+    <p>{% trans "You have already taken this quiz and only one attempt is permitted" %}.</p>
+  {% else %}
+    <p>{% trans "This quiz is only accessible to signed in users" %}.</p>
+  {% endif %}
 
 {% endblock %}

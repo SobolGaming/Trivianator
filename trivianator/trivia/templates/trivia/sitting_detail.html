@@ -2,11 +2,11 @@
 {% load i18n %}
 {% load quiz_tags %}
 {% block title %}
-{% trans "Result of" %} {{ sitting.quiz.title }} {% trans "for" %} {{ sitting.user }}
+{% trans "Result of" %} {{ sitting.quiz.title|smooth_title }} {% trans "for" %} {{ sitting.user }}
 {% endblock %}
 
 {% block content %}
-<h2>{% trans "Quiz title" %}: {{ sitting.quiz.title }}</h2>
+<h2>{% trans "Quiz title" %}: {{ sitting.quiz.title|smooth_title }}</h2>
 <h3>{% trans "Category" %}: {{ sitting.quiz.category }}</h3>
 <p>{{ sitting.quiz.description }}</p>
 <hr>

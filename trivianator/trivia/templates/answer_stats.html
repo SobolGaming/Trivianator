@@ -4,7 +4,7 @@
 {% load quiz_tags %}
 
 {% block title %} {{ quiz.title }} {% endblock %}
-{% block description %} {% trans "Answer Statistics for Quiz: " %} {{ quiz.title }} {% endblock %}
+{% block description %} {% trans "Answer Statistics for Quiz: " %} {{ quiz.title|smooth_title }} {% endblock %}
 
 {% block content %}
     {% if quiz.competitive and quiz.end_time_expired or not quiz.competitive %}
