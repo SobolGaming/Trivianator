@@ -105,6 +105,11 @@ class QuizDetailView(DetailView):
             raise PermissionDenied
 
         context = self.get_context_data(object=self.object)
+
+        # if there is a quiz specific message during a competitive active period
+        if self.object.competitive and not self.object.end_time_expired and self.object.message:
+            messages.warning(request, self.object.message, extra_tags='safe')
+
         return self.render_to_response(context)
 
 

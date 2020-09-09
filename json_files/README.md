@@ -16,6 +16,8 @@ The JSON file for uploading a Quiz, it's associated Questions and their Answers 
         "Save": (Optional) Boolean (true or false) - should answers be saved upon quiz completion; defaults to "True"
         "SingleAttempt": (Optional) Boolean (true or false) - is each user given only one attempt to take the quiz; defaults to "False"
         "Draft": (Optional) Boolean (true or false) - is the quiz still in development, if "True" will not appear to non-admin users; defaults to "False"
+        "Message": (Optional) Text - message to display in pop-up message window prior to taking a competitive quiz (for rules for example).
+        "DisplayCount": (Optional) Positive Int - number of users to display in leaderboard; defaults to 30
         "Timer": (Optional) Positive Integer - value in seconds, if greater than 0, allowed for quiz attempt; defaults to 0
         "Leaderboards": (Optional) Boolean (true or false) - should leaderboards be shown at end of quiz; defaults to "True"
         "Competitive": (Optional) Boolean (true or false) - is this quiz competitive; defaults to "False"

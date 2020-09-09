@@ -87,6 +87,8 @@ def archive_upload_post_save(sender, instance, created, *args, **kwargs):
                 saved = data['Quiz']['Save'] if 'Save' in data['Quiz'] else True,
                 single_attempt = data['Quiz']['SingleAttempt'] if 'SingleAttempt' in data['Quiz'] else False,
                 draft = data['Quiz']['Draft'] if 'Draft' in data['Quiz'] else False,
+                message = data['Quiz']['Message'] if 'Message' in data['Quiz'] and data['Quiz']['Message'] != '' else None,
+                num_display = data['Quiz']['DisplayCount'] if 'DisplayCount' in data['Quiz'] and data['Quiz']['DisplayCount'] >= 0 else 30,
                 timer = max(0, data['Quiz']['Timer']) if 'Timer' in data['Quiz'] else 0,
                 show_leaderboards = data['Quiz']['Leaderboards'] if 'Leaderboards' in data['Quiz'] else True,
                 competitive = data['Quiz']['Competitive'] if 'Competitive' in data['Quiz'] else False,

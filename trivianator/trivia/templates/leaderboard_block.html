@@ -9,6 +9,9 @@
           <th>{% trans "Username" %}</th>
           <th>{% trans "Score" %}</th>
           <th>{% trans "Completion Time" %}</th>
+          {% if user.is_superuser %}
+            <th>{% trans "Email" %}</th>
+          {% endif %}
       </tr>
     </thead>
     <tbody>
@@ -17,6 +20,9 @@
               <td>{{ entry.user.username }}</td>
               <td>{{ entry.score }}</td>
               <td>{{ entry.completion_time|smooth_timedelta }}</td>
+              {% if user.is_superuser %}
+                <td>{{ entry.user.email }}</td>
+              {% endif %}
           </tr>
       {% endfor %}
     </tbody>

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 # Register your models here.
-from .models import Quiz, Category, Question, Progress, Answer, Leaderboard, MOTD
+from .models import Quiz, Category, Sitting, Question, Progress, Answer, Leaderboard, MOTD
 from django.utils.translation import ugettext_lazy as _
 from .models import ArchiveUpload
 
@@ -68,6 +68,10 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('category', )
 
 
+class SittingAdmin(admin.ModelAdmin):
+    search_fields = ('category', )
+
+
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ('content', 'category', )
     list_filter = ('category',)
@@ -96,6 +100,7 @@ class LeaderboardAdmin(admin.ModelAdmin):
 
 admin.site.register(Quiz, QuizAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(Sitting, SittingAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Progress, ProgressAdmin)
 admin.site.register(Leaderboard, LeaderboardAdmin)

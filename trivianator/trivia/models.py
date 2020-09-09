@@ -125,6 +125,14 @@ class Quiz(models.Model):
         verbose_name=_("EndTime"),
         help_text=_("End DateTime of the quiz."))
 
+    message = models.TextField(null=True, blank=True,
+        help_text=_("Message to Display prior to taking quiz."),
+        verbose_name=_("Quiz Message."))
+
+    num_display = models.PositiveSmallIntegerField(null = False, blank=True, default= 30,
+        help_text=_("The Number of users to display in Leaderboard."),
+        verbose_name=_("Number of users to Display"))
+
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         self.url = re.sub('\s+', '-', self.url).lower()
 
@@ -161,7 +169,9 @@ class Quiz(models.Model):
 
     @property
     def get_leaderboard(self):
-        return Leaderboard.objects.filter(quiz=self).order_by('-score', 'completion_time')[:30]
+        if self.num_display > 0:
+            return Leaderboard.objects.filter(quiz=self).order_by('-score', 'completion_time')[:self.num_display]
+        return Leaderboard.objects.filter(quiz=self).order_by('-score', 'completion_time')
 
     @property
     def get_leaderboard_count(self):
