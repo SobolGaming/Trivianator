@@ -69,7 +69,9 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class SittingAdmin(admin.ModelAdmin):
-    search_fields = ('category', )
+    list_display = ('user', 'quiz', 'current_score', 'complete', 'start', 'end', )
+    search_fields = ('user', 'quiz', )
+    fields = ('user', 'quiz', 'current_score', 'user_answers', )
 
 
 class QuestionAdmin(admin.ModelAdmin):
