@@ -54,17 +54,47 @@
 	<div id="counter"></div>
 	<script>
 		var seconds = {{ time_remaining }};
-		document.getElementById("counter").innerHTML = "Quiz Time Remaining: " + seconds;
+		document.getElementById("counter").innerHTML = getStrTime(seconds);
+
+		function getStrTime(seconds) {
+			var secs = seconds;
+			var message = "Quiz Time Remaining: ";
+			if (secs > 3600) {
+				var hrs = Math.floor(secs / 3600);
+				if (hrs == 1) {
+					message += "1 hour ";
+				} else {
+					message += hrs + " hours ";
+				}
+				secs -= (hrs * 3600);
+			}
+			if (secs > 60) {
+				var mins = Math.floor(secs / 60);
+				if (mins == 1) {
+					message += "1 minute ";
+				} else {
+					message += mins + " minutes ";
+				}
+				secs -= (mins * 60);
+			}
+			if (secs == 1) {
+				message += "1 second";
+			} else {
+				message += secs + " seconds";
+			}
+			return message;
+		}
+
 		var x = setInterval(function() {
 			seconds -= 1;
 			if (seconds <= 0) {
 				document.getElementById("counter").style.color = "red";
 				document.getElementById("counter").innerHTML = "Quiz Time: EXPIRED";
 			} else {
-				document.getElementById("counter").innerHTML = "Quiz Time Remaining: " + seconds;
+				document.getElementById("counter").innerHTML = getStrTime(seconds);
 			}
 		}, 1000);
-		</script>
+	</script>
 {% endif %}
 <small class="muted">{% trans "Question Category: " %}</small><strong>{{ question.category }}</strong>
 <br><br>
