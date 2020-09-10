@@ -113,6 +113,7 @@ LOGIN_REQUIRED_IGNORE_VIEW_NAMES = [
     'google_callback',
     'admin:index',
     'admin:login',
+    'privacy',
 ]
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 

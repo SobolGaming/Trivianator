@@ -73,5 +73,10 @@ $card-text: #fff;
   background-position: center;
 }
 
+.socialaccount_ballot ul {
+    list-style: none;
+    padding-left: 0;
+}
+
 // Bootstrap file partials
 @import "../../../node_modules/bootstrap/scss/bootstrap";
