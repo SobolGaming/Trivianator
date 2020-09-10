@@ -369,6 +369,12 @@ class SittingResultView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(SittingResultView, self).get_context_data(**kwargs)
         sitting = self.get_object()
+        # if this sitting does not belong to the user (b/c they hand crafted the URL)
+        # raise 403
+        if sitting.user != self.request.user:
+            raise PermissionDenied
+
+        # if quiz is competitive and not yet complete, don't show results
         if sitting.quiz.competitive and not sitting.quiz.end_time_expired:
             return context
         else:
