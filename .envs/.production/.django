@@ -27,6 +27,8 @@ DJANGO_EMAIL_USE_SSL=False
 # django-allauth
 # ------------------------------------------------------------------------------
 DJANGO_ACCOUNT_ALLOW_REGISTRATION=True
+DJANGO_ALLAUTH_GOOGLE_CLIENTID=SOMESECRETCLIENTID.apps.googleusercontent.com
+DJANGO_ALLAUTH_GOOGLE_CLIENTSECRET=SOMESECRETCLIENTKEY
 
 # Gunicorn
 # ------------------------------------------------------------------------------

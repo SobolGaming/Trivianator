@@ -41,7 +41,7 @@ services:
     env_file:
       - ./.envs/.production/.postgres
 
- #apache:
+ # apache:
  #  build:
  #    context: .
  #    dockerfile: ./compose/production/apache2/Dockerfile
@@ -58,8 +58,8 @@ services:
  #    - "8090:80"
  #   depends_on:
  #      - django
-
- #nginx:
+ #
+ # nginx:
  #  build:
  #    context: .
  #    dockerfile: ./compose/production/nginx/Dockerfile
@@ -73,9 +73,10 @@ services:
  #    - static_files_data:/opt/staticfiles
  #    - media_files_data:/opt/mediafiles
  #  ports:
- #  - "8080:80"
+ #    - "8080:80"
  #  depends_on:
  #    - django
+
   # traefik:
   #   build:
   #     context: .
