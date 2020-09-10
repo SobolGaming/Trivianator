@@ -80,6 +80,7 @@
   {% if questions and no_longer_competitive or reveal_answer %}
   <div class="results row">
     <div class="col-12">
+
       {% for question in questions %}
       <div class="card w-100" style="width: 18rem;">
         <div class="card-body">
@@ -110,10 +111,11 @@
 
 
           <hr>
-
-          {% endfor %}
+  
         </div>
       </div>
+      {% endfor %}
+
     </div>
   </div>
 
