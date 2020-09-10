@@ -68,6 +68,7 @@ THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
     "django_celery_beat",
     "rest_framework",
     "rest_framework.authtoken",
@@ -101,18 +102,21 @@ LOGIN_REDIRECT_URL = "users:redirect"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = "account_login"
 
-LOGIN_REQUIRED_IGNORE_PATHS = [
-    r'/accounts/logout/$'
-    r'/accounts/signup/$',
-    r'/admin/$',
-    r'/admin/login/$',
-    r'/about/$'
-]
+# LOGIN_REQUIRED_IGNORE_PATHS = [
+#     r'/accounts/logout/$'
+#     r'/accounts/signup/$',
+#     r'/admin/$',
+#     r'/admin/login/$',
+#     r'/about/$'
+# ]
 
 LOGIN_REQUIRED_IGNORE_VIEW_NAMES = [
     'account_login',
     'account_signup',
     'account_confirm_email',
+    'socialaccount_signup',
+    'socialaccount_login_cancelled',
+    'socialaccount_login_error',
     'admin:index',
     'admin:login',
 ]
@@ -153,7 +157,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "login_required.middleware.LoginRequiredMiddleware",
+    #"login_required.middleware.LoginRequiredMiddleware",
 ]
 
 # STATIC
@@ -309,6 +313,23 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_ADAPTER = "trivianator.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_ADAPTER = "trivianator.users.adapters.SocialAccountAdapter"
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'APP': {
+            'client_id': env("DJANGO_ALLAUTH_GOOGLE_CLIENTID"),
+            'secret': env("DJANGO_ALLAUTH_GOOGLE_CLIENTSECRET"),
+            'key': ''
+        }
+    }
+}
 
 # django-rest-framework
 # -------------------------------------------------------------------------------
