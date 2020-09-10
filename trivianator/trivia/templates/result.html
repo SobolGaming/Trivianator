@@ -61,10 +61,10 @@
   <hr><p class="lead">{{ sitting.result_message }}</p>
 
   <hr>
-    {% if sitting.complete and quiz.show_leaderboards and quiz.competitive and no_longer_competitive %}
-      {% include 'leaderboard_block.html' %}
-    {% endif %}
-  <hr>
+  {% if sitting.complete and quiz.show_leaderboards and quiz.competitive and no_longer_competitive %}
+    {% include 'leaderboard_block.html' %}
+    <hr>
+  {% endif %}
 
   <div>
   {% if quiz.answers_reveal_option == 2 and no_longer_competitive or reveal_answer %}
@@ -76,12 +76,6 @@
   {% endif %}
 
   <hr>
-  {% if possible and no_longer_competitive or reveal_answer %}
-    <p class="lead">
-      {% trans "Your session score is" %} {{ session }} {% trans "out of a possible" %} {{ possible }}
-    </p>
-    <hr>
-  {% endif %}
 
   {% if questions and no_longer_competitive or reveal_answer %}
 
@@ -103,10 +97,12 @@
           <p>{% trans "Your answer: None" %}</p>
         {% endif %}
 
-      <p><strong>{% trans "Explanation" %}:</strong></p>
-      <div class="alert alert-debug">
-        {{ question.explanation }}
-      </div>
+      {% if question.explanation %}
+        <p><strong>{% trans "Explanation" %}:</strong></p>
+        <div class="alert alert-debug">
+          {{ question.explanation }}
+        </div>
+      {% endif %}
 
       <hr>
 
