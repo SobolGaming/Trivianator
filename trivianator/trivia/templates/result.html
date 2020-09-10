@@ -84,13 +84,16 @@
   {% endif %}
 
   {% if questions and no_longer_competitive or reveal_answer %}
-
+  <div class="results row">
+    <div class="col-12">
     {% for question in questions %}
+    <div class="card w-100" style="width: 18rem;">
+      <div class="card-body">
 
       <p class="lead">
         {{ question.content }}
       </p>
-      
+
       {% if question.figure %}
         <p><img src="{{question.figure.url}}" alt="{{ question.content }}" /></p>
       {% endif %}
@@ -107,10 +110,15 @@
       <div class="alert alert-debug">
         {{ question.explanation }}
       </div>
+      </div>
+    </div>
 
       <hr>
 
     {% endfor %}
+    </div>
+    </div>
+    </div>
 
   {% endif %}
 

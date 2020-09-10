@@ -18,6 +18,14 @@
   list-style: none;
   padding-left: 0; }
 
+.results .card {
+  color: #c1c1c1;
+  background-color: #343a40; }
+
+.results .card-body {
+  color: #c1c1c1;
+  background-color: #343a40; }
+
 /*!
  * Bootstrap v4.3.1 (https://getbootstrap.com/)
  * Copyright 2011-2019 The Bootstrap Authors

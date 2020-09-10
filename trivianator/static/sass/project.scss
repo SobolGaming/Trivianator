@@ -78,5 +78,15 @@ $card-text: #fff;
     padding-left: 0;
 }
 
+.results .card {
+    color: $body-color;
+    background-color: #343a40;
+}
+
+.results .card-body {
+    color: $body-color;
+    background-color: #343a40;
+}
+
 // Bootstrap file partials
 @import "../../../node_modules/bootstrap/scss/bootstrap";
