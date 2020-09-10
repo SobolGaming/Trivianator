@@ -102,14 +102,6 @@ LOGIN_REDIRECT_URL = "users:redirect"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = "account_login"
 
-# LOGIN_REQUIRED_IGNORE_PATHS = [
-#     r'/accounts/logout/$'
-#     r'/accounts/signup/$',
-#     r'/admin/$',
-#     r'/admin/login/$',
-#     r'/about/$'
-# ]
-
 LOGIN_REQUIRED_IGNORE_VIEW_NAMES = [
     'account_login',
     'account_signup',
@@ -117,6 +109,8 @@ LOGIN_REQUIRED_IGNORE_VIEW_NAMES = [
     'socialaccount_signup',
     'socialaccount_login_cancelled',
     'socialaccount_login_error',
+    'google_login',
+    'google_callback',
     'admin:index',
     'admin:login',
 ]
@@ -157,7 +151,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    #"login_required.middleware.LoginRequiredMiddleware",
+    "login_required.middleware.LoginRequiredMiddleware",
 ]
 
 # STATIC
