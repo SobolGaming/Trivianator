@@ -80,41 +80,42 @@
   {% if questions and no_longer_competitive or reveal_answer %}
   <div class="results row">
     <div class="col-12">
-    {% for question in questions %}
-    <div class="card w-100" style="width: 18rem;">
-      <div class="card-body">
+      {% for question in questions %}
+      <div class="card w-100" style="width: 18rem;">
+        <div class="card-body">
 
-      <p class="lead">
-        {{ question.content }}
-      </p>
+          <p class="lead">
+            {{ question.content }}
+          </p>
 
-      {% if question.figure %}
-        <p><img src="{{question.figure.url}}" alt="{{ question.content }}" /></p>
-      {% endif %}
+          {% if question.figure %}
+          <p><img src="{{question.figure.url}}" alt="{{ question.content }}" /></p>
+          {% endif %}
 
-      {% correct_answer_for_all question %}
+          {% correct_answer_for_all question %}
 
-        {% if question.user_answer %}
+          {% if question.user_answer %}
           <p>{% trans "Your answer" %}: {{ question|answer_choice_to_string:question.user_answer }}</p>
-        {% else %}
+          {% else %}
           <p>{% trans "Your answer: None" %}</p>
-        {% endif %}
+          {% endif %}
 
 
-        {% if question.explanation %}
+          {% if question.explanation %}
           <p><strong>{% trans "Explanation" %}:</strong></p>
           <div class="alert alert-debug">
             {{ question.explanation }}
           </div>
-        {% endif %}
+          {% endif %}
 
 
-      <hr>
+          <hr>
 
-    {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
     </div>
-    </div>
-    </div>
+  </div>
 
   {% endif %}
 
