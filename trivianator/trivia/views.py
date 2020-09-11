@@ -371,7 +371,7 @@ class SittingResultView(DetailView):
         sitting = self.get_object()
         # if this sitting does not belong to the user (b/c they hand crafted the URL)
         # raise 403
-        if sitting.user != self.request.user:
+        if sitting.user != self.request.user and not self.request.user.is_superuser:
             raise PermissionDenied
 
         # if quiz is competitive and not yet complete, don't show results
