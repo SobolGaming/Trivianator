@@ -92,7 +92,6 @@ class QuizListView(ListView):
             context['draft_quizzes'] = []
             draft_qs = super(QuizListView, self).get_queryset().filter(draft=True)
             for draft_quiz in draft_qs:
-                print("Appending", draft_quiz)
                 context['draft_quizzes'].append(draft_quiz)
 
         # see if there is any admin messages to display
