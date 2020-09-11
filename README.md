@@ -10,10 +10,6 @@ Django-based Trivia Quiz Framework
   easier integration into an existing environment
 * Automatically minimizes static files in develop/local mode.
 
-# To Be Done
-* Minify files for production
-* Add OAuth Google-supported User Credentials
-
 # Dependencies
 This is a Docker-based Django framework. Please make sure you have Docker and
 docker-compose installed.
