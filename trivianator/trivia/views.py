@@ -88,6 +88,13 @@ class QuizListView(ListView):
         context['competitive_old_count'] = len(context['competitive_old'])
         context['competitive_old_taken_count'] = len(context['competitive_old_taken'])
 
+        if self.request.user.has_perm('trivia.change_quiz'):
+            context['draft_quizzes'] = []
+            draft_qs = super(QuizListView, self).get_queryset().filter(draft=True)
+            for draft_quiz in draft_qs:
+                print("Appending", draft_quiz)
+                context['draft_quizzes'].append(draft_quiz)
+
         # see if there is any admin messages to display
         get_motd(self.request)
 
@@ -344,11 +351,12 @@ class QuizTake(FormView):
 
         self.sitting.mark_quiz_complete()
 
-        if self.quiz.answers_reveal_option == 2 or (self.quiz.end_time_expired is True and self.quiz.answers_reveal_option == 3):
+        if self.quiz.answers_reveal_option == 2 or (self.quiz.end_time_expired is True and self.quiz.answers_reveal_option == 3) \
+            or (self.quiz.draft and self.request.user.has_perm('trivia.change_quiz')):
             results['questions'] = self.sitting.get_questions(with_answers=True)
             results['incorrect_questions'] = self.sitting.get_incorrect_questions
         
-        if self.quiz.end_time_expired is True:
+        if self.quiz.end_time_expired is True or (self.quiz.draft and self.request.user.has_perm('trivia.change_quiz')):
             results['reveal_answer'] = True
 
         prev_score, prev_sit = self.quiz.get_quiz_sit_info(self.request.user)

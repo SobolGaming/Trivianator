@@ -6,6 +6,44 @@
 {% block content %}
 	<h5>{% trans "Current Server DateTime: " %}{{ now }}</h5>
 
+	{% if draft_quizzes %}
+		<h2>{% trans "DRAFT QUIZZES - ONLY VISIBLE TO SPECIAL USERS" %}</h2>
+		<table class="table table-bordered table-striped">
+
+		<thead>
+			<tr>
+			<th></th>
+			<th>{% trans "Title" %}</th>
+			<th>{% trans "Start DateTime" %}</th>
+			<th>{% trans "End DateTime" %}</th>
+			<th>{% trans "Num Questions" %}</th>
+			<th>{% trans "Timer" %}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for entry in draft_quizzes %}
+				<tr>
+				{% if entry.taken %}
+					<td>{% trans "Quiz Already Taken" %}</td>
+				{% else %}
+					<td><a href="{% url 'quiz_start_page' slug=entry.url %}">{% trans "Take Quiz" %}</a></td>
+				{% endif %}
+				<td>{{ entry.title|smooth_title }}</td>
+				<td>{{ entry.start_time }}</td>
+				<td>{{ entry.end_time }}</td>
+				<td>{{ entry.get_max_score }}</td>
+				{% if entry.timer > 0 %}
+					<td>{{ entry.timer|smooth_timedelta }}</td>
+				{% else %}
+					<td>{% trans "Not Timed" %}</td>
+				{% endif %}
+				</tr>
+			{% endfor %}
+		</tbody>
+
+		</table>
+	{% endif %}
+
 	{% if competitive %}
 		<h2>{% trans "List of Competitive Quizzes" %}</h2>
 		<table class="table table-bordered table-striped">

@@ -15,36 +15,33 @@
 
   {% if previous.answers %}
 
-  <p class="muted"><small>{% trans "The previous question" %}:</small></p>
-  <p>{{ previous.previous_question }}</p>
+    <p class="muted"><small>{% trans "The previous question" %}:</small></p>
+    <p>{{ previous.previous_question }}</p>
 
-  {% if previous.previous_outcome %}
-	<div class="alert alert-success">
-  {% else %}
-	<div class="alert alert-warning">
-  {% endif %}
-  	  <p><small>
-		{% trans "Your answer was" %} </small>
-		<strong>
-		  {{ previous.previous_outcome|yesno:"correct,incorrect" }}
-		</strong>
-	  </p>
+    {% if previous.previous_outcome %}
+      <div class="alert alert-success">
+    {% else %}
+      <div class="alert alert-warning">
+    {% endif %}
+    <p>
+      <small>{% trans "Your answer was" %} </small>
+      <strong>{{ previous.previous_outcome|yesno:"correct,incorrect" }}</strong>
+    </p>
+      </div>
 
-	</div>
+    {% include 'correct_answer.html' %}
 
-  {% include 'correct_answer.html' %}
-
-  {% if previous.previous_question.explanation %}
-  <p><strong>{% trans "Explanation" %}:</strong></p>
-  <div class="alert alert-debug">
-    {{ previous.previous_question.explanation }}
-  </div>
-  <hr>
-  {% endif %}
+    {% if previous.previous_question.explanation %}
+    <p><strong>{% trans "Explanation" %}:</strong></p>
+    <div class="alert alert-debug">
+      {{ previous.previous_question.explanation }}
+    </div>
+    <hr>
+    {% endif %}
 
   {% endif %}
 
-  {% if max_score and no_longer_competitive == True %}
+  {% if max_score and no_longer_competitive %}
     <div>
       <h2>{% trans "Quiz results" %}</h2>
       <p>
@@ -66,12 +63,9 @@
     <hr>
   {% endif %}
 
-  <div>
   {% if quiz.answers_reveal_option == 2 and no_longer_competitive or reveal_answer %}
+  <div>
     <p>{% trans "Review the questions below and try the quiz again in the future" %}.</p>
-    {% if user.is_authenticated %}
-      <p>{% trans "The result of this quiz will be stored in your progress section so you can review and monitor your progression" %}.</p>
-    {% endif %}
   </div>
   {% endif %}
 
