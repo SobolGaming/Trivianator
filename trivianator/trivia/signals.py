@@ -2,6 +2,8 @@ import django.dispatch
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.utils.dateparse import parse_datetime
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 from tarfile import TarFile
 from pathlib import Path
@@ -132,3 +134,10 @@ def archive_upload_post_save(sender, instance, created, *args, **kwargs):
             instance.save()
         except ValueError as err:
             raise err
+
+@receiver(pre_delete, sender=Quiz)
+def pre_delete_quiz(sender, instance, **kwargs):
+    for question in instance.get_questions():
+        if question.quiz.count() == 1 and instance in question.quiz.all():
+            # instance is the only Quiz that has this Question, delete it
+            question.delete()

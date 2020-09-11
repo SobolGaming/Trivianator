@@ -375,7 +375,7 @@ class SittingResultView(DetailView):
             raise PermissionDenied
 
         # if quiz is competitive and not yet complete, don't show results
-        if sitting.quiz.competitive and not sitting.quiz.end_time_expired:
+        if sitting.quiz.competitive and not sitting.quiz.end_time_expired and not sitting.quiz.draft:
             return context
         else:
             context['quiz'] = sitting.quiz
