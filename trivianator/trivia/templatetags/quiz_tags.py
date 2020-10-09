@@ -27,7 +27,9 @@ def answer_choice_to_string(question, answer):
 
 @register.filter()
 def smooth_timedelta(secs):
-    """Convert a datetime.timedelta object into Days, Hours, Minutes, Seconds."""
+    """Convert seconds into Days, Hours, Minutes, Seconds."""
+    if isinstance(secs, str):
+        secs = int(secs)
     timetot = ""
     if secs > 86400: # 60sec * 60min * 24hrs
         days = secs // 86400

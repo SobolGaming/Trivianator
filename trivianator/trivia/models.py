@@ -186,6 +186,12 @@ class Quiz(models.Model):
                 return False
         return True
 
+    @property
+    def get_time_until_start(self):
+        if self.competitive:
+            return max((self.start_time - now()).seconds, 0)
+        return 0
+
     def get_quiz_sit_info(self, user):
         try:
             sitting = Sitting.objects.get(quiz=self, user=user)

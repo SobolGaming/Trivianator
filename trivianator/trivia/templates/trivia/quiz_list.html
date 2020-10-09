@@ -103,7 +103,50 @@
 		<tbody>
 			{% for quiz in competitive_upcoming %}
 				<tr>
-				<td>{% trans "Will Be Available on Start" %}</a></td>
+				<td id="timer"></td>
+				<script>
+					var seconds = {{ quiz.get_time_until_start }};
+					document.getElementById("timer").innerHTML = getStrTime(seconds);
+
+					function getStrTime(seconds) {
+						var secs = seconds;
+						var message = "Starts in ";
+						if (secs > 3600) {
+							var hrs = Math.floor(secs / 3600);
+							if (hrs == 1) {
+								message += "1 hour ";
+							} else {
+								message += hrs + " hours ";
+							}
+							secs -= (hrs * 3600);
+						}
+						if (secs > 60) {
+							var mins = Math.floor(secs / 60);
+							if (mins == 1) {
+								message += "1 minute ";
+							} else {
+								message += mins + " minutes ";
+							}
+							secs -= (mins * 60);
+						}
+						if (secs == 1) {
+							message += "1 second";
+						} else {
+							message += secs + " seconds";
+						}
+						return message;
+					}
+
+					var x = setInterval(function() {
+						seconds -= 1;
+						if (seconds <= 0) {
+							document.getElementById("timer").style.color = "red";
+							document.getElementById("timer").innerHTML = "Refresh Page for Link";
+						} else {
+							document.getElementById("timer").innerHTML = getStrTime(seconds);
+						}
+					}, 1000);
+				</script>
 				<td>{{ quiz.title|smooth_title }}</td>
 				<td>{{ quiz.start_time }}</td>
 				<td>{{ quiz.end_time }}</td>
