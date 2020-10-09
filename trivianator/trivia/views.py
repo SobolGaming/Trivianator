@@ -56,7 +56,7 @@ class QuizListView(ListView):
                 context['competitive'].append(
                     {
                         'quiz': q,
-                        'taken': prev_sit != None,
+                        'taken': prev_sit != None and prev_sit.complete,
                     }
                 )
             elif q.start_time > now():
@@ -159,9 +159,15 @@ class QuizUserProgressView(TemplateView):
         progress, c = Progress.objects.get_or_create(user=self.request.user)
         context['cat_scores'] = progress.list_all_cat_scores
         context['saved'] = progress.show_saved()
+        context['started'] = progress.show_started()
         context['display_categories'] = True
         context['hide'] = []
         for quiz in context['saved']:
+            if quiz.quiz.competitive and now() < quiz.quiz.end_time:
+                context['display_categories'] = False
+                context['hide'].append(quiz.quiz.title)
+                break
+        for quiz in context['started']:
             if quiz.quiz.competitive and now() < quiz.quiz.end_time:
                 context['display_categories'] = False
                 context['hide'].append(quiz.quiz.title)

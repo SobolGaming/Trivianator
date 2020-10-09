@@ -338,6 +338,13 @@ class Progress(models.Model):
         """
         return Sitting.objects.filter(user=self.user, complete=True)
 
+    def show_started(self):
+        """
+        Finds the previous quizzes that have a sitting.
+        Returns a queryset of started quizzes.
+        """
+        return Sitting.objects.filter(user=self.user, complete=False)
+
     def __str__(self):
         return self.user.username + ' - '  + self.serialized_performance
 
