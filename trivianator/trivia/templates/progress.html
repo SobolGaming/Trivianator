@@ -79,12 +79,14 @@
 
 			{% for cat, value in cat_scores.items %}
 
-			<tr>
-				<td>{{ cat }}</td>
-				<td>{{ value.0 }}</td>
-				<td>{{ value.1 }}</td>
-				<td>{{ value.2 }}</td>
-			</tr>
+				{% if value.0 %}
+					<tr>
+						<td>{{ cat }}</td>
+						<td>{{ value.0 }}</td>
+						<td>{{ value.1 }}</td>
+						<td>{{ value.2 }}</td>
+					</tr>
+				{% endif %}
 
 			{% endfor %}
 

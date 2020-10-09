@@ -129,7 +129,6 @@
 			<th></th>
 			<th>{% trans "Title" %}</th>
 			<th>{% trans "Num Question" %}</th>
-			<th>{% trans "Category" %}</th>
 			<th>{% trans "Answer Reveal" %}</th>
 			</tr>
 		</thead>
@@ -140,7 +139,6 @@
 				<td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Quiz" %}</a></td>
 				<td>{{ quiz.title|smooth_title }}</td>
 				<td>{{ quiz.get_max_score }}</td>
-				<td>{{ quiz.category }}</td>
 				{% if quiz.answers_reveal_option == 1 %}
 					<td>{% trans "After each question" %}</td>
 				{% elif quiz.answers_reveal_option == 2 %}
@@ -153,7 +151,6 @@
 				<td><a href="{% url 'quiz_start_page' slug=quiz.url %}">{% trans "Take Again - Prev Score: " %}{{ generic_results|get_item:quiz.title }}{% trans "%" %}</a></td>
 				<td>{{ quiz.title|smooth_title }}</td>
 				<td>{{ quiz.get_max_score }}</td>
-				<td>{{ quiz.category }}</td>
 				{% if quiz.answers_reveal_option == 1 %}
 					<td>{% trans "After each question" %}</td>
 				{% elif quiz.answers_reveal_option == 2 %}
