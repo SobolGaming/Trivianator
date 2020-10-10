@@ -109,7 +109,7 @@ class QuizDetailView(DetailView):
 
         # from django.contrib.auth.models import Permission
         # print([(x.id, x.name) for x in Permission.objects.filter(user=request.user)])
-        if self.object.draft and not request.user.has_perm('trivia.change_quiz'):
+        if (self.object.get_time_until_start > 0 or self.object.draft) and not request.user.has_perm('trivia.change_quiz'):
             raise PermissionDenied
 
         context = self.get_context_data(object=self.object)

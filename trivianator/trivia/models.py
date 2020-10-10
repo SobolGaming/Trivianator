@@ -189,7 +189,9 @@ class Quiz(models.Model):
     @property
     def get_time_until_start(self):
         if self.competitive:
-            return max((self.start_time - now()).seconds, 0)
+            if self.start_time > now():
+                return (self.start_time - now()).seconds
+            return 0
         return 0
 
     def get_quiz_sit_info(self, user):
