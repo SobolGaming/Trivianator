@@ -32,7 +32,7 @@
   {% if previous.previous_question.explanation %}
 	<p><strong>{% trans "Explanation" %}:</strong></p>
 	<div class="alert alert-debug">
-	  <p>{{ previous.previous_question.explanation }}</p>
+	  <p>{{ previous.previous_question.explanation|safe }}</p>
 	</div>
   {% endif %}
 

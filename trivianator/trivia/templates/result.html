@@ -34,7 +34,7 @@
     {% if previous.previous_question.explanation %}
     <p><strong>{% trans "Explanation" %}:</strong></p>
     <div class="alert alert-debug">
-      {{ previous.previous_question.explanation }}
+      {{ previous.previous_question.explanation|safe }}
     </div>
     <hr>
     {% endif %}
@@ -58,11 +58,6 @@
   <hr><p class="lead">{{ sitting.result_message }}</p>
 
   <hr>
-  {% if sitting.complete and quiz.show_leaderboards and quiz.competitive and no_longer_competitive %}
-    {% include 'leaderboard_block.html' %}
-    <hr>
-  {% endif %}
-
   {% if quiz.answers_reveal_option == 2 and no_longer_competitive or reveal_answer %}
   <div>
     <p>{% trans "Review the questions below and try the quiz again in the future" %}.</p>
@@ -99,7 +94,7 @@
           {% if question.explanation %}
           <p><strong>{% trans "Explanation" %}:</strong></p>
           <div class="alert alert-debug">
-            {{ question.explanation }}
+            {{ question.explanation|safe }}
           </div>
           {% endif %}
 
@@ -115,5 +110,10 @@
 
   {% endif %}
 
+  <hr>
+  {% if sitting.complete and quiz.show_leaderboards and quiz.competitive and no_longer_competitive %}
+    {% include 'leaderboard_block.html' %}
+    <hr>
+  {% endif %}
 
 {% endblock %}

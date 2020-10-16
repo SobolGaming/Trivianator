@@ -6,6 +6,7 @@
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
+          <th>{% trans "Index" %}</th>
           <th>{% trans "Username" %}</th>
           <th>{% trans "Score" %}</th>
           <th>{% trans "Completion Time" %}</th>
@@ -17,6 +18,7 @@
     <tbody>
       {% for entry in quiz.get_leaderboard %}
           <tr>
+              <td>{{ forloop.counter }}</td>
               <td>{{ entry.user.username }}</td>
               <td>{{ entry.score }}</td>
               <td>{{ entry.completion_time|smooth_timedelta }}</td>

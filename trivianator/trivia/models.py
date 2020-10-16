@@ -501,8 +501,8 @@ class Sitting(models.Model):
         # add to leaderboard if quiz was competitive and currently in session
         if self.quiz.competitive and self.quiz.end_time > now() and self.quiz.start_time < now():
             if not Leaderboard.objects.filter(quiz=self.quiz, user=self.user).exists():
-                ld = Leaderboard.objects.create(quiz=self.quiz, user=self.user, score=self.current_score,
-                                                completion_time=(self.end - self.start).seconds)
+                comp_time = min((self.end - self.start).seconds, self.quiz.timer)
+                Leaderboard.objects.create(quiz=self.quiz, user=self.user, score=self.current_score, completion_time=comp_time)
 
     def add_incorrect_question(self, question):
         """
