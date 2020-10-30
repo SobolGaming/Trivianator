@@ -1,0 +1,15 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+{% load quiz_tags %}
+
+{% block title %}{% trans "All Available Quizzes" %}{% endblock %}
+
+{% block content %}
+    <h3>{% trans "All Available Quizzes" %}</h3>
+    {% if quiz_list %}
+        {% for q in quiz_list %}
+            <div>{{ q.title|smooth_title }}</div>
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

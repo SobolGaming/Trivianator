@@ -7,6 +7,10 @@ urlpatterns = [
         view=views.QuizListView.as_view(),
         name='quiz_index'),
 
+    path(route='quiz_list_guest/',
+        view=views.QuizListViewGuest.as_view(),
+        name='quiz_list_guest'),
+
     path(route='progress/',
         view=views.QuizUserProgressView.as_view(),
         name='progress'),
