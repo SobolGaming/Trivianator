@@ -59,23 +59,23 @@ services:
  #   depends_on:
  #      - django
 
-  nginx:
-    build:
-      context: .
-      dockerfile: ./compose/production/nginx/Dockerfile
-    image: trivianator_production_nginx
-    container_name: nginx
-    environment:
-      DJANGO_UPSTREAM_SERVER: ${DJANGO_SELF_HOST}
-      DJANGO_UPSTREAM_PORT: ${DJANGO_UPSTREAM_PORT:-8000}
-      DJANGO_SELF_HOST: ${DJANGO_SELF_HOST}
-    volumes:
-      - static_files_data:/opt/staticfiles
-      - media_files_data:/opt/mediafiles
-    ports:
-    - "8080:80"
-    depends_on:
-      - django
+ # nginx:
+ #   build:
+ #     context: .
+ #     dockerfile: ./compose/production/nginx/Dockerfile
+ #   image: trivianator_production_nginx
+ #   container_name: nginx
+ #   environment:
+ #     DJANGO_UPSTREAM_SERVER: ${DJANGO_SELF_HOST}
+ #     DJANGO_UPSTREAM_PORT: ${DJANGO_UPSTREAM_PORT:-8000}
+ #     DJANGO_SELF_HOST: ${DJANGO_SELF_HOST}
+ #   volumes:
+ #     - static_files_data:/opt/staticfiles
+ #     - media_files_data:/opt/mediafiles
+ #   ports:
+ #   - "8080:80"
+ #   depends_on:
+ #     - django
 
   nwcheck:
    image: praqma/network-multitool
