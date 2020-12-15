@@ -77,9 +77,10 @@ services:
  #   depends_on:
  #     - django
 
-  nwcheck:
-   image: praqma/network-multitool
-   container_name: nwcheck
+ # nwcheck:
+ #  image: praqma/network-multitool
+ #  container_name: nwcheck
+ 
   # traefik:
   #   build:
   #     context: .
