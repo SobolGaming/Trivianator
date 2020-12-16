@@ -114,6 +114,7 @@ LOGIN_REQUIRED_IGNORE_VIEW_NAMES = [
     'admin:index',
     'admin:login',
     'privacy',
+    'about',
     'quiz_list_guest'
 ]
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
