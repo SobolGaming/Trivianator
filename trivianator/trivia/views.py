@@ -100,6 +100,27 @@ class QuizListView(ListView):
         return context
 
 
+class QuizListViewGuest(ListView):
+    template_name = 'guest_quiz_list.html'
+    model = Quiz
+    def get_queryset(self):
+        queryset = super(QuizListViewGuest, self).get_queryset()
+        return queryset.filter(draft=False)
+
+    def get_context_data(self, **kwargs):
+        context = super(QuizListViewGuest, self).get_context_data(**kwargs)
+        q_list = self.get_queryset()
+
+        context['quiz_list'] = []
+        for q in q_list:
+            context['quiz_list'].append(q)
+
+        # see if there is any admin messages to display
+        get_motd(self.request)
+
+        return context
+
+
 class QuizDetailView(DetailView):
     model = Quiz
     slug_field = 'url'
