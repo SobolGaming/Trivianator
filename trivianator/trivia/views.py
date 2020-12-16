@@ -112,9 +112,12 @@ class QuizListViewGuest(ListView):
         q_list = self.get_queryset()
 
         context['quiz_list'] = []
+        context['quiz_list_flat'] = "Quizzes: " + " \n "
         for q in q_list:
             context['quiz_list'].append(q)
+            context['quiz_list_flat'] += q.title + " \n "
 
+        context['quiz_list_flat'] = context['quiz_list_flat'].replace('-', ' ')
         # see if there is any admin messages to display
         get_motd(self.request)
 
